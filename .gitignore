@@ -1,0 +1,19 @@
+# macOS
+.DS_Store
+
+# Backup files
+*.backup
+*.backup_*
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+
+# Scripts (don't push sync scripts to repo)
+SYNC_TO_GITHUB.sh
+SYNC_COMMANDS.sh

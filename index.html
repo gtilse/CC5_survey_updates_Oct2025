@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+
+<html lang="en" id="htmlDocument">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Client Culture Survey">
+    <meta name="author" content="">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/favorite/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favorite/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favorite/favicon-16x16.ico">
+    <link rel="manifest" href="/assets/favorite/site.webmanifest">
+    <link rel="mask-icon" href="/assets/favorite/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+
+    <title data-bind="text: pageTitle">Thank you for your feedback</title>
+
+    <!-- Style Sheets -->
+    <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./styles.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+  </head>
+
+  <body>
+
+    <!-- Loading placeholder -->
+    <div id="loading" data-bind="visible: viewState()==1" style="display:none">
+      <img data-bind="attr:{src: loadingImageFile}">
+      <p>Just a moment...</p>
+    </div>
+
+    <!-- Preview mode -->
+    <div id="preview" class="alert alert-success" role="alert" style="display: none">
+      <h4 class="alert-heading">Preview Mode</h4>
+      <p>No data will be saved during this process.</p>
+    </div>
+
+    <!-- Error -->
+    <div id="divError" class="alert alert-danger" data-bind="visible: viewState()===0" style="display:none">
+      <h4 class="alert-heading">Something went wrong!</h4>
+      <p>
+        We were unable to process your request. Please try again later or contact us at
+        <span data-bind="text: supportEmailAddress"></span> if the error persists.
+      </p>
+    </div>
+
+    <!-- Page contents -->
+    <div id="divPageContents" data-bind="visible: viewState()>1" style="display:none">
+
+      <!-- Org logo -->
+      <img id="vendorLogo" alt="Logo"/ style="display:none" data-bind="visible: vendorLogo(),attr:{src: vendorLogo}">
+      <hr>
+
+      <!-- Bot protection / Detractor score confirmation -->
+      <div id="divConfirmation" data-bind="visible: wizardState()==5">
+        <h4 class="font-500">
+          You selected <span data-bind="text: scoreObs"></span>. We are sorry to hear that.
+        </h4>
+
+        <h4 style="margin-top: 16px;">Can we ask you to please confirm your score of <span data-bind="text: scoreObs"></span></h4>
+        <div class="confirmationButtons">
+          <button type="button" data-bind="click: function(data, event) { callButtonClick(1, event) }" class="btn btn-primary btn-lg">Confirm my score of <span data-bind="text: scoreObs"></span></button>
+          <!-- <button type="button" data-bind="click: function(data, event) { callButtonClick(2, event) }" class="btn btn-lg">No. Please don't call me at this stage</button> -->
+        </div>
+
+        <p>If you did not mean to select <span data-bind="text: scoreObs"></span> you can take the survey again 
+          <a data-bind="attr: { href: webSurveyLink  }">here.</a>
+        </p>
+        
+
+      </div>
+
+      <!-- Comments section -->
+      <div id="divFeedback" data-bind="visible: wizardState()==1">
+
+        <!-- Unified greeting -->
+        <h2>Thanks for taking a moment to share your feedback.</h2>
+
+        <!-- NPS question and score display (populated via JavaScript) -->
+        <hr/>
+        <div id="nps-context" style="margin: 20px 0;">
+          <h3 id="nps-question" style="font-size: 21px; font-weight: 400; text-align: left; margin-top: 20px; margin-bottom: 20px;"></h3>
+          <div class="score-buttons-wrapper" style="margin: 20px 0;">
+            <div class="score-buttons-container" style="display: flex; flex-wrap: nowrap; gap: 8px; margin-bottom: 10px;">
+              <span class="score-button-display" data-score="0">0</span>
+              <span class="score-button-display" data-score="1">1</span>
+              <span class="score-button-display" data-score="2">2</span>
+              <span class="score-button-display" data-score="3">3</span>
+              <span class="score-button-display" data-score="4">4</span>
+              <span class="score-button-display" data-score="5">5</span>
+              <span class="score-button-display" data-score="6">6</span>
+              <span class="score-button-display" data-score="7">7</span>
+              <span class="score-button-display" data-score="8">8</span>
+              <span class="score-button-display" data-score="9">9</span>
+              <span class="score-button-display" data-score="10">10</span>
+            </div>
+            <div class="score-labels">
+              <span class="score-label">Least likely</span>
+              <span class="score-label">Most likely</span>
+            </div>
+          </div>
+        </div>
+
+        <hr/>
+
+        <!-- Conditional introductory message based on score -->
+        <!-- ko if: isPromoter() -->
+        <h2 style="font-weight: 500; margin-bottom: 12px;">Thank you</h2>
+        <p>We're delighted to hear you've had a positive experience.</p>
+        <hr/>
+        <h3 style="font-size: 21px; font-weight: 500; margin-top: 24px; margin-bottom: 12px; text-align: left;">Optional questions</h3>
+        <p>If you have a moment, there are <strong>four optional quick questions</strong> below — including why you'd recommend us, how we could make things even better, and an opportunity to recognise deserving team members.</p>
+        <!-- /ko -->
+
+        <!-- ko if: isPassive() -->
+        <h2 style="font-weight: 500; margin-bottom: 12px;">Thank you.</h2>
+        <p>We appreciate your feedback.</p>
+        <p>Actually, we would love to know what would make your experience better.</p>
+        <hr/>
+        <h3 style="font-size: 21px; font-weight: 500; margin-top: 24px; margin-bottom: 12px; text-align: left;">Optional questions</h3>
+        <p>If you have a moment, there are <strong>three optional quick questions</strong> below — they'll help us understand why you gave this score, what's most important to you, and how we can improve the experience for you in future. We'd greatly value your insights.</p>
+        <!-- /ko -->
+
+        <!-- ko if: !isPromoter() && !isPassive() -->
+        <h2 style="font-weight: 500; margin-bottom: 12px;">Thank you</h2>
+        <p>We're sorry your experience hasn't met expectations. We'd like to do better.</p>
+        <hr/>
+        <h3 style="font-size: 21px; font-weight: 500; margin-top: 24px; margin-bottom: 12px; text-align: left;">Optional questions</h3>
+        <p>If you have a moment, there are <strong>three optional quick questions</strong> below to help us understand what happened, identify the key areas that matter most to you, and learn how we can improve. We'd greatly value your insights.</p>
+        <!-- /ko -->
+
+        <!-- <h2>Please tell us a bit more</h2> -->
+        <h2 style="text-align: left;" data-bind="text: scoreText"></h2>
+        <form>
+
+          <!-- Feedback comments -->
+          <div class="form-group">
+            <textarea id="txtFeedback" data-bind="value: comments" class="form-control" rows="10" maxlength="450" placeholder="your feedback here please..." autofocus></textarea>
+          </div>
+
+          <!-- Comments error message -->
+          <p id="lblInvalidFeedback" class="text-danger">Please enter a comment above</p>
+
+          <!-- Loyalty Drivers -->
+
+          <!-- ko if: loyaltyDriversOptions().length !== 0 -->
+          <div class="loyalty-drivers">
+            <h2 style="text-align:left;margin-bottom: 8px;" data-bind="html: loyaltyDriversHeading"></h2>
+            <p style="margin-top: 0; margin-bottom: 16px; text-align: left; color: #666;">Help us identify what matters most for you.</p>
+
+            <div data-bind="foreach: loyaltyDriversOptions">
+              <div class="form-check" style="text-align: left; margin-bottom: 12px;">
+                <input class="form-check-input" type="checkbox"
+                  data-bind="checkedValue: $data, checked: $parent.loyaltyDriversMultipleSelectionValue,
+                             enable: $parent.loyaltyDriversMultipleSelectionValue.indexOf($data) !== -1 || $parent.loyaltyDriversMultipleSelectionValue().length < 3"
+                >
+                <label class="form-check-label" data-bind="text: $data"></label>
+              </div>
+            </div>
+          </div>
+          <!-- /ko -->
+
+
+          <!-- How to improve question -->
+          <div class="form-group mt-4" data-bind="visible:addHowToImproveQuestion()">
+            <h2 style="text-align:left; margin-bottom: 8px;" data-bind="text: howToImproveQuestionText"></h2>
+            <textarea id="txtHowToImproveComments" data-bind="value: howToImproveComments" class="form-control" rows="5" maxlength="450" placeholder="suggestions here..."></textarea>
+          </div>
+
+          <!-- How to improve question -->
+          <div class="form-group mt-4" data-bind="visible:addHowToImproveQuestion2()">
+            <h2 style="text-align:left; margin-bottom: 8px;" data-bind="text: howToImproveQuestion2Text"></h2>
+            <p style="margin-top: 0; margin-bottom: 16px; text-align: left; color: #666;">Help us recognise our people and teams.</p>
+            <textarea id="txtHowToImproveComments2" data-bind="value: howToImproveComments2" class="form-control" rows="5" maxlength="450" placeholder="suggestions here..."></textarea>
+          </div>
+          
+          <!-- Allow testimonial checkbox -->
+          <div class="form-check" id="divTestimonial" data-bind="visible:testimonial()">
+            <input class="form-check-input" id="chkAllowTestimonial" type="checkbox" data-bind="checked: allowTestimonial">
+            <label class="form-check-label" for="chkAllowTestimonial">
+               Permission to use my comment as a testimonial
+            </label>
+            <small class="form-text text-muted" data-bind="text: testimonial">permission type</small>
+          </div>
+
+          <!-- Submit feedback -->
+          <div style="display: flex; align-items: flex-end; justify-content: space-between; margin-top: 32px;">
+            <button id="btnSubmitFeedback" type="button" data-bind="click: function(data, event) { submitButtonClick('COMMENT', event) }" class="btn btn-primary btn-lg">Submit Feedback</button>
+            <a id="change-score-link" href="#" style="color: #007bff; text-decoration: underline; font-size: 14px;">Change score</a>
+          </div>
+
+        </form>
+
+      </div>
+
+      <!-- Additional questions section -->
+      <div id="divAdditionalQuestions" data-bind="visible: wizardState()==2">
+        <h4 class="font-500" data-bind="text: additionalQuestionsText"></h4>
+        <hr style="margin-top: 48px;"/>
+
+        <form>
+
+          <!-- Staff select -->
+          <div class="form-group mb-5" id="slStaff" style="display:none">
+            <label>Select a Manager</label>
+            <select class="form-control form-control-lg" data-bind="options: staffSelectList,optionsText: 'name', optionsValue: 'objectId', optionsCaption: 'Choose...', value:selectedStaff"></select>
+          </div>
+
+          <div data-bind="foreach: additionalQuestions">
+            <h4 data-bind="text: heading"></h4>
+            <p data-bind="text: subHeading"></p>
+            <!-- Text area -->
+            <!-- ko if: type()===0 -->
+              <div class="form-group">
+                <textarea class="form-control" data-bind="value: textInput" rows="3"></textarea>
+              </div>
+            <!-- /ko -->
+
+            <!-- Radio buttons -->
+            <!-- ko if: type()===1 -->
+              <div data-bind="foreach: options">
+                <div class="form-check" >
+                  <input class="form-check-input" type="radio" data-bind="checkedValue: $data, checked: $parent.singleSelectionValue, attr: { name: 'option' + $parentContext.$index() }">
+                  <label class="form-check-label" data-bind="text: $data"></label>
+                </div>
+              </div>
+
+            <!-- /ko -->
+
+            <!-- Check boxes -->
+            <!-- ko if: type()===2 -->
+              <div data-bind="foreach: options">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" data-bind="checkedValue: $data, checked: $parent.multipleSelectionValue">
+                  <label class="form-check-label" data-bind="text: $data"></label>
+                </div>
+              </div>
+
+            <!-- /ko -->
+
+            <hr>
+
+          </div>
+
+          <button id="btnSubmitAdditionalQuestions" type="button" data-bind="click: function(data, event) { submitButtonClick('ADDITIONAL_QUESTIONS', event) }" class="btn btn-primary btn-lg">Submit Feedback</button>
+
+        </form>
+      </div>
+
+      <!-- Social media section -->
+      <div id="divFeedbackSocial" data-bind="visible: wizardState()==3">
+        <h2>Thank you for your feedback</h2>
+        <p class="text-muted">We would appreciate it if you could leave us a social media review by clicking on an icon below</p>
+        <a data-bind="visible: googleLink(),attr:{src: googleLink}" target="_blank"><img src="../assets/images/google-plus.png" alt="google logo" style="max-height:48px"></a>
+        <a data-bind="visible: facebookLink(),attr:{src: facebookLink}" target="_blank"><img src="../assets/images/facebook.png" alt="facebook logo" width=48 height=48></a>
+        <a data-bind="visible: truelocalLink(),attr:{src: truelocalLink}" target="_blank"><img src="../assets/images/truelocal.png" alt="true local logo" style="max-height:48px"></a>
+        <div class="clearfix"></div>
+
+      </div>
+
+      <!-- Feedback sent - thank you note -->
+      <div id="divFeedbackSent" data-bind="visible: wizardState()==4" style="text-align: left;">
+        <h2 style="font-weight: 500; margin-bottom: 16px;">Thank you for your feedback</h2>
+        <p style="font-size: 16px; color: #666; margin-bottom: 24px;">
+          We've received your feedback and truly appreciate you taking the time to help us improve our service<!-- ko if: firmName() --> at <span data-bind="text: firmName"></span><!-- /ko -->.
+        </p>
+        <p style="font-size: 14px; color: #999;">
+          You can now close this window.
+        </p>
+      </div>
+
+    </div>
+
+    <footer class="footer" style="display:none" data-bind="visible: viewState()>1">
+      <div class="container" style="padding-bottom:20px;">
+        <hr style="border:none;border-top:1px solid #eee;margin:36px 0 8px 0;">
+
+        <p style="font-size:13px;color:#777;text-align:left;line-height:1.4;margin:0;">
+          <span style="display:block;margin-bottom:5px;"><strong>Independent quality assurance for leading firms</strong> — a Client Culture service.</span>
+          <span style="display:block;margin-bottom:5px;">If you have any questions about this request, please contact your usual contact at <span data-bind="text: firmName"></span>.</span>
+          <span style="display:block;"><a href="https://clientculture.com" style="color:#777;text-decoration:underline;">Powered by Client Culture</a> — empowering teams to deliver client excellence.</span>
+        </p>
+      </div>
+    </footer>
+
+    <!-- Include Scripts -->
+    <script src="../assets/js/jquery-3.3.1.min.js"></script>
+    <script src="../assets/js/bootstrap.min.js"></script>
+    <script src="../assets/js/popper.min.js"></script>
+    <script src="../assets/js/bootbox.min.js"></script>
+    <script src="../assets/js/knockout-3.4.2.js"></script>
+    <script src="./numbertowordsconverter.js"></script>
+    <script src="./app.js"></script>
+
+    <script>
+      // Display NPS question and highlight selected score
+      (function() {
+        // Get URL parameters
+        var urlParams = new URLSearchParams(window.location.search);
+        var score = urlParams.get('score');
+        var question = urlParams.get('question');
+
+        if (question) {
+          // Display the NPS question
+          var npsQuestionEl = document.getElementById('nps-question');
+          if (npsQuestionEl) {
+            npsQuestionEl.textContent = decodeURIComponent(question);
+          }
+        }
+
+        if (score) {
+          // Highlight the selected score
+          var scoreButtons = document.querySelectorAll('.score-button-display');
+          for (var i = 0; i < scoreButtons.length; i++) {
+            if (scoreButtons[i].getAttribute('data-score') === score) {
+              scoreButtons[i].classList.add('selected');
+            }
+          }
+        }
+
+        // If no question or score, hide the NPS context section
+        if (!question && !score) {
+          var npsContext = document.getElementById('nps-context');
+          if (npsContext) {
+            npsContext.style.display = 'none';
+          }
+        }
+      })();
+
+      // Align labels with button edges (like on score page)
+      function alignFeedbackLabels() {
+        var buttons = document.querySelectorAll('#divFeedback .score-button-display');
+        var labelsContainer = document.querySelector('#divFeedback .score-labels');
+
+        if (buttons.length > 0 && labelsContainer) {
+          var firstButton = buttons[0];
+          var lastButton = buttons[buttons.length - 1];
+
+          var firstRect = firstButton.getBoundingClientRect();
+          var lastRect = lastButton.getBoundingClientRect();
+          var wrapperRect = labelsContainer.parentElement.getBoundingClientRect();
+
+          // Calculate the width from the left edge of first button to right edge of last button
+          var labelsWidth = lastRect.right - firstRect.left;
+          var leftOffset = firstRect.left - wrapperRect.left;
+
+          // Set the width and position of labels container
+          labelsContainer.style.width = labelsWidth + 'px';
+          labelsContainer.style.marginLeft = leftOffset + 'px';
+          labelsContainer.style.display = 'flex';
+          labelsContainer.style.justifyContent = 'space-between';
+
+          console.log('Labels aligned - width:', labelsWidth, 'offset:', leftOffset);
+        } else {
+          console.log('Could not find buttons or labels container');
+        }
+      }
+
+      // Align on load with delay to ensure everything is rendered
+      window.addEventListener('load', function() {
+        setTimeout(alignFeedbackLabels, 100);
+      });
+
+      // Re-align on resize
+      window.addEventListener('resize', function() {
+        alignFeedbackLabels();
+      });
+
+      // Save and restore feedback text using localStorage
+      (function() {
+        var urlParams = new URLSearchParams(window.location.search);
+        var id = urlParams.get('id');
+        var storageKey = 'feedback_' + id;
+
+        // Restore saved feedback when page loads
+        window.addEventListener('load', function() {
+          var savedData = localStorage.getItem(storageKey);
+          if (savedData) {
+            try {
+              var data = JSON.parse(savedData);
+
+              // Restore main feedback textarea
+              var feedbackTextarea = document.getElementById('txtFeedback');
+              if (feedbackTextarea && data.feedback) {
+                feedbackTextarea.value = data.feedback;
+                // Trigger Knockout binding update
+                var event = new Event('change', { bubbles: true });
+                feedbackTextarea.dispatchEvent(event);
+              }
+
+              // Restore how to improve textarea
+              var howToImproveTextarea = document.getElementById('txtHowToImproveComments');
+              if (howToImproveTextarea && data.howToImprove) {
+                howToImproveTextarea.value = data.howToImprove;
+                var event2 = new Event('change', { bubbles: true });
+                howToImproveTextarea.dispatchEvent(event2);
+              }
+
+              // Restore how to improve 2 textarea
+              var howToImproveTextarea2 = document.getElementById('txtHowToImproveComments2');
+              if (howToImproveTextarea2 && data.howToImprove2) {
+                howToImproveTextarea2.value = data.howToImprove2;
+                var event3 = new Event('change', { bubbles: true });
+                howToImproveTextarea2.dispatchEvent(event3);
+              }
+            } catch (e) {
+              console.error('Error restoring feedback:', e);
+            }
+          }
+        });
+
+        // Auto-save feedback as user types
+        window.addEventListener('load', function() {
+          var feedbackTextarea = document.getElementById('txtFeedback');
+          var howToImproveTextarea = document.getElementById('txtHowToImproveComments');
+          var howToImproveTextarea2 = document.getElementById('txtHowToImproveComments2');
+
+          function saveFeedback() {
+            var data = {
+              feedback: feedbackTextarea ? feedbackTextarea.value : '',
+              howToImprove: howToImproveTextarea ? howToImproveTextarea.value : '',
+              howToImprove2: howToImproveTextarea2 ? howToImproveTextarea2.value : ''
+            };
+            localStorage.setItem(storageKey, JSON.stringify(data));
+          }
+
+          if (feedbackTextarea) {
+            feedbackTextarea.addEventListener('input', saveFeedback);
+            feedbackTextarea.addEventListener('blur', saveFeedback);
+          }
+          if (howToImproveTextarea) {
+            howToImproveTextarea.addEventListener('input', saveFeedback);
+            howToImproveTextarea.addEventListener('blur', saveFeedback);
+          }
+          if (howToImproveTextarea2) {
+            howToImproveTextarea2.addEventListener('input', saveFeedback);
+            howToImproveTextarea2.addEventListener('blur', saveFeedback);
+          }
+        });
+      })();
+
+      // Wire up "Change score" link
+      window.addEventListener('load', function() {
+        var changeScoreLink = document.getElementById('change-score-link');
+        if (changeScoreLink) {
+          changeScoreLink.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Get current URL parameters
+            var urlParams = new URLSearchParams(window.location.search);
+            var id = urlParams.get('id');
+            var type = urlParams.get('type');
+
+            // Build webview URL (no score pre-selected)
+            if (id && type) {
+              var webviewUrl = window.location.origin + window.location.pathname.replace('index.html', '') + 'survey.php?id=' + id + '&type=' + type + '&webview=1';
+              window.location.href = webviewUrl;
+            }
+          });
+        }
+      });
+    </script>
+
+  </body>
+
+</html>

@@ -1,0 +1,293 @@
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  margin-bottom: 140px; /* Margin bottom by footer height */
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #333;
+  line-height: 1.5;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  font-weight: 400;
+  color: #222;
+  margin-top: 32px;
+  margin-bottom: 12px;
+}
+
+.font-500 {
+  font-weight: 500;
+}
+
+.text-underline {
+  text-decoration: underline;
+}
+
+#loading {
+  position:absolute;
+  left:0;
+  top:0;
+  right:0;
+  bottom:0;
+  margin:auto;
+  width:230px;
+  height:60px;
+  text-align:center
+}
+
+#loading img {
+  max-height: 35px;
+}
+
+
+#divPageContents {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+#vendorLogo {
+  display: block;
+  margin:20px 0;
+  max-width:300px;
+}
+
+#divPageContents > hr {
+  margin: 0;
+  width: 100%;
+}
+
+#divError {
+  margin: 15px;
+}
+
+#divError span.email {
+  font-weight: bold;
+}
+
+#divFeedback, #divFeedbackSent,#divFeedbackSocial, #divConfirmation {
+  width:100%;
+  max-width:600px;
+  margin:10px auto;
+  text-align:center;
+  padding-bottom: 60px;
+}
+
+#divFeedback > h2 {
+  font-size: 21px;
+  text-align: left;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+#divFeedback h2 {
+  font-size: 21px;
+  text-align: left;
+}
+
+#divFeedback p {
+  font-size: 16px;
+  text-align: left;
+}
+
+#divFeedback .loyalty-drivers label {
+  font-size: 16px;
+}
+
+#divFeedback .score-button-display {
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  line-height: 2;
+  color: #222;
+  background-color: #FFFFFF;
+  border-radius: 8px;
+  display: inline-block;
+  font-weight: 500;
+  min-width: 44px;
+  text-align: center;
+}
+
+#divFeedback .score-button-display.selected {
+  background-color: #2b6de2;
+  color: #fff;
+  border-color: #2b6de2;
+}
+
+#divFeedback .score-labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+#divFeedback .score-label {
+  color: #A9A9A9;
+  font-size: 12px;
+  display: block;
+  white-space: nowrap;
+}
+
+#divFeedback > h2:first-of-type {
+  opacity: 0.5;
+}
+
+#divFeedback #nps-context {
+  opacity: 0.5;
+}
+
+@media (max-width: 640px) {
+  /* Hide the NPS context score display on mobile - users already selected their score */
+  #divFeedback #nps-context {
+    display: none !important;
+  }
+
+  /* Hide the HR before and after NPS context on mobile */
+  #divFeedback #nps-context + hr {
+    display: none !important;
+  }
+
+  #divFeedback .score-buttons-container {
+    flex-direction: column-reverse !important;
+    align-items: stretch !important;
+  }
+
+  #divFeedback .score-button-display {
+    width: 100%;
+    padding: 16px;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #f5f5f5;
+  }
+
+  #divFeedback .score-labels {
+    display: none !important;
+  }
+
+  /* Ensure button and change score link are fully visible on mobile */
+  #btnSubmitFeedback {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+  #divFeedback form > div:last-child {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  #change-score-link {
+    display: block;
+    margin-top: 8px;
+    margin-bottom: 40px;
+  }
+}
+
+#divAdditionalQuestions {
+  width: 100%;
+  max-width: 600px;
+  margin: 50px auto 10px auto;
+}
+
+#divFeedbackSocial > h2, #divFeedbackSocial > button {
+  display: none;
+}
+
+#divFeedbackSocial > a {
+  margin-right: 10px;
+}
+
+#divFeedbackSocial > p {
+  font-size: 100%;
+  font-weight: lighter;
+  margin: 10px 0px;
+  padding: 5px;
+}
+
+#btnSubmitFeedback {
+  margin-top:20px;
+  padding:10px 20px;
+  display: block;
+  margin-left: 0;
+}
+
+#btnSubmitAdditionalQuestions {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+}
+
+#btnSocialContinue {
+  display: none;
+  margin: 45px auto 0px auto!important;
+  text-decoration: underline;
+}
+
+#lblInvalidFeedback {
+  display: none;
+  font-weight: bold;
+}
+
+p, label {
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+
+textarea {
+  font-family: inherit;
+  font-size: 15px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  resize: vertical;
+  margin-bottom: 24px;
+}
+
+input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background-color: #ffffff;
+  font-size: 14px;
+  text-align: left;
+  border-top: none;
+  box-shadow: none;
+  color: #999;
+  font-weight: 400;
+  padding: 20px 0;
+}
+
+.footer a {
+  color: #999;
+  text-decoration: underline;
+}
+
+.footer .container {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.footer hr {
+  margin: 0 0 8px 0;
+  width: 100%;
+}
+
+.confirmationButtons {
+
+  margin-bottom: 12px;
+  margin-top: 16px;
+
+  & button {
+    width: 400px;
+    margin-bottom: 8px;
+  }
+}
