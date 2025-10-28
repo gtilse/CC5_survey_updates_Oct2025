@@ -190,7 +190,6 @@ In parent directory (`../`):
 - **[SURVEY_SYSTEM_COMPLETE.md](../SURVEY_SYSTEM_COMPLETE.md)** - Complete system docs
 - **[INCIDENT_REMINDER_FIX_ROLLBACK_OCT27_2025.md](../INCIDENT_REMINDER_FIX_ROLLBACK_OCT27_2025.md)** - Incident report
 - **Session Notes (Oct 25-27)** - Detailed work logs
-- **[MIGRATION_STRATEGY_SURVEY_TO_ANNIKAAI.md](../MIGRATION_STRATEGY_SURVEY_TO_ANNIKAAI.md)** - Future redevelopment plan
 
 ---
 

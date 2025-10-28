@@ -430,8 +430,6 @@ After restoration:
 - [SURVEY_SYSTEM_COMPLETE.md](../SURVEY_SYSTEM_COMPLETE.md) - Complete system documentation
 - [INCIDENT_REMINDER_FIX_ROLLBACK_OCT27_2025.md](../INCIDENT_REMINDER_FIX_ROLLBACK_OCT27_2025.md) - Reminder timing incident report
 - [SESSION_NOTES_OCT27_2025_EVENING_PART2.md](../SESSION_NOTES_OCT27_2025_EVENING_PART2.md) - Latest session notes
-- [MIGRATION_STRATEGY_SURVEY_TO_ANNIKAAI.md](../MIGRATION_STRATEGY_SURVEY_TO_ANNIKAAI.md) - Migration roadmap
-
 ---
 
 ## File Integrity Verification
