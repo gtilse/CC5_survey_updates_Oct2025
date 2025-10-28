@@ -53,7 +53,6 @@ This document details every change made to the survey system during October 25-2
 - ✅ **Visual Consistency**
   - Added favicon support
   - Consistent header/footer styling
-  - Purple gradient branding throughout
 
 **Specific Technical Changes:**
 ```javascript
@@ -100,9 +99,8 @@ if (window.opener && !window.opener.closed) {
   - Footer display logic
 
 - ✅ **Second Question Threshold**
-  - Changed from 7 to 6
-  - More promoters get the extra question
-  - Better feedback collection
+  - Only shown to promoters
+  - Not scores of 8
 
 **Specific Technical Changes:**
 ```javascript
@@ -276,6 +274,7 @@ if ($_POST['action'] === 'submit_score') {
   - NEW: `email_template_initial.html` - For initial survey emails
   - NEW: `email_template_reminder_single.html` - Default reminder (single button)
   - NEW: `email_template_reminder.html` - Multi-purpose (webview + inline scores)
+  - Inline scores only used in reminder if vendorId manually added to code (at the moment this is set for the demo version Elston xv8iF4ktxfthn)
 
 - ✅ **Template Selection Logic**
   - Automatic template selection based on email type
