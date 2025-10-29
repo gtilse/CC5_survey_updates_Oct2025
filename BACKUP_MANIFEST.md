@@ -62,9 +62,9 @@ This backup captures all production survey module changes made between **October
   - Binds to footer display
 
 **Critical Functions:**
-- `submitScore()`: Handles score submission
 - `submitFeedback()`: Handles feedback form submission
-- `wizardState` observable: Controls UI state flow
+- `submitButtonClick()`: Handles button clicks (comments, additional questions)
+- `wizardState` observable: Controls UI state flow (1=comments, 2=additional questions, 3=social, 4=thank you)
 
 ---
 
