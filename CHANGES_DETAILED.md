@@ -56,28 +56,53 @@ This document details every change made to the survey system during October 25-2
   - Added favicon support
   - Consistent header/footer styling
 
-**Specific Technical Changes:**
+**Actual Code Changes:**
+
+**Firm name handling** (index.html lines 273, 288; app.js lines 286-288):
+```html
+<!-- Thank you message with firm name -->
+<p>We've received your feedback and truly appreciate you taking the time to help us improve our service<!-- ko if: firmName() --> at <span data-bind="text: firmName"></span><!-- /ko -->.</p>
+
+<!-- Footer with firm name -->
+<span>If you have any questions about this request, please contact your usual contact at <span data-bind="text: firmName"></span>.</span>
+```
+
 ```javascript
-// NEW: Firm name pass-through
-var firmName = getParameterByName('firmName') || '';
-if (firmName) {
-    $('.footer-firm-name').text(firmName);
+// app.js: Read firmName from URL and set observable
+if (urlVars["firmName"]) {
+  viewModel.firmName(decodeURIComponent(urlVars["firmName"]));
 }
+```
 
-// NEW: Auto-close opener window
-if (window.opener && !window.opener.closed) {
-    window.opener.close();
+**Mobile NPS context hiding** (styles.css lines 142-151):
+```css
+@media (max-width: 640px) {
+  /* Hide the NPS context score display on mobile - users already selected their score */
+  #divFeedback #nps-context {
+    display: none !important;
+  }
+
+  /* Hide the HR before and after NPS context on mobile */
+  #divFeedback #nps-context + hr {
+    display: none !important;
+  }
 }
+```
 
-// NEW: Mobile-specific CSS
-@media (max-width: 768px) {
-    .nps-context {
-        display: none; /* Hide on mobile to prevent button wall */
-    }
-    .submit-button {
-        width: 100%;
-        max-width: 100%;
-    }
+**Mobile button improvements** (styles.css lines 172-187):
+```css
+@media (max-width: 640px) {
+  /* Ensure button and change score link are fully visible on mobile */
+  #btnSubmitFeedback {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+  #change-score-link {
+    display: block;
+    margin-top: 8px;
+    margin-bottom: 40px;
+  }
 }
 ```
 
@@ -90,54 +115,36 @@ if (window.opener && !window.opener.closed) {
 **Change:** +459 bytes (~3% increase)
 
 **Major Changes:**
-- ✅ **Submit Button Logic**
-  - Added `submitScore()` function for inline score submission
-  - Proper window management after submission
-  - Better error handling
-
 - ✅ **Firm Name Handling**
-  - Added firm name parameter extraction
+  - Reads firmName from URL parameters (line 286-288)
+  - Binds to Knockout observable for footer display
   - Pass-through to all subsequent pages
-  - Footer display logic
 
 - ✅ **Second Question Threshold**
   - Changed from scores 8-10 to scores 9-10
   - Now only shown to Promoters (scores 9-10)
 
-**Specific Technical Changes:**
+**Actual Code Changes:**
+
+**Firm name parameter extraction** (app.js lines 286-288):
 ```javascript
-// NEW: Submit score function for inline scores
-function submitScore(score) {
-    var surveyId = getParameterByName('surveyId');
-    var surveyToken = getParameterByName('token');
-    var firmName = getParameterByName('firmName') || '';
-
-    // Submit score via AJAX
-    $.ajax({
-        url: 'survey.php',
-        method: 'POST',
-        data: {
-            action: 'submit_score',
-            survey_id: surveyId,
-            score: score
-        },
-        success: function() {
-            // Redirect to feedback form
-            window.location.href = 'index.html?surveyId=' + surveyId +
-                                  '&token=' + surveyToken +
-                                  '&score=' + score +
-                                  '&firmName=' + encodeURIComponent(firmName);
-        }
-    });
-}
-
-// CHANGED: Second question threshold (only for Promoters now)
-// OLD: if (score >= 8)  // Scores 8, 9, 10
-// NEW: if (score >= 9)  // Scores 9, 10 only
-if (score >= 9) {
-    $('.second-question-container').show();
+// Set firm name from URL if provided
+if (urlVars["firmName"]) {
+  viewModel.firmName(decodeURIComponent(urlVars["firmName"]));
 }
 ```
+
+**Second question threshold adjustment** (app.js lines 363-367):
+```javascript
+// Temporary adjustment
+// Show additionalquestion2 if score >=9
+if(viewModel.addHowToImproveQuestion2() === true && viewModel.score < 9 ) {
+  viewModel.addHowToImproveQuestion2(false);
+}
+// End temporary adjustment
+```
+
+**Note:** The actual second question logic is simpler than expected - it just hides the question if score < 9, rather than having complex conditional logic.
 
 ---
 
@@ -163,50 +170,68 @@ if (score >= 9) {
   - Better hover states
   - Improved visibility
 
-**Specific Technical Changes:**
+**Actual Code Changes:**
+
+**Mobile NPS context hiding** (styles.css lines 138-151):
 ```css
-/* NEW: Mobile breakpoints */
-@media (max-width: 768px) {
-    .nps-context {
-        display: none !important; /* Critical for mobile UX */
-    }
-
-    .submit-button {
-        width: 100%;
-        max-width: 100%;
-        padding: 15px 30px;
-        font-size: 18px;
-    }
-
-    .nps-buttons {
-        flex-direction: column;
-        gap: 10px;
-    }
+#divFeedback #nps-context {
+  opacity: 0.5;
 }
 
-/* NEW: Footer always visible */
-footer {
-    position: relative;
-    margin-top: 40px;
-    padding: 20px 0;
-    background: #f5f5f5;
-}
+@media (max-width: 640px) {
+  /* Hide the NPS context score display on mobile - users already selected their score */
+  #divFeedback #nps-context {
+    display: none !important;
+  }
 
-/* IMPROVED: Submit button styling */
-.submit-button {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 12px 40px;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+  /* Hide the HR before and after NPS context on mobile */
+  #divFeedback #nps-context + hr {
+    display: none !important;
+  }
 }
+```
 
-.submit-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+**Mobile button and layout improvements** (styles.css lines 153-188):
+```css
+@media (max-width: 640px) {
+  #divFeedback .score-buttons-container {
+    flex-direction: column-reverse !important;
+    align-items: stretch !important;
+  }
+
+  /* Ensure button and change score link are fully visible on mobile */
+  #btnSubmitFeedback {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+  #divFeedback form > div:last-child {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  #change-score-link {
+    display: block;
+    margin-top: 8px;
+    margin-bottom: 40px;
+  }
+}
+```
+
+**Footer visibility fix** (styles.css lines 254-266):
+```css
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background-color: #ffffff;
+  font-size: 14px;
+  text-align: left;
+  border-top: none;
+  box-shadow: none;
+  color: #999;
+  font-weight: 400;
+  padding: 20px 0;
 }
 ```
 
@@ -220,48 +245,23 @@ footer {
 
 **Major Changes:**
 - ✅ **Firm Name Pass-through**
-  - Added firm name to all URL parameters
-  - Database lookup for firm name
-  - Consistent branding throughout user journey
+  - Uses {{FirmName}} placeholder in templates
+  - Replaced with organisationName from database
+  - Displayed in footer and thank you messages
 
-- ✅ **Submit Score Endpoint**
-  - New AJAX endpoint for inline score submission
-  - Better separation of concerns
-  - Improved error handling
+**Actual Code Changes:**
 
-**Specific Technical Changes:**
+**Firm name replacement** (survey.php line 89):
 ```php
-// NEW: Firm name lookup and pass-through
-$firm_name = '';
-if (!empty($survey['practitioner_id'])) {
-    $stmt = $conn->prepare("SELECT firm_name FROM practitioners WHERE id = ?");
-    $stmt->bind_param("i", $survey['practitioner_id']);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    if ($row = $result->fetch_assoc()) {
-        $firm_name = $row['firm_name'];
-    }
-}
-
-// NEW: Add firmName to all redirects
-header("Location: index.html?surveyId=" . $survey_id .
-       "&token=" . $token .
-       "&score=" . $score .
-       "&firmName=" . urlencode($firm_name));
-
-// NEW: Submit score AJAX endpoint
-if ($_POST['action'] === 'submit_score') {
-    $survey_id = $_POST['survey_id'];
-    $score = $_POST['score'];
-
-    $stmt = $conn->prepare("UPDATE surveys SET score = ?, updated_at = NOW() WHERE id = ?");
-    $stmt->bind_param("ii", $score, $survey_id);
-    $success = $stmt->execute();
-
-    echo json_encode(['success' => $success]);
-    exit;
-}
+$emailTemplate = str_ireplace("{{FirmName}}",$survey["organisationName"],$emailTemplate);
 ```
+
+**Note:** survey.php doesn't handle firm name as a URL parameter itself. Instead, it:
+1. Loads the template (email_template_reminder.html)
+2. Replaces {{FirmName}} with the organisation name from the database
+3. The email template then includes firmName in URLs when score buttons are clicked
+
+The firm name flows through URL parameters in the email templates and gets picked up by index.html/app.js.
 
 ---
 
@@ -284,46 +284,39 @@ if ($_POST['action'] === 'submit_score') {
   - Better separation of concerns
 
 - ✅ **Footer Text Consistency**
-  - Changed "professionals" → "firms"
-  - Consistent branding language
-  - Better alignment with business model
+  - Updated email templates to use "firms" instead of "professionals"
+  - Consistent branding language across all communications
 
-**Specific Technical Changes:**
+**Actual Code Changes:**
+
+**Vendor-specific inline score switch** (survey_emailer.php lines 129):
 ```php
-// NEW: Template selection logic
-function getEmailTemplate($email_type, $vendor_id = null) {
-    // Initial emails use simplified template
-    if ($email_type === 'initial') {
-        return 'email_template_initial.html';
-    }
+// MANUAL SWITCH: Inline Score Reminders
+// DEFAULT: Empty array (all vendors use single button)
+// Add vendor IDs to enable inline scores for specific vendors
+$inlineScoreVendorIds = ['xv8iF4ktxfthn']; // Elston Wealth demo account
+```
 
-    // Reminders: Check if vendor wants inline scores
-    if ($email_type === 'reminder') {
-        $inline_score_vendors = [123, 456, 789]; // Manually configured
-
-        if (in_array($vendor_id, $inline_score_vendors)) {
-            return 'email_template_reminder.html'; // Multi-purpose with inline
-        } else {
-            return 'email_template_reminder_single.html'; // Default single button
-        }
-    }
-
-    return 'email_template_reminder_single.html'; // Fallback
+**Template selection logic** (survey_emailer.php lines 166-178):
+```php
+if($emailType == $GLOBALS["EMAIL_TYPE"]["SURVEY"]) {
+  // Initial email: Always single button template (better deliverability)
+  $emailTemplate = file_get_contents(__DIR__ ."/email_template_initial.html");
+} else {
+  // Reminder email: Check manual switch
+  if (in_array($vendorId, $inlineScoreVendorIds)) {
+    // Inline scores with confirmation mode (vendor-specific)
+    $emailTemplate = file_get_contents(__DIR__ ."/email_template_reminder.html");
+  } else {
+    // Single button (default) - uses webview mode
+    $emailTemplate = file_get_contents(__DIR__ ."/email_template_reminder_single.html");
+  }
 }
+```
 
-// NEW: Footer text replacement
-$html = str_replace(
-    'help professionals like',
-    'help firms like',
-    $html
-);
-
-// NEW: Favicon support
-$html = str_replace(
-    '</head>',
-    '<link rel="icon" type="image/x-icon" href="https://www.clientculture.net/favicon.ico">' . "\n</head>",
-    $html
-);
+**Firm name replacement** (survey_emailer.php line 218):
+```php
+$emailTemplate = str_ireplace("{{FirmName}}",$survey["organisationName"],$emailTemplate);
 ```
 
 **Email Template Architecture:**
@@ -342,79 +335,58 @@ $html = str_replace(
 **NEW:** 10,624 bytes
 **Change:** +773 bytes (~8% increase)
 
-**Purpose:** Critical fix for reminder timing bug
+**Purpose:** Critical fix for reminder timing bug and safety improvements
 
 **Major Features:**
-- ✅ **Timezone-Aware Scheduling**
-  - Australian reminders: 10am-12pm AEDT
-  - UK reminders: 10am-12pm GMT
-  - US reminders: 10am-12pm local time
-  - Fixed 23-hour early bug for Australian clients
-
 - ✅ **30-Day Safety Window**
-  - Prevents old reminders from sending
-  - Only sends surveys from last 30 days
+  - Prevents old reminders from sending (protects against timing bugs)
+  - Only processes surveys from last 30 days
   - Database cleanup protection
 
 - ✅ **Concurrency Lock**
-  - Prevents duplicate sends
+  - Prevents duplicate sends during overlapping cron runs
   - File-based locking mechanism
-  - Safe for multiple cron runs
+  - Safe for frequent execution (every 2 hours)
 
 - ✅ **Improved Logging**
-  - Detailed execution logs
-  - Timezone debugging information
+  - Logs job start times
   - Success/failure tracking
 
-**Technical Implementation:**
+**Actual Code Changes:**
+
+**30-day safety window in SQL query** (background_job.php line 63-66):
 ```php
-// Timezone-aware reminder scheduling
-function shouldSendReminder($survey) {
-    $now = new DateTime('now', new DateTimeZone('UTC'));
-    $scheduled_time = new DateTime($survey['reminder_scheduled_for'], new DateTimeZone('UTC'));
-
-    // Get practitioner timezone
-    $timezone = $survey['timezone'] ?: 'Australia/Sydney';
-    $local_time = new DateTime('now', new DateTimeZone($timezone));
-    $local_hour = (int)$local_time->format('G');
-
-    // Only send during business hours (10am-12pm local time)
-    if ($local_hour < 10 || $local_hour >= 12) {
-        return false;
-    }
-
-    // Check if scheduled time is within 2 hours of now
-    $diff_hours = ($now->getTimestamp() - $scheduled_time->getTimestamp()) / 3600;
-
-    // Send if within -2 to +2 hour window
-    if ($diff_hours >= -2 && $diff_hours <= 2) {
-        return true;
-    }
-
-    return false;
-}
-
-// 30-day safety window
-$thirty_days_ago = date('Y-m-d H:i:s', strtotime('-30 days'));
-$sql = "SELECT * FROM surveys
-        WHERE reminder_scheduled_for IS NOT NULL
-        AND reminder_scheduled_for >= '$thirty_days_ago'
-        AND reminder_sent_at IS NULL
-        ORDER BY reminder_scheduled_for ASC";
-
-// Concurrency lock
-$lock_file = '/tmp/survey_reminder_cron.lock';
-if (file_exists($lock_file)) {
-    echo "Another instance is running. Exiting.\n";
-    exit;
-}
-file_put_contents($lock_file, getmypid());
-
-// ... process reminders ...
-
-// Release lock
-unlink($lock_file);
+$stmt = $conn->query("Select DISTINCT(surveyId) FROM Survey_Log " .
+  "INNER JOIN Survey ON Survey.objectId = Survey_Log.surveyId " .
+  "where Survey.type = 0 AND " .
+  "reminderDate IS NOT NULL AND reminderDate <= UTC_TIMESTAMP() AND reminderDate >= UTC_TIMESTAMP() - INTERVAL 30 DAY AND score IS NULL AND reminderSentOnDate IS NULL");
 ```
+
+**Key SQL logic:**
+- `reminderDate <= UTC_TIMESTAMP()` - Reminder is due
+- `reminderDate >= UTC_TIMESTAMP() - INTERVAL 30 DAY` - **NEW:** Only last 30 days
+- `score IS NULL` - Not yet completed
+- `reminderSentOnDate IS NULL` - Not yet sent
+
+**Concurrency lock** (background_job.php lines 44-50):
+```php
+// Concurrency lock - prevent multiple instances running simultaneously
+$lockFile = '/tmp/survey_reminder.lock';
+$fp = fopen($lockFile, 'w');
+if(!flock($fp, LOCK_EX | LOCK_NB)) {
+  if(!DEV) file_put_contents("/var/www/html/admin/background_job.log", gmdate("Y-m-d H:i:s") . " - Survey reminder already running (skipped)" . PHP_EOL, FILE_APPEND);
+  die("Already running");
+}
+```
+
+**Lock release** (background_job.php lines 87-89):
+```php
+// Release lock
+flock($fp, LOCK_UN);
+fclose($fp);
+```
+
+**Important:** The file does NOT contain complex timezone-aware scheduling logic. The "timezone fix" comes from changing the cron frequency (daily → every 2 hours), which means reminders are sent within 2 hours of their scheduled time, regardless of timezone.
 
 **Cron Schedule Change:**
 - **OLD:** Daily at midnight (`0 0 * * *`)
