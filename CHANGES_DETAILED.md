@@ -14,10 +14,11 @@ This document details every change made to the survey system during October 25-2
 - The GitHub codebase (pre-changes)
 - The production backup (post-changes)
 
-### Files Changed: 6
-### Files Added: 4
+### Files Modified: 6
+### Files Added: 3
 ### Files Removed: 0
-### Total Lines Changed: ~2,000+
+### Total Files Changed: 9
+### Total Size Change: +57,501 bytes (+66%)
 
 ---
 
@@ -336,9 +337,9 @@ $html = str_replace(
 
 ### 6. `background_job.php` (Reminder Cron Job)
 
-**OLD:** Not in GitHub version
-**NEW:** 10,624 bytes (NEW FILE)
-**Change:** +10,624 bytes (100% new)
+**OLD:** 9,851 bytes
+**NEW:** 10,624 bytes
+**Change:** +773 bytes (~8% increase)
 
 **Purpose:** Critical fix for reminder timing bug
 
@@ -553,11 +554,11 @@ unlink($lock_file);
 | `styles.css` | 1,737 | 5,019 | +3,282 | +189% |
 | `survey.php` | 9,953 | 10,180 | +227 | +2% |
 | `survey_emailer.php` | 39,941 | 44,424 | +4,483 | +11% |
-| `background_job.php` | 0 | 10,624 | +10,624 | NEW |
+| `background_job.php` | 9,851 | 10,624 | +773 | +8% |
 | `email_template_initial.html` | 0 | 6,819 | +6,819 | NEW |
 | `email_template_reminder_single.html` | 0 | 6,819 | +6,819 | NEW |
 | `email_template_reminder.html` | 21,000 | 22,010 | +1,010 | +5% |
-| **TOTAL** | **77,647** | **144,999** | **+67,352** | **+87%** |
+| **TOTAL** | **87,498** | **144,999** | **+57,501** | **+66%** |
 
 ### Changes by Category
 
