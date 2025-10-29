@@ -14,12 +14,12 @@ This document details every change made to the survey system during October 25-2
 - The GitHub codebase (pre-changes)
 - The production backup (post-changes)
 
-### Files Modified: 6
-### Files Added: 3 (New Names)
+### Files Modified: 7
+### Files Added: 3 (New Template Names)
 ### Files Removed: 3 (Old Template Names)
-### Total Files Changed: 9
+### Total Files Changed: 10
 ### Net File Change: 0 (templates renamed/reorganized)
-### Total Size Change: +57,501 bytes (+66%)
+### Total Size Change: +36,372 bytes (+33%)
 
 ---
 
@@ -86,8 +86,8 @@ if (window.opener && !window.opener.closed) {
 ### 2. `app.js` (View Model)
 
 **OLD:** 15,183 bytes
-**NEW:** 15,651 bytes
-**Change:** +468 bytes (~3% increase)
+**NEW:** 15,642 bytes
+**Change:** +459 bytes (~3% increase)
 
 **Major Changes:**
 - ✅ **Submit Button Logic**
@@ -101,8 +101,8 @@ if (window.opener && !window.opener.closed) {
   - Footer display logic
 
 - ✅ **Second Question Threshold**
-  - Only shown to promoters
-  - Not scores of 8
+  - Changed from scores 8-10 to scores 9-10
+  - Now only shown to Promoters (scores 9-10)
 
 **Specific Technical Changes:**
 ```javascript
@@ -131,10 +131,10 @@ function submitScore(score) {
     });
 }
 
-// CHANGED: Second question threshold
-// OLD: if (score >= 7)
-// NEW: if (score >= 6)
-if (score >= 6) {
+// CHANGED: Second question threshold (only for Promoters now)
+// OLD: if (score >= 8)  // Scores 8, 9, 10
+// NEW: if (score >= 9)  // Scores 9, 10 only
+if (score >= 9) {
     $('.second-question-container').show();
 }
 ```
@@ -418,8 +418,20 @@ unlink($lock_file);
 
 **Cron Schedule Change:**
 - **OLD:** Daily at midnight (`0 0 * * *`)
-- **NEW:** Every 2 hours (`0 */2 * * *`)
-- **Why:** Better timezone coverage, more timely delivery
+- **NEW:** Every 2 hours at :05 past the hour (`5 */2 * * *`)
+- **Why:** Better timezone coverage, more timely delivery (reminders at 00:05, 02:05, 04:05, etc.)
+
+---
+
+### 7. `numbertowordsconverter.js` (Utility)
+
+**OLD:** 1,818 bytes
+**NEW:** 1,868 bytes
+**Change:** +50 bytes (~3% increase)
+
+**Purpose:** Converts numbers to words for NPS score display
+
+**Status:** Minor formatting/comment changes only
 
 ---
 
@@ -446,7 +458,7 @@ These files existed in GitHub but were **removed** from production:
 
 These files are **NEW** in production, replacing the old templates:
 
-### 7. `email_template_initial.html`
+### 8. `email_template_initial.html`
 
 **Size:** 6,819 bytes
 **Purpose:** Initial survey invitation emails ONLY
@@ -511,7 +523,7 @@ These files are **NEW** in production, replacing the old templates:
 
 ---
 
-### 8. `email_template_reminder_single.html`
+### 9. `email_template_reminder_single.html`
 
 **Size:** 6,819 bytes
 **Purpose:** Default reminder emails (single button)
@@ -538,7 +550,7 @@ These files are **NEW** in production, replacing the old templates:
 
 ---
 
-### 9. `email_template_reminder.html`
+### 10. `email_template_reminder.html`
 
 **Size:** 22,010 bytes
 **Purpose:** Multi-purpose reminder (webview + inline scores)
@@ -588,15 +600,18 @@ These files are **NEW** in production, replacing the old templates:
 | File | Old Size | New Size | Change | % Change |
 |------|----------|----------|--------|----------|
 | `index.html` | 10,833 | 23,473 | +12,640 | +117% |
-| `app.js` | 15,183 | 15,651 | +468 | +3% |
+| `app.js` | 15,183 | 15,642 | +459 | +3% |
 | `styles.css` | 1,737 | 5,019 | +3,282 | +189% |
 | `survey.php` | 9,953 | 10,180 | +227 | +2% |
 | `survey_emailer.php` | 39,941 | 44,424 | +4,483 | +11% |
 | `background_job.php` | 9,851 | 10,624 | +773 | +8% |
-| `email_template_initial.html` | 0 | 6,819 | +6,819 | NEW |
-| `email_template_reminder_single.html` | 0 | 6,819 | +6,819 | NEW |
-| `email_template_reminder.html` | 21,000 | 22,010 | +1,010 | +5% |
-| **TOTAL** | **87,498** | **144,999** | **+57,501** | **+66%** |
+| `email_template_initial.html` | 7,623* | 6,819 | -804 | -11% |
+| `email_template_reminder_single.html` | 4,193* | 6,819 | +2,626 | +63% |
+| `email_template_reminder.html` | 9,374* | 22,010 | +12,636 | +135% |
+| `numbertowordsconverter.js` | 1,818 | 1,868 | +50 | +3% |
+| **TOTAL** | **110,506** | **146,878** | **+36,372** | **+33%** |
+
+*Email templates replaced old files: email_template.html, email_template2.html, email_template_inline.html
 
 ### Changes by Category
 
