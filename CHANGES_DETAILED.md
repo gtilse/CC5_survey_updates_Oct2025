@@ -15,9 +15,10 @@ This document details every change made to the survey system during October 25-2
 - The production backup (post-changes)
 
 ### Files Modified: 6
-### Files Added: 3
-### Files Removed: 0
+### Files Added: 3 (New Names)
+### Files Removed: 3 (Old Template Names)
 ### Total Files Changed: 9
+### Net File Change: 0 (templates renamed/reorganized)
 ### Total Size Change: +57,501 bytes (+66%)
 
 ---
@@ -422,13 +423,34 @@ unlink($lock_file);
 
 ---
 
-## New Email Templates
+## Email Template Reorganization
+
+**Critical Change:** Complete email template restructure with clearer naming and purpose.
+
+### Old Template System (DELETED)
+
+These files existed in GitHub but were **removed** from production:
+
+| Old File | Size | Purpose |
+|----------|------|---------|
+| `email_template.html` | 7,623 bytes | General purpose template (unclear usage) |
+| `email_template2.html` | 4,193 bytes | Alternative template (unclear usage) |
+| `email_template_inline.html` | 9,374 bytes | Template with inline score buttons |
+
+**Problems with old system:**
+- Confusing names (`email_template.html` vs `email_template2.html` - which is which?)
+- No clear distinction between initial emails vs reminders
+- Hard to maintain and understand which template to use when
+
+### New Template System (CREATED)
+
+These files are **NEW** in production, replacing the old templates:
 
 ### 7. `email_template_initial.html`
 
 **Size:** 6,819 bytes
-**Purpose:** Initial survey invitation emails
-**Status:** NEW FILE
+**Purpose:** Initial survey invitation emails ONLY
+**Status:** NEW FILE (replaces unclear old templates)
 
 **Features:**
 - Clean, simple design
@@ -437,6 +459,8 @@ unlink($lock_file);
 - Mobile-responsive
 - Firm name branding
 - Favicon support
+
+**When Used:** First email sent to client
 
 **Template Structure:**
 ```html
@@ -491,7 +515,7 @@ unlink($lock_file);
 
 **Size:** 6,819 bytes
 **Purpose:** Default reminder emails (single button)
-**Status:** NEW FILE (Default for most reminders)
+**Status:** NEW FILE - Most important addition
 
 **Features:**
 - Matches initial email design
@@ -501,15 +525,16 @@ unlink($lock_file);
 - Mobile-responsive
 
 **Why Created:**
+- Old system didn't distinguish between initial and reminder emails clearly
+- Creates consistent user experience (initial → reminder looks similar)
 - Simplified default reminder flow
-- Better UX than multi-option emails
+- Better UX than multi-option emails (less confusion)
 - Higher conversion rates
-- Easier to maintain
 
 **When Used:**
-- Default for all reminder emails
-- Unless vendor specifically requests inline scores
-- Matches initial email experience
+- **DEFAULT for ALL reminder emails** (most common case)
+- Unless vendor specifically requests inline scores (rare)
+- Matches initial email experience for continuity
 
 ---
 
@@ -517,29 +542,42 @@ unlink($lock_file);
 
 **Size:** 22,010 bytes
 **Purpose:** Multi-purpose reminder (webview + inline scores)
-**Status:** MODIFIED (Optional for specific vendors)
+**Status:** EVOLVED from `email_template_inline.html`
 
 **Features:**
-- Two options: Webview OR Inline score buttons
+- Two options: Webview OR Inline score buttons (0-10 in email)
 - More complex layout
 - Vendor-specific activation
-- Legacy compatibility
+- Legacy compatibility maintained
 
 **When Used:**
-- Only for specific vendors who request it
-- Manually configured in `survey_emailer.php`
-- Not the default anymore
+- **OPTIONAL:** Only for specific vendors who request inline scoring
+- Manually configured in `survey_emailer.php` (requires code change)
+- Currently only used for demo account
+- NOT the default (most firms use single button version)
 
 **Trade-offs:**
-- More options = potential confusion
-- Works for some vendors who want immediate scoring
-- Requires maintenance of two code paths
+- More options = potential confusion for recipients
+- Works for vendors who want immediate one-click scoring
+- Requires maintenance of two template paths
+- Larger file size (22KB vs 6.8KB)
 
 ---
 
-## Files Removed
+## Template Migration Summary
 
-**None.** All old files remain for backward compatibility.
+### What Changed:
+| Old Templates (DELETED) | New Templates (CREATED) | Purpose |
+|------------------------|------------------------|---------|
+| `email_template.html` | `email_template_initial.html` | Initial survey invitations |
+| `email_template2.html` | `email_template_reminder_single.html` | Default reminders (new!) |
+| `email_template_inline.html` | `email_template_reminder.html` | Optional inline scoring |
+
+### Key Improvements:
+1. **Clear naming:** No more guessing which template does what
+2. **Separate initial vs reminder:** Better user experience continuity
+3. **Default simplified:** Single button for most cases (higher conversion)
+4. **Optional complexity:** Inline scores available but not default
 
 ---
 
