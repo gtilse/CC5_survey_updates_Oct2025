@@ -691,7 +691,7 @@ These files are **NEW** in production, replacing the old templates:
 - None (all changes are code-only)
 
 ### Cron Job Changes Required
-- Update cron schedule: `0 0 * * *` → `0 */2 * * *`
+- Update cron schedule: `0 0 * * *` → `5 */2 * * *` (runs at :05 past every 2nd hour)
 - Deploy new `background_job.php`
 
 ---
@@ -714,7 +714,7 @@ rm src/background_job.php
 
 # Restore old cron schedule
 crontab -e
-# Change: 0 */2 * * * → 0 0 * * *
+# Change: 5 */2 * * * → 0 0 * * *
 ```
 
 **Time to Rollback:** <5 minutes
