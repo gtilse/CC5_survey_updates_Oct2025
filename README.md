@@ -196,7 +196,7 @@ In parent directory (`../`):
 ## Why This Backup Matters
 
 **Problem:**
-- Developer's GitHub doesn't have latest production code
+- GitHub doesn't have this latest survey related production code
 - Recent improvements could be lost if production fails
 - No version control history for Oct 25-27 work
 
