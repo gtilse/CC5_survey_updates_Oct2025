@@ -62,9 +62,11 @@ This backup captures all production survey module changes made between **October
   - Binds to footer display
 
 **Critical Functions:**
-- `submitFeedback()`: Handles feedback form submission
+- `submitFeedback()`: Handles feedback form submission in index.html
 - `submitButtonClick()`: Handles button clicks (comments, additional questions)
 - `wizardState` observable: Controls UI state flow (1=comments, 2=additional questions, 3=social, 4=thank you)
+
+**Note:** There is NO `submitScore()` function in app.js. The "Submit Score" button in email_template_reminder.html uses an inline event listener (not a named function).
 
 ---
 
@@ -120,9 +122,20 @@ This backup captures all production survey module changes made between **October
 
 **Critical Sections:**
 - Line 129: Firm name variable capture
-- Line 495-501: Auto-close on Submit Score
+- Line 292: Submit Score button (hidden initially, shown in confirmation mode)
+- Line 481-500: Submit Score button click handler (inline event listener)
+  - Redirects to index.html with selected score and firm name
+  - Auto-closes window after 500ms
 - Line ~380: Auto-close on webview button click
 - Line ~200: NPS score buttons (0-10)
+
+**Submit Score Button Logic:**
+The "Submit Score" button does NOT call a function named `submitScore()`. Instead, it uses an inline `addEventListener` that:
+1. Reads the selected score from `currentSelectedScore` variable
+2. Gets survey parameters from URL (id, type)
+3. Gets firm name from DOM attribute
+4. Redirects to: `index.html?id=X&type=Y&score=Z&firmName=ABC`
+5. Auto-closes the window after redirect
 
 ---
 
