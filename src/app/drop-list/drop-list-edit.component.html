@@ -1,0 +1,79 @@
+<!-- Heading -->
+<div class="form-heading" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
+  <mat-icon>mode_edit</mat-icon>
+  <div>{{ 'DROPLIST.EDIT_HEADING' | translate }}</div>
+</div>
+
+<mat-divider></mat-divider>
+
+<!-- Controls -->
+<div fxFlex="grow" class="push-top-xl">
+  <form [formGroup]="dropListForm" novalidate fxLayout="column" fxLayoutGap="16px">
+    <!-- Category -->
+    <mat-form-field fxFlex>
+      <mat-select
+        placeholder="{{ 'DROPLIST.CATEGORY' | translate }}"
+        formControlName="category"
+        required
+      >
+        <mat-option
+          *ngFor="let dropList of dropListCategories"
+          [value]="dropList.VALUE"
+        >
+          {{ dropList.DESC }}
+        </mat-option>
+      </mat-select>
+      <mat-error ngxErrors="category">
+        <div ngxError="required" when="touched">
+          {{ 'DROPLIST.CATEGORY_ERROR' | translate }}
+        </div>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field fxFlex>
+      <input
+        matInput
+        placeholder="{{ 'DROPLIST.DESCRIPTION' | translate }}"
+        formControlName="description"
+        required
+      />
+      <mat-error ngxErrors="description">
+        <div ngxError="required" when="touched">
+          {{ 'DROPLIST.DESCRIPTION_ERROR' | translate }}
+        </div>
+      </mat-error>
+    </mat-form-field>
+  </form>
+
+  <mat-card>
+    <mat-card-subtitle>{{ 'DROPLIST.HEADING_NEW_CATEGORY' | translate }}</mat-card-subtitle>
+    <div fxLayout="row" fxLayoutGap="16px" fxLayoutAlign="start center">
+      <mat-form-field appearance="legacy" fxFlex>
+        <input matInput placeholder="{{ 'DROPLIST.NEW_CATEGORY' | translate }}" [(ngModel)]="newCategoryName">
+      </mat-form-field>
+      <button (click)="createCategory()" mat-stroked-button [disabled]="!newCategoryName">{{ 'GENERAL.CREATE' | translate }}</button>
+    </div>
+
+  </mat-card>
+</div>
+
+<!-- Form tools -->
+<div fxFlex="none" fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="16px">
+  <button
+    type="reset"
+    mat-stroked-button
+    (click)="close()"
+    [disabled]="appComponentStateService.isSaving"
+  >
+    {{ 'GENERAL.CANCEL' | translate }}
+  </button>
+  <button
+    type="button"
+    mat-raised-button
+    color="primary"
+    (click)="saveRecord()"
+    [disabled]="!dropListForm.valid || appComponentStateService.isSaving"
+  >
+    {{ 'GENERAL.SAVE' | translate }}
+  </button>
+</div>

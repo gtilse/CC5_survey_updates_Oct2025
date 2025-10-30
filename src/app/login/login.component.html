@@ -1,0 +1,78 @@
+<div class="login-container">
+  <h2 class="mat-title">{{ 'LOGIN.HEADING' | translate }}</h2>
+  <!-- Login form -->
+  <form [formGroup]="loginForm" class="push-top-xl" novalidate>
+    <div fxLayout="column" fxLayoutAlign="start" fxLayoutGap="0px">
+      <!-- Username -->
+      <mat-form-field>
+        <input
+          #username
+          name="username"
+          matInput
+          placeholder="{{ 'LOGIN.USERNAME' | translate }}"
+          formControlName="username"
+          autofocus
+        />
+        <!-- <mat-icon matSuffix color="primary">account_circle</mat-icon> -->
+        <!-- <mat-error ngxErrors="username">
+          <div ngxError="required" when="touched">
+            Enter a valid username
+          </div>
+        </mat-error> -->
+      </mat-form-field>
+
+      <!-- Password -->
+      <mat-form-field class="push-top">
+        <input
+          #password
+          name="password"
+          type="password"
+          matInput
+          placeholder="{{ 'LOGIN.PASSWORD' | translate }}"
+          formControlName="password"
+        />
+        <!-- <mat-icon matSuffix color="primary">lock_outline</mat-icon> -->
+        <!-- <mat-error ngxErrors="password">
+          <div ngxError="required" when="touched">
+            Enter a valid password
+          </div>
+        </mat-error> -->
+      </mat-form-field>
+    </div>
+
+    <!-- Submit button -->
+    <div fxLayout="row" fxLayoutAlign="start center" class="push-top">
+      <div fxFlex="none">
+        <mat-checkbox formControlName="rememberMe" color="accent">{{
+          'LOGIN.REMEMBER_ME' | translate
+        }}</mat-checkbox>
+      </div>
+      <div fxFlex="grow"></div>
+      <button
+        fxFlex="none"
+        type="submit"
+        mat-stroked-button
+        color="primary"
+        style="border-width: 2px;"
+        (click)="onSubmit()"
+        [disabled]="!(username.value && password.value) || isLoading"
+      >
+        {{ 'LOGIN.SIGNIN' | translate }}
+      </button>
+    </div>
+  </form>
+
+  <!-- Footer -->
+  <div class="push-top-lg">
+    <div class="push-bottom">
+      <a routerLink="/auth/forgotpassword">{{
+        'LOGIN.FORGOT_PASSWORD' | translate
+      }}</a>
+    </div>
+
+    <!-- <div class="push-top-xxl">
+      <div>{{'LOGIN.CREATE_ACCOUNT_PREFIX' | translate}}</div>
+      <div><a routerLink="/auth/register">{{'LOGIN.CREATE_ACCOUNT_LINK' | translate}}</a></div>
+    </div> -->
+  </div>
+</div>

@@ -1,0 +1,253 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Client Culture Survey</title>
+
+    <style type="text/css">
+      body {
+        background-color:#F6F6F6;
+        color: #000000;
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.6em;margin: 0;
+        padding: 0;
+        -webkit-font-smoothing: antialiased;
+        -webkit-text-size-adjust: none;
+        width: 100% !important;
+      }
+
+      h1, h2, h3, h4, h5, h6 {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+      }
+
+      p {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        font-size: 16px;
+      }
+
+      h1, h2, h3, h4, h5, h6,
+      .h1, .h2, .h3, .h4, .h5, .h6 {
+        margin-bottom: 0.5rem;
+        font-family: inherit;
+        font-weight: 500;
+        line-height: 1.2;
+        color: inherit;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+      }
+
+      h2 {
+        font-size: 2rem;
+      }
+
+      h3 {
+        font-size: 1.75rem;
+      }
+
+      h4 {
+        font-size: 1.5rem;
+      }
+
+      h5 {
+        font-size: 1.25rem;
+      }
+
+      h6 {
+        font-size: 1rem;
+      }
+
+      table {
+        border-collapse: collapse;
+        border-spacing: 0;
+      }
+
+
+      .email-container {
+        background-color:#FFFFFF;
+        margin-top:20px;
+        margin-bottom:20px;
+      }
+
+      .score-button {
+        
+        line-height: 2;
+        color: #FFF!important;
+        border-radius: 0px;
+        display:inline-block;
+        font-weight:bold;
+        text-decoration:none;
+      }
+
+      .score-button-neutral {
+        border-left:18px solid #adacac;
+        border-right:18px solid #adacac;
+        border-top:8px solid #adacac;
+        border-bottom:8px solid #adacac;
+        background-color: #adacac;
+      }
+
+      .score-button-promoter {
+        border-left:18px solid #11C598;
+        border-right:18px solid #11C598;
+        border-top:8px solid #11C598;
+        border-bottom:8px solid #11C598;
+        background-color: #11C598;
+      }
+
+      .score-button-detractor {
+        border-left:18px solid #F50057;
+        border-right:18px solid #F50057;
+        border-top:8px solid #F50057;
+        border-bottom:8px solid #F50057;
+        background-color: #F50057;
+      }
+
+      .score-label {
+        color:#A9A9A9;
+      }
+
+      .footer-text {
+        display: block;
+        margin-top: 10px;
+        margin-bottom:0px;
+        padding: 0;
+        font-weight: normal;
+        font-size: 14px;
+        color: #666666;
+      }
+
+      .score-column {
+          border: 1px solid #666;
+      }
+
+      .promoter {
+          background: #11C598;
+      }
+
+      .neutral {
+          background: #adacac;
+      }
+
+      .detractor {
+          background: #F50057;
+      }
+
+      .footer-link {
+
+        padding: 0;
+        color: #999999!important;
+      }
+
+    </style>
+
+    <!--[if gte mso 9]>
+      <style type="text/css">
+        body,table tr,table td,a,p, span,table.MsoNormalTable {  font-family: Arial, sans-serif !important; font-size: 12px!important  }
+        p {margin-bottom:10px!important;}
+      </style>
+    <![endif]-->
+
+  </head>
+
+  <body>
+    <!-- Outer container -->
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" class="email-wrapper">
+      <tr>
+        <td align="center" valign="top">
+
+          <!-- Contents table -->
+          <table border="0" cellpadding="10" cellspacing="0" width="600" class="email-container">
+
+            <!-- Logo Image -->
+            <tr>
+              <td align="center" valign="top">
+                {{LOGO_IMAGE}}
+              </td>
+            </tr>
+
+            <!-- Email contents -->
+            <tr>
+              <td align="center" valign="top">
+                {{EMAIL_HTML}}
+              </td>
+            </tr>
+
+            <!-- Score buttons -->
+            <tr>
+              <td align="center" valign="top">
+                <table border="0" cellpadding="0" cellspacing="5" width="auto">
+                  <tr>
+                    <td class="score-column neutral" align="center" valign="top">
+                      <a class="score-button score-button-neutral" href="{{WEB_ROOT}}survey/index2.html?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=0" target="_blank"><!--[if mso]>&nbsp;<![endif]-->0<!--[if mso]>&nbsp;<![endif]--></a>
+                    </td>
+                    <td class="score-column neutral" align="center" valign="top">
+                      <a class="score-button score-button-neutral" href="{{WEB_ROOT}}survey/index2.html?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=1" target="_blank"><!--[if mso]>&nbsp;<![endif]-->1<!--[if mso]>&nbsp;<![endif]--></a>
+                    </td>
+                    <td class="score-column neutral" align="center" valign="top">
+                      <a class="score-button score-button-neutral" href="{{WEB_ROOT}}survey/index2.html?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=2" target="_blank"><!--[if mso]>&nbsp;<![endif]-->2<!--[if mso]>&nbsp;<![endif]--></a>
+                    </td>
+                    <td class="score-column neutral" align="center" valign="top">
+                      <a class="score-button score-button-neutral" href="{{WEB_ROOT}}survey/index2.html?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=3" target="_blank"><!--[if mso]>&nbsp;<![endif]-->3<!--[if mso]>&nbsp;<![endif]--></a>
+                    </td>
+                    <td class="score-column neutral" align="center" valign="top">
+                      <a class="score-button score-button-neutral" href="{{WEB_ROOT}}survey/index2.html?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=4" target="_blank"><!--[if mso]>&nbsp;<![endif]-->4<!--[if mso]>&nbsp;<![endif]--></a>
+                    </td>
+                    <td class="score-column neutral" align="center" valign="top">
+                      <a class="score-button score-button-neutral" href="{{WEB_ROOT}}survey/index2.html?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=5" target="_blank"><!--[if mso]>&nbsp;<![endif]-->5<!--[if mso]>&nbsp;<![endif]--></a>
+                    </td>
+                    <td class="score-column neutral" align="center" valign="top">
+                      <a class="score-button score-button-neutral" href="{{WEB_ROOT}}survey/index2.html?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=6" target="_blank"><!--[if mso]>&nbsp;<![endif]-->6<!--[if mso]>&nbsp;<![endif]--></a>
+                    </td>
+                    <td class="score-column neutral" align="center" valign="top">
+                      <a class="score-button score-button-neutral" href="{{WEB_ROOT}}survey/index2.html?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=7" target="_blank"><!--[if mso]>&nbsp;<![endif]-->7<!--[if mso]>&nbsp;<![endif]--></a>
+                    </td>
+                    <td class="score-column neutral" align="center" valign="top">
+                      <a class="score-button score-button-neutral" href="{{WEB_ROOT}}survey/index2.html?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=8" target="_blank"><!--[if mso]>&nbsp;<![endif]-->8<!--[if mso]>&nbsp;<![endif]--></a>
+                    </td>
+                    <td class="score-column neutral" align="center" valign="top">
+                      <a class="score-button score-button-neutral" href="{{WEB_ROOT}}survey/index2.html?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=9" target="_blank"><!--[if mso]>&nbsp;<![endif]-->9<!--[if mso]>&nbsp;<![endif]--></a>
+                    </td>
+                    <td class="score-column neutral" align="center" valign="top">
+                      <a class="score-button score-button-neutral" style="border-left:14px solid #adacac;border-right: 14px solid #adacac" href="{{WEB_ROOT}}survey/index2.html?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=10" target="_blank">10</a>
+                    </td>
+
+                  </tr>
+
+                  <!-- <tr>
+                    
+                    <td align="center" valign="top" colspan="11">
+                      <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                        <tr>
+                          <td class="score-label" align="left" valign="top">Not seriously</td>
+                          <td class="score-label" align="right" valign="top">Critically</td>
+                        </tr>
+
+                      </table>
+                    </td>
+
+                  </tr> -->
+                </table>
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td align="center" valign="top">
+                <p class="footer-text"><a class="footer-link" href="{{COMPANY_WEBSITE}}">Powered by {{COMPANY_NAME}}</a></p>
+                {{UNSUBSCRIBE_LINK}}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <div style="display:none">{{UTRACK}}</div>
+
+  </body>
+</html>

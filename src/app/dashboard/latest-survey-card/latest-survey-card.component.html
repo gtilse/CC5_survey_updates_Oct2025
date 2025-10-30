@@ -1,0 +1,86 @@
+<div fxLayout="column" class="dashboard-card-container">
+  <div class="mat-body-strong" fxLayout="row" fxLayoutAlign="space-between center">
+    <div>Latest survey</div>
+    <mat-icon color="primary" *ngIf="dateRangeEnabled" matTooltip="Results are for the selected date range">date_range</mat-icon>
+  </div>
+  
+
+  <mat-form-field floatLabel="never" style="width: 140px;">
+    <mat-select [(ngModel)]="mode" (ngModelChange)="changeMode()">
+      <mat-option *ngFor="let item of modes" [value]="item.value">
+        {{ item.label }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div fxFlex="grow" fxLayout="row">
+
+    <!-- Responses -->
+    <ng-container *ngIf="mode === 'responses'">
+      <div fxHide fxShow.gt-sm fxFlex.gt-sm="30" fxLayout="row" fxLayoutAlign="start flex-end">
+        <div class="mat-display-3 app-primary-fg" style="margin: 0;">
+          {{ data.lastSurveyResponses }}&nbsp;<span class="mat-title app-accent-fg">{{
+            withSign(data.responsesChange)
+          }}</span>
+        </div>
+      </div>
+      <div fxFlex="grow" fxFlex.gt-sm="70" [chart]="chart1" (resized)="onResized1()"></div>
+    </ng-container>
+
+    <!-- Response rates -->
+    <ng-container *ngIf="mode === 'response-rates'">
+      <div fxHide fxShow.gt-sm fxFlex.gt-sm="30" fxLayout="row" fxLayoutAlign="start flex-end">
+        <div class="mat-display-3 app-primary-fg" style="margin: 0;">
+          {{ data.lastSurveyResponseRate }}<span class="mat-title">%</span>&nbsp;<span
+            class="mat-title app-accent-fg"
+            >{{ withSign(data.responseRateChange) }}</span
+          >
+        </div>
+      </div>
+      <div fxFlex="grow" fxFlex.gt-sm="70" [chart]="chart2" (resized)="onResized2()"></div>
+    </ng-container>
+
+    <!-- Loyalty segments -->
+    <ng-container *ngIf="mode === 'loyalty-segments'">
+      <div fxHide fxShow.gt-sm fxFlex.gt-sm="30" fxLayout="row" fxLayoutAlign="start flex-end">
+        <div class="mat-title">
+          <span class="app-promoter-fg" matTooltip="Promoters"
+            >{{ last.promoterPercent }}%</span
+          >&nbsp;
+          <span class="app-neutral-fg" matTooltip="Neutrals"
+            >{{ last.neutralPercent }}%</span
+          >&nbsp;
+          <span class="app-accent-fg" matTooltip="Detractors"
+            >{{ last.detractorPercent }}%</span
+          >
+        </div>
+      </div>
+      <div fxFlex="grow" fxFlex.gt-sm="70" [chart]="chart3" (resized)="onResized3()"></div>
+    </ng-container>
+
+    <!-- NPS -->
+    <ng-container *ngIf="mode === 'nps'">
+      <div fxHide fxShow.gt-sm fxFlex.gt-sm="30" fxLayout="row" fxLayoutAlign="start flex-end">
+        <div class="mat-display-3 app-primary-fg" style="margin: 0;">
+          {{ data.lastSurveyNPS }}&nbsp;<span class="mat-title app-accent-fg">{{
+            withSign(data.npsChange)
+          }}</span>
+        </div>
+      </div>
+      <div fxFlex="grow" fxFlex.gt-sm="70" [chart]="chart4" (resized)="onResized4()"></div>
+    </ng-container>
+
+    
+  </div>
+
+  <!-- <div>
+    <mat-divider></mat-divider>
+    <div
+      fxLayout="row"
+      fxLayoutAlign="start center"
+      class="push-top card-footer display-personnel-result"
+    >
+      Display your personal results
+    </div>
+  </div> -->
+</div>

@@ -1,0 +1,304 @@
+<!-- Loading component -->
+<app-loading
+  placeholder="{{ 'SETTING.VIEW_TITLE' | translate }}"
+  [hidden]="
+    !appComponentStateService.isLoading || appComponentStateService.hasError
+  "
+></app-loading>
+
+<!-- Error handler component -->
+<app-error-handler
+  [hidden]="!appComponentStateService.hasError"
+  (refresh)="loadData()"
+></app-error-handler>
+
+<!-- Setting component -->
+<div
+  [hidden]="
+    appComponentStateService.isLoading || appComponentStateService.hasError
+  "
+>
+  <!-- Heading -->
+  <div class="card-header">
+    <!-- Icon + header text -->
+    <div fxLayout="row" fxLayoutAlign="start center" class="text-muted2">
+      <span fxFlex="none" class="mat-headline">{{
+        'SETTING.HEADING' | translate
+      }}</span>
+    </div>
+  </div>
+  <!-- Setting form -->
+  <div fxLayout="row" class="page-content-container">
+    <form
+      [formGroup]="organisationSettingForm"
+      fxFlex="50"
+      fxFlex.lt-md="100"
+      fxLayout="column"
+      class="pad"
+      novalidate
+    >
+      <!-- General section -->
+      <h2 class="mat-title">
+        {{ 'SETTING.HEADING_GENERAL' | translate }}
+      </h2>
+      <mat-divider></mat-divider>
+      <!-- Survey from email address -->
+      <mat-form-field fxFlexOffset="32px">
+        <input
+          type="email"
+          readonly="true"
+          matInput
+          placeholder="{{ 'SETTING.SURVEY_FROM_EMAIL' | translate }}"
+          formControlName="surveyEmailFrom"
+          required
+          email
+        />
+        <mat-hint>{{ 'SETTING.SURVEY_FROM_EMAIL_HINT' | translate }}</mat-hint>
+        <mat-error ngxErrors="surveyEmailFrom">
+          <div [ngxError]="['required', 'email']" when="touched">
+            {{ 'SETTING.SURVEY_FROM_EMAIL_ERROR' | translate }}
+          </div>
+        </mat-error>
+      </mat-form-field>
+      <!-- Client survey limit -->
+      <mat-form-field fxFlexOffset="32px">
+        <mat-select
+          placeholder="{{ 'SETTING.CLIENT_SURVEY_LIMIT' | translate }}"
+          formControlName="clientSurveyLimit"
+        >
+          <mat-option *ngFor="let o of clientSurveyLimit" [value]="o.VALUE">
+            {{ o.DESC }}
+          </mat-option>
+        </mat-select>
+        <mat-hint>{{
+          'SETTING.CLIENT_SURVEY_LIMIT_HINT' | translate
+        }}</mat-hint>
+      </mat-form-field>
+
+      <!-- Dashboard section -->
+      <h2 class="mat-title" fxFlexOffset="48px">
+        {{ 'SETTING.HEADING_DASHBOARD' | translate }}
+      </h2>
+      <mat-divider></mat-divider>
+
+      <mat-form-field fxFlexOffset="32px">
+        <mat-select
+          placeholder="{{ 'SETTING.CLIENT_CHECKIN' | translate }}"
+          formControlName="clientCheckIn"
+        >
+          <mat-option *ngFor="let o of clientCheckIn" [value]="o.VALUE">
+            {{ o.DESC }}
+          </mat-option>
+        </mat-select>
+        <mat-hint>{{
+          'SETTING.CLIENT_CHECKIN_HINT' | translate
+        }}</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field fxFlexOffset="32px">
+        
+          <mat-select
+            placeholder="{{ 'SETTING.SURVEY_SCHEDULE' | translate }}"
+            formControlName="surveySchedule"
+          >
+            <mat-option *ngFor="let o of surveySchedule" [value]="o.VALUE">
+              {{ o.DESC }}
+            </mat-option>
+          </mat-select>
+          <mat-hint>{{
+            'SETTING.SURVEY_SCHEDULE_HINT' | translate
+          }}</mat-hint>
+        
+      </mat-form-field>
+
+      <mat-form-field fxFlexOffset = "32px" *ngIf="organisationSettingForm.get('surveySchedule').value===0">
+        <input
+        type="text"
+        matInput
+        placeholder="{{ 'SETTING.SURVEY_SCHEDULE_CUSTOM' | translate }}"
+        formControlName="surveyScheduleCustom"
+      />
+      </mat-form-field>
+
+      <mat-form-field fxFlexOffset="32px">
+       
+        <mat-select
+          placeholder="{{ 'SETTING.VENDOR_LEVEL' | translate }}"
+          formControlName="vendorLevel"
+        >
+          <mat-option *ngFor="let o of vendorLevel" [value]="o">
+            {{ o }}
+          </mat-option>
+        </mat-select>
+        <mat-hint>{{
+          'SETTING.VENDOR_LEVEL_HINT' | translate
+        }}</mat-hint>
+      
+      </mat-form-field>
+
+      <!-- Notifications section -->
+      <h2 class="mat-title" fxFlexOffset="48px">
+        {{ 'SETTING.HEADING_NOTIFICATION' | translate }}
+      </h2>
+      <mat-divider></mat-divider>
+
+      <mat-form-field fxFlexOffset="32px">
+        <input
+          type="email"
+          matInput
+          placeholder="{{ 'SETTING.NOTIFICATIONS_EMAIL' | translate }}"
+          formControlName="notificationsEmail"
+          required
+          email
+        />
+        <mat-error ngxErrors="notificationsEmail">
+          <div [ngxError]="['required', 'email']" when="touched">
+            {{ 'SETTING.NOTIFICATIONS_EMAIL_ERROR' | translate }}
+          </div>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-checkbox
+        fxFlexOffset="16px"
+        style="display: block;"
+        [checked]="
+          !!organisationSettingForm.controls.emailMessageNotification.value
+        "
+        (change)="checkboxToggle('emailMessageNotification')"
+        >{{ 'SETTING.EMAIL_NOTIFICATION' | translate }}</mat-checkbox
+      >
+      <mat-checkbox
+        style="display: block;"
+        [checked]="
+          !!organisationSettingForm.controls.bouncedEmailNotification.value
+        "
+        (change)="checkboxToggle('bouncedEmailNotification')"
+        >{{ 'SETTING.BOUNCED_EMAIL_NOTIFICATION' | translate }}</mat-checkbox
+      >
+      <mat-checkbox
+        style="display: block;"
+        [checked]="
+          !!organisationSettingForm.controls.pendingActionItemsNotification
+            .value
+        "
+        (change)="checkboxToggle('pendingActionItemsNotification')"
+        >{{ 'SETTING.ACTION_ITEMS_NOTIFICATION' | translate }}</mat-checkbox
+      >
+      <mat-checkbox
+        style="display: block;"
+        [checked]="
+          !!organisationSettingForm.controls.newResponsesNotification.value
+        "
+        (change)="checkboxToggle('newResponsesNotification')"
+        >{{ 'SETTING.NEW_RESPONSES_NOTIFICATION' | translate }}</mat-checkbox
+      >
+
+      <!-- Social media -->
+      <h2 class="mat-title" fxFlexOffset="48px">
+        {{ 'SETTING.HEADING_SOCIAL_MEDIA' | translate }}
+      </h2>
+      <mat-divider></mat-divider>
+
+      <mat-checkbox
+        style="display: block;"
+        fxFlexOffset="32px"
+        [checked]="
+          !!organisationSettingForm.controls.displaySocialLinksInSurvey.value
+        "
+        (change)="checkboxToggle('displaySocialLinksInSurvey')"
+        >{{ 'SETTING.SOCIAL_LINKS' | translate }}</mat-checkbox
+      >
+
+      <mat-card
+        [hidden]="!organisationSettingForm.value.displaySocialLinksInSurvey"
+        class="push-top pad"
+      >
+        <mat-checkbox
+          [checked]="
+            !!organisationSettingForm.controls.automatedEmailSocialMedia.value
+          "
+          (change)="checkboxToggle('automatedEmailSocialMedia')"
+          >{{ 'SETTING.SOCIAL_REMINDER' | translate }}</mat-checkbox
+        >
+
+        <!-- Google page -->
+        <mat-form-field class="full-width push-top">
+          <input
+            matInput
+            placeholder="{{ 'SETTING.GOOGLE_PAGE' | translate }}"
+            formControlName="googlePage"
+          />
+          <mat-error ngxErrors="googlePage">
+            <div [ngxError]="['pattern']" when="touched">
+              {{ 'SETTING.URL_FORMAT_ERROR' | translate }}
+            </div>
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Facebook page -->
+        <mat-form-field class="full-width">
+          <input
+            matInput
+            placeholder="{{ 'SETTING.FACEBOOK_PAGE' | translate }}"
+            formControlName="facebookPage"
+          />
+          <mat-error ngxErrors="facebookPage">
+            <div [ngxError]="['pattern']" when="touched">
+              {{ 'SETTING.URL_FORMAT_ERROR' | translate }}
+            </div>
+          </mat-error>
+        </mat-form-field>
+
+        <!-- True Local page -->
+        <mat-form-field class="full-width">
+          <input
+            matInput
+            placeholder="{{ 'SETTING.TRUELOCAL_PAGE' | translate }}"
+            formControlName="truelocalPage"
+          />
+          <mat-error ngxErrors="truelocalPage">
+            <div [ngxError]="['pattern']" when="touched">
+              {{ 'SETTING.URL_FORMAT_ERROR' | translate }}
+            </div>
+          </mat-error>
+        </mat-form-field>
+      </mat-card>
+
+      <!-- Testimonial permissions -->
+      <h2 class="mat-title" fxFlexOffset="48px">
+        {{ 'SETTING.HEADING_TESTIMONIAL_PERMISSION' | translate }}
+      </h2>
+      <mat-divider></mat-divider>
+      <mat-radio-group formControlName="testimonialType" fxFlexOffset="16px">
+        <mat-radio-button style="display: block;" [value]="0">{{
+          'SETTING.TESTIMONIAL_PERMISSION_NONE' | translate
+        }}</mat-radio-button>
+        <mat-radio-button style="display: block;" [value]="1">{{
+          'SETTING.TESTIMONIAL_PERMISSION_ANONYMOUS' | translate
+        }}</mat-radio-button>
+        <mat-radio-button style="display: block;" [value]="2">{{
+          'SETTING.TESTIMONIAL_PERMISSION_FIRST_NAME' | translate
+        }}</mat-radio-button>
+        <mat-radio-button style="display: block;" [value]="3">{{
+          'SETTING.TESTIMONIAL_PERMISSION_FULL_NAME' | translate
+        }}</mat-radio-button>
+      </mat-radio-group>
+
+      <div fxFlexOffset="32px" fxLayout="row">
+        <div fxFlex="grow"></div>
+        <button
+          fxFlex="none"
+          type="button"
+          mat-raised-button
+          color="primary"
+          (click)="saveChanges()"
+          [disabled]="
+            !organisationSettingForm.valid || appComponentStateService.isSaving
+          "
+        >
+          {{ 'GENERAL.UPDATE' | translate | uppercase }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

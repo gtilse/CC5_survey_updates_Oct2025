@@ -1,0 +1,45 @@
+.clickable-icon-link {
+
+    cursor: pointer;
+    display: inline-block;
+
+}
+
+.client-response-icon {
+    font-size: 1.75em;
+    //line-height: 1.75em;
+    color: #e0e0e0;
+    cursor: pointer;
+    font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 48;
+
+    &.promoters {
+        color: #11c598;
+    }
+  
+    &.neutrals {
+        color: #cccccc;
+    }
+  
+    &.detractors {
+        color: #ed265b;
+    }
+
+    &.flagged {
+        color: #ed265b;
+    }
+  
+    &.note {
+        color: #11c598;
+    }
+
+
+    & .mat-badge-content {
+        background-color: #11c598;
+        top: -7px!important;
+        right: -8px;
+        width: 18px;
+        height: 18px;
+        line-height: 18px;
+
+    }
+}

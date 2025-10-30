@@ -1,0 +1,139 @@
+<div flex>
+  <form [formGroup]="locationForm" novalidate class="pad">
+    <!-- Location name -->
+    <mat-form-field class="full-width">
+      <input
+        matInput
+        maxlength="45"
+        placeholder="{{ 'LOCATION.NAME' | translate }}"
+        formControlName="name"
+        required
+      />
+      <mat-error ngxErrors="name">
+        <div ngxError="required" when="touched">
+          {{ 'LOCATION.NAME_ERROR' | translate }}
+        </div>
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Address -->
+    <mat-form-field class="full-width">
+      <textarea
+        matInput
+        maxlength="300"
+        placeholder="{{ 'LOCATION.ADDRESS' | translate }}"
+        formControlName="address"
+      ></textarea>
+    </mat-form-field>
+
+    <!-- City, State, Post Code -->
+    <div layout="row">
+      <!-- City -->
+      <div layout="row" flex="33">
+        <mat-form-field flex>
+          <mat-select
+            placeholder="{{ 'LOCATION.CITY' | translate }}"
+            formControlName="city"
+          >
+            <mat-option
+              *ngFor="
+                let dropList of dropLists
+                  | filterDropListByCategory: dropLists:'City'
+              "
+              [value]="dropList.description"
+            >
+              {{ dropList.description }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button
+          mat-icon-button
+          class="droplist-add-button"
+          (click)="addToDropList('city', 'CITY')"
+        >
+          <mat-icon>add_box</mat-icon>
+        </button>
+      </div>
+
+      <!-- State -->
+      <div layout="row" flex="33" class="push-left">
+        <mat-form-field flex>
+          <mat-select
+            placeholder="{{ 'LOCATION.STATE' | translate }}"
+            formControlName="state"
+          >
+            <mat-option
+              *ngFor="
+                let dropList of dropLists
+                  | filterDropListByCategory: dropLists:'State'
+              "
+              [value]="dropList.description"
+            >
+              {{ dropList.description }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button
+          mat-icon-button
+          class="droplist-add-button"
+          (click)="addToDropList('state', 'STATE')"
+        >
+          <mat-icon>add_box</mat-icon>
+        </button>
+      </div>
+
+      <!-- Post Code -->
+      <div layout="row" flex="33" class="push-left">
+        <mat-form-field flex>
+          <mat-select
+            placeholder="{{ 'LOCATION.POST_CODE' | translate }}"
+            formControlName="postCode"
+          >
+            <mat-option
+              *ngFor="
+                let dropList of dropLists
+                  | filterDropListByCategory: dropLists:'PostCode'
+              "
+              [value]="dropList.description"
+            >
+              {{ dropList.description }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button
+          mat-icon-button
+          class="droplist-add-button"
+          (click)="addToDropList('postCode', 'POST_CODE')"
+        >
+          <mat-icon>add_box</mat-icon>
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- Form tools -->
+<div layout="row" layout-align="end center" layout-margin>
+  <button
+    type="reset"
+    mat-button
+    (click)="close()"
+    [disabled]="appComponentStateService.isSaving"
+  >
+    {{ 'GENERAL.CANCEL' | translate }}
+  </button>
+  <button
+    type="button"
+    flex="none"
+    flex-offset="2"
+    mat-raised-button
+    color="primary"
+    (click)="saveRecord()"
+    [disabled]="!locationForm.valid || appComponentStateService.isSaving"
+  >
+    {{ 'GENERAL.SAVE' | translate }}
+  </button>
+</div>

@@ -1,0 +1,191 @@
+<!-- Loading component -->
+<app-loading placeholder="{{ 'CLIENT.VIEW_TITLE' | translate }}" [hidden]="!appComponentStateService.isLoading || appComponentStateService.hasError"></app-loading>
+
+<!-- Error handler component -->
+<app-error-handler [hidden]="!appComponentStateService.hasError" (refresh)="loadData()"></app-error-handler>
+
+<!-- Sidenav container -->
+<mat-sidenav-container class="data-container" [hidden]="
+    appComponentStateService.isLoading || appComponentStateService.hasError
+  " (backdropClick)="recordSaveCancelled($event)">
+    <!-- Sidenav edit component -->
+    <mat-sidenav mode="over" position="end" [opened]="editorOpened" fixedInViewport="true" fixedTopGap="52" disableClose="true">
+        <app-client-edit [staffSelectList]="staffSelectList" [dropLists]="dropLists" (recordSaved)="recordSaved($event)" (recordSaveCancelled)="recordSaveCancelled($event)">
+        </app-client-edit>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+
+        <div class="content-area" fxLayout="column">
+            <!-- Heading and filters -->
+            <div class="card-header" fxFlex="none">
+                <!-- Icon + header text -->
+                <div fxLayout="row" fxLayoutAlign="start center" class="text-muted2">
+                    <mat-icon class="md-36" fxFlex="none">people</mat-icon>
+                    <span fxFlex="none" fxFlexOffset="16px" class="mat-headline">{{ 'CLIENT.HEADING' | translate}}</span>
+                </div>
+
+                <!-- Title -->
+                <div fxLayout="row" fxLayoutAlign="start flex-end" class="dark-theme push-top-xxl push-bottom">
+                    <span class="mat-body-strong" fxFlex="none">{{ 'CLIENT.SUB_HEADING' | translate }}</span>
+                    <span fxFlex></span>
+                    <button type="button" fxFlex="none" mat-flat-button color="primary" (click)="addRecord()">
+                        <mat-icon>add</mat-icon>&nbsp;{{
+                        'GENERAL.ADD' | translate | uppercase
+                        }}
+                    </button>
+                    <button type="button" fxFlex="none" fxFlexOffset="16px" mat-stroked-button (click)="uploadClients()">{{ 'CLIENT.UPLOAD_CLIENTS' | translate | uppercase }}</button>
+                </div>
+
+                <mat-divider class="divider"></mat-divider>
+
+                <!-- Filter -->
+                <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="16px" class="push-top-xl filter-box">
+                    <!-- All staff -->
+                    <mat-form-field floatLabel="never" fxFlex>
+                        <mat-select placeholder="{{ 'GENERAL.FILTER_ALL_STAFF' | translate }}" [(ngModel)]="filterCriteria.clientContacts" multiple>
+                            <mat-option *ngFor="let clientContact of staffDescendantsList" [value]="clientContact.objectId">
+                                {{ clientContact.name }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <!-- Client group -->
+                    <mat-form-field floatLabel="never" fxFlex>
+                        <mat-select placeholder="{{ 'GENERAL.FILTER_ALL_CLIENTS' | translate }}" [(ngModel)]="filterCriteria.clientGroup">
+                            <mat-option class="clear-selection" [value]="''" [hidden]="!filterCriteria.clientGroup">{{ 'GENERAL.FILTER_ALL_CLIENTS' | translate }}</mat-option>
+                            <mat-optgroup *ngFor="let group of clientListKey" [label]="group">
+                                <mat-option *ngFor="let val of clientListValue[group]" [value]="group + '_' + val">
+                                    {{ val }}
+                                </mat-option>
+                            </mat-optgroup>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <!-- Date created -->
+                    <mat-form-field floatLabel="never" fxFlex>
+                        <mat-select placeholder="{{ 'CLIENT.CLIENT_ADDED_ON' | translate }}" [(ngModel)]="filterCriteria.dateRange">
+                            <mat-option class="clear-selection">{{ 'GENERAL.CLEAR_SELECTION' | translate }}
+                            </mat-option>
+                            <mat-option *ngFor="let dateRange of dateRanges" [value]="dateRange.VALUE">
+                                {{ dateRange.DESC }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <!-- Active/In-active -->
+                    <mat-form-field floatLabel="never" fxFlex>
+                        <mat-select placeholder="Status" [(ngModel)]="filterCriteria.active">
+
+                            <mat-option [value]="1">Active</mat-option>
+                            <mat-option [value]="0">Inactive</mat-option>
+
+                        </mat-select>
+                    </mat-form-field>
+
+                    <!-- Search text -->
+                    <mat-form-field hideRequiredMarker="true" floatLabel="never" fxFlex>
+                        <input matInput placeholder="{{ 'CLIENT.SEARCH' | translate }}" [(ngModel)]="filterCriteria.filterString" />
+                    </mat-form-field>
+
+                    <!-- Filter button -->
+                    <button mat-raised-button color="primary" (click)="loadData(true)" [disabled]="isFetching" fxFlex="none">
+                        {{ 'GENERAL.FILTER' | translate | uppercase }}
+                    </button>
+                </div>
+            </div>
+
+            <!-- Table actions -->
+            <div class="mat-table-actions" fxFlex="none" fxLayoutGap="16px">
+                <button fxFlex="none" mat-raised-button color="warn" (click)="deleteSelectedRecords()" [disabled]="this.selection.selected.length===0">
+                    {{ 'GENERAL.DELETE' | translate }}
+                </button>
+
+                <button fxFlex="none" mat-raised-button (click)="deactivateSelectedRecords()" [disabled]="this.selection.selected.length===0">
+                {{ 'GENERAL.INACTIVE' | translate }}
+                </button>
+            </div>
+
+            <!-- Table -->
+            <div class="mat-table-container" fxFlex="grow">
+                <mat-table [dataSource]="clients" matSort (matSortChange)="loadData(true)" matSortActive="name" matSortDirection="asc" matSortDisableClear class="mat-elevation-z8">
+
+                    <!-- Selection -->
+                    <ng-container matColumnDef="select">
+                        <mat-header-cell *matHeaderCellDef>
+                            <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()">
+
+                            </mat-checkbox>
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(element) : null" [checked]="selection.isSelected(element)">
+                            </mat-checkbox>
+                        </mat-cell>
+                    </ng-container>
+
+                    <!-- Info -->
+                    <ng-container matColumnDef="info">
+                        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            <mat-icon class="tc-grey-500" matTooltipPosition="right" matTooltip="{{ 'GENERAL.CREATED_AT' | translate }}:&nbsp;{{
+                    element.createdAt | utcToLocal
+                  }}&#10;{{ 'GENERAL.UPDATED_AT' | translate }}:&nbsp;{{
+                    element.updatedAt | utcToLocal
+                  }}">
+                                info_outline
+                            </mat-icon>
+                        </mat-cell>
+                    </ng-container>
+
+                    <!-- Client Name -->
+                    <ng-container matColumnDef="name">
+                        <mat-header-cell mat-sort-header *matHeaderCellDef> {{ 'CLIENT.NAME' | translate }}</mat-header-cell>
+                        <mat-cell class="client-name" *matCellDef="let element" (click)="showScoreDetails(element)">{{element.name}}</mat-cell>
+                    </ng-container>
+
+                    <!-- Organization -->
+                    <ng-container matColumnDef="organisation">
+                        <mat-header-cell mat-sort-header *matHeaderCellDef> {{ 'CLIENT.ORGANISATION' | translate }}</mat-header-cell>
+                        <mat-cell *matCellDef="let element"> {{element.organisation}} </mat-cell>
+                    </ng-container>
+
+                    <!-- Email -->
+                    <ng-container matColumnDef="email">
+                        <mat-header-cell mat-sort-header *matHeaderCellDef> {{ 'CLIENT.EMAIL' | translate }}</mat-header-cell>
+                        <mat-cell *matCellDef="let element"> {{element.email}} </mat-cell>
+                    </ng-container>
+
+                    <!-- Phone -->
+                    <ng-container matColumnDef="phone">
+                        <mat-header-cell mat-sort-header *matHeaderCellDef> {{ 'CLIENT.PHONE' | translate }}</mat-header-cell>
+                        <mat-cell *matCellDef="let element"> {{element.phone}} </mat-cell>
+                    </ng-container>
+
+                    <!-- DRL -->
+                    <ng-container matColumnDef="clientContact">
+                        <mat-header-cell *matHeaderCellDef> {{ 'CLIENT.CLIENT_CONTACT' | translate }}</mat-header-cell>
+                        <mat-cell *matCellDef="let element"> {{ element.drl | employeeIdToName: staffSelectList }} </mat-cell>
+                    </ng-container>
+
+                    <!-- Actions -->
+                    <ng-container matColumnDef="actions">
+                        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                        <mat-cell *matCellDef="let element"><button mat-icon-button type="button" (click)="editRecord(element)"><mat-icon>mode_edit</mat-icon></button></mat-cell>
+                    </ng-container>
+
+                    <mat-header-row *matHeaderRowDef="columns;sticky: true"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: columns"></mat-row>
+
+                </mat-table>
+            </div>
+
+            <div class="mat-table-footer" fxFlex="none" fxLayoutAlign="start center">
+                <div fxFlex="grow">{{ "GENERAL.RECORD_DISPLAY_COUNT" | translate:{ count: clients.length, totalCount: totalRecordCount} }}</div>
+                <button fxFlex="none" mat-raised-button color="primary" (click)="loadData()" [disabled]="!hasMoreRecords || isFetching">{{ "GENERAL.LOAD_MORE" | translate }}</button>
+            </div>
+
+        </div>
+
+    </mat-sidenav-content>
+
+</mat-sidenav-container>

@@ -1,0 +1,253 @@
+<div
+  class="loading-overlay"
+  [hidden]="!appComponentStateService.isLoading"
+></div>
+<mat-progress-bar
+  mode="indeterminate"
+  color="primary"
+  style="position: absolute; top: 0; left: 0; z-index: 20;"
+  [hidden]="!appComponentStateService.isLoading"
+></mat-progress-bar>
+<!-- Heading -->
+<div fxLayout="row" fxLayoutAlign="start center">
+  <div fxFlex="grow" class="mat-title" color="primary">
+    {{ employeeInfo.firstName + ' ' + employeeInfo.lastName }}
+  </div>
+  <div fxFlex="none">
+    <span class="text-muted text-md"
+      >{{ 'EMPLOYEE_INFO.CREATED_AT' | translate
+      }}{{
+        employeeInfo.createdAt | utcToLocal: 'DD/MM/YYYY'
+      }}&nbsp;|&nbsp;</span
+    >
+    <span class="text-muted text-md"
+      >{{ 'EMPLOYEE_INFO.UPDATED_AT' | translate }}
+      {{ employeeInfo.updatedAt | utcToLocal: 'DD/MM/YYYY' }}</span
+    >
+  </div>
+</div>
+<mat-divider></mat-divider>
+<mat-tab-group animationDuration="0ms">
+  <mat-tab label="{{ 'EMPLOYEE_INFO.ABOUT_TAB' | translate }}">
+    <div style="height: 400px; overflow-y: auto;">
+      <div fxLayout="row" fxLayoutAlign="start center" class="push-top">
+        <div fxFlex="none">
+          <mat-icon [color]="employeeInfo.active ? 'primary' : 'warn'">{{
+            employeeInfo.active ? 'check' : 'clear'
+          }}</mat-icon>
+        </div>
+        <div fxFlex="none" fxFlexOffset="8px">
+          {{ 'EMPLOYEE_INFO.ACTIVE' | translate }}
+        </div>
+      </div>
+      <div fxLayout="row" class="push-top">
+        <div fxLayout="column" fxFlex="40">
+          <div class="mat-title">
+            {{ 'EMPLOYEE_INFO.EMPLOYEE_DETAILS_HEADING' | translate }}
+          </div>
+          <mat-divider></mat-divider>
+          <div fxLayout="row" fxFlexOffset="16px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'EMPLOYEE_INFO.REPORTS_TO' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              [appFormattedText]="employeeInfo.parentName"
+              appFormattedTextPlaceholder="{{
+                'EMPLOYEE_INFO.REPORTS_TO_SELF' | translate
+              }}"
+            ></div>
+          </div>
+          <div fxLayout="row" fxFlexOffset="8px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'EMPLOYEE_INFO.DEPARTMENT' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              [appFormattedText]="employeeInfo.department"
+              appFormattedTextPlaceholder="{{
+                'EMPLOYEE_INFO.NOT_GIVEN' | translate
+              }}"
+            ></div>
+          </div>
+          <div fxLayout="row" fxFlexOffset="8px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'EMPLOYEE_INFO.DESIGNATION' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              [appFormattedText]="employeeInfo.designation"
+              appFormattedTextPlaceholder="{{
+                'EMPLOYEE_INFO.NOT_GIVEN' | translate
+              }}"
+            ></div>
+          </div>
+          <div class="push-top"></div>
+          <mat-divider></mat-divider>
+          <div fxLayout="row" fxFlexOffset="8px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'EMPLOYEE_INFO.EMAIL' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              [appFormattedText]="employeeInfo.email"
+              appFormattedTextPlaceholder="{{
+                'EMPLOYEE_INFO.NOT_GIVEN' | translate
+              }}"
+            ></div>
+          </div>
+          <div fxLayout="row" fxFlexOffset="8px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'EMPLOYEE_INFO.PHONE' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              [appFormattedText]="employeeInfo.phone"
+              appFormattedTextPlaceholder="{{
+                'EMPLOYEE_INFO.NOT_GIVEN' | translate
+              }}"
+            ></div>
+          </div>
+          <div fxLayout="row" fxFlexOffset="8px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'EMPLOYEE_INFO.MOBILE' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              [appFormattedText]="employeeInfo.mobile"
+              appFormattedTextPlaceholder="{{
+                'EMPLOYEE_INFO.NOT_GIVEN' | translate
+              }}"
+            ></div>
+          </div>
+        </div>
+        <div fxLayout="column" fxFlex="60" fxFlexOffset="32px">
+          <div class="mat-title">
+            {{ 'EMPLOYEE_INFO.DATA_ANALYSIS_HEADING' | translate }}
+          </div>
+          <mat-divider></mat-divider>
+          <div fxLayout="row" fxFlexOffset="16px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'EMPLOYEE_INFO.NPS' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              [appFormattedText]="nps"
+              appFormattedTextPlaceholder="{{
+                'EMPLOYEE_INFO.NOT_AVAILABLE' | translate
+              }}"
+            ></div>
+          </div>
+          <div fxLayout="row" fxFlexOffset="8px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'EMPLOYEE_INFO.CLIENT_SCORE' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              [appFormattedText]="clientScore"
+              appFormattedTextPlaceholder="{{
+                'EMPLOYEE_INFO.NOT_AVAILABLE' | translate
+              }}"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab label="{{ 'EMPLOYEE_INFO.SURVEY_TAB' | translate }}">
+    <div
+      class="mat-table client-responses"
+      style="height: 400px; overflow-y: auto;"
+    >
+      <div class="mat-header-row">
+        <div class="mat-header-cell" fxFlex="20">
+          {{ 'EMPLOYEE_INFO.SURVEY_SENT_ON' | translate }}
+        </div>
+        <div class="mat-header-cell" fxFlex="20">
+          {{ 'EMPLOYEE_INFO.SURVEY_DESCRIPTION' | translate }}
+        </div>
+        <div class="mat-header-cell" fxFlex="20">
+          {{ 'EMPLOYEE_INFO.SURVEY_RESPONSE_RECEIVED_ON' | translate }}
+        </div>
+        <div class="mat-header-cell" fxFlex="10">
+          {{ 'EMPLOYEE_INFO.SURVEY_SCORE' | translate }}
+        </div>
+        <div class="mat-header-cell" fxFlex="30">
+          {{ 'EMPLOYEE_INFO.SURVEY_COMMENTS' | translate }}
+        </div>
+      </div>
+      <!-- Data filter -->
+      <div class="mat-row" class="bg-light">
+        <div class="mat-cell" fxFlex="100" class="push-top-sm">
+          <mat-checkbox disableRipple #chkNonResponders>{{
+            'EMPLOYEE_INFO.DISPLAY_NONRESPONDERS' | translate
+          }}</mat-checkbox>
+        </div>
+      </div>
+      <!-- Data -->
+      <div
+        class="mat-row"
+        fxLayout="row wrap"
+        *ngFor="let obj of filteredSurveys(chkNonResponders.checked)"
+      >
+        <div class="mat-cell" fxFlex="20">
+          {{ obj.sentOnDate | utcToLocal: 'DD/MM/YYYY' }}
+        </div>
+        <div class="mat-cell" fxFlex="20">
+          {{ obj.surveyDescription }}
+        </div>
+        <div class="mat-cell" fxFlex="20" *ngIf="obj.receivedOnDate">
+          {{ obj.receivedOnDate | utcToLocal: 'DD/MM/YYYY' }}
+        </div>
+        <div class="mat-cell" fxFlex="10" *ngIf="obj.receivedOnDate">
+          <span
+            class="score"
+            [ngClass]="{
+              promoters: obj.score > 8,
+              neutrals: obj.score > 6 && obj.score <= 8,
+              detractors: obj.score < 7
+            }"
+            >{{ obj.score }}</span
+          >
+        </div>
+        <div class="mat-cell" fxFlex="30" *ngIf="obj.receivedOnDate">
+          {{ obj.comments }}
+        </div>
+        <!-- No response row -->
+        <div class="mat-cell" fxFlex="60" *ngIf="!obj.receivedOnDate">
+          <span class="text-muted text-italic">{{
+            'EMPLOYEE_INFO.NO_RESPONSE' | translate
+          }}</span>
+          <span
+            class="push-left pad-xs"
+            [ngClass]="{
+              'app-promoter-bg': obj.emailStatus <= 2,
+              'app-warn-bg': obj.emailStatus > 2
+            }"
+            >{{ emailStatusDesc[obj.emailStatus] }}</span
+          >
+        </div>
+        <!-- Note row -->
+        <div class="mat-cell bg-light text-md" fxFlex="100" *ngIf="obj.note">
+          <i class="fa fa-file-o text-muted2"></i>&nbsp;{{ obj.note }}
+        </div>
+        <!-- Resolved row -->
+        <div
+          class="mat-cell bg-light text-md"
+          fxFlex="100"
+          *ngIf="obj.followupOnDate"
+        >
+          <span class="text-muted"
+            >{{ 'EMPLOYEE_INFO.FOLLOWUP' | translate }}:&nbsp;{{
+              obj.followupByName
+            }}&nbsp;|&nbsp;{{ obj.followupOnDate | utcToLocal: 'DD/MM/YYYY'
+            }}<br
+          /></span>
+          <i class="fa fa-file-o text-muted2"></i>&nbsp;{{
+            obj.followupComments
+          }}
+        </div>
+      </div>
+    </div>
+  </mat-tab>
+</mat-tab-group>

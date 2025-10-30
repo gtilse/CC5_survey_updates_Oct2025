@@ -1,0 +1,275 @@
+<div flex class="pad">
+  <div layout="row" layout-align="start start">
+    <!-- Profile picture -->
+    <div class="image-upload-wrapper" style="width: 150px;" flex="none">
+      <div
+        class="image"
+        style="height: 120px;"
+        [ngStyle]="{ 'background-image': 'url(' + profilePictureSource + ')' }"
+      ></div>
+
+      <div class="toolbar">
+        <button
+          mat-icon-button
+          color="primary"
+          (click)="openImageCropperModal()"
+        >
+          <mat-icon>add</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          color="warn"
+          [disabled]="profilePictureSource === emptyProfilePictureFile"
+          (click)="clearLogo()"
+        >
+          <mat-icon>remove</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="employeeForm" novalidate flex class="push-left">
+      <!-- Active/Inactive -->
+      <div layout="row" class="push-bottom">
+        <mat-checkbox
+          [checked]="!!employeeForm.controls.active.value"
+          (change)="checkboxToggle('active')"
+          >{{ 'STAFF.ACTIVE' | translate }}</mat-checkbox
+        >
+
+        <mat-checkbox class="push-left"
+          [checked]="!!employeeForm.controls.staffSurveyOnly.value"
+          (change)="checkboxToggle('staffSurveyOnly')"
+          >{{ 'STAFF.STAFF_SURVEY_ONLY' | translate }}</mat-checkbox
+        >
+      </div>
+
+      <!-- First, Middle, Last name -->
+      <div layout="row">
+        <mat-form-field flex="40">
+          <input
+            matInput
+            placeholder="{{ 'STAFF.FIRST_NAME' | translate }}"
+            formControlName="firstName"
+            required
+          />
+          <mat-error ngxErrors="firstName">
+            <div ngxError="required" when="touched">
+              {{ 'STAFF.FIRST_NAME_ERROR' | translate }}
+            </div>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field flex="20" class="push-left">
+          <input
+            matInput
+            placeholder="{{ 'STAFF.MIDDLE_NAME' | translate }}"
+            formControlName="middleName"
+          />
+        </mat-form-field>
+
+        <mat-form-field flex="40" class="push-left">
+          <input
+            matInput
+            placeholder="{{ 'STAFF.LAST_NAME' | translate }}"
+            formControlName="lastName"
+            required
+          />
+          <mat-error ngxErrors="lastName">
+            <div ngxError="required" when="touched">
+              {{ 'STAFF.LAST_NAME_ERROR' | translate }}
+            </div>
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- User level -->
+      <mat-form-field class="full-width">
+        <mat-select
+          placeholder="{{ 'STAFF.ACCESS_RIGHTS' | translate }}"
+          formControlName="level"
+        >
+          <mat-option
+            *ngFor="let userLevel of userLevels"
+            [value]="userLevel.value"
+          >
+            {{ userLevel.description }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Location -->
+      <mat-form-field class="full-width">
+        <mat-select
+          placeholder="{{ 'STAFF.LOCATION' | translate }}"
+          formControlName="locationId"
+        >
+          <mat-option class="clear-selection" [value]="null">{{
+            'GENERAL.CLEAR_SELECTION' | translate
+          }}</mat-option>
+          <mat-option
+            *ngFor="let location of locations"
+            [value]="location.objectId"
+          >
+            {{ location.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Email address -->
+      <mat-form-field class="full-width">
+        <input
+          type="email"
+          matInput
+          placeholder="{{ 'STAFF.EMAIL' | translate }}"
+          formControlName="email"
+          required
+        />
+        <mat-error ngxErrors="email">
+          <div [ngxError]="['required', 'email']" when="touched">
+            {{ 'STAFF.EMAIL_ERROR' | translate }}
+          </div>
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Reports To -->
+      <mat-form-field class="full-width">
+        <mat-select
+          placeholder="{{ 'STAFF.DRL' | translate }}"
+          formControlName="parentId"
+        >
+          <mat-option [value]="null">{{ 'STAFF.SELF' | translate }}</mat-option>
+          <mat-option
+            *ngFor="let reportsTo of reportsToList"
+            [value]="reportsTo.objectId"
+          >
+            {{ reportsTo.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Display data for -->
+      <mat-form-field class="full-width">
+        <mat-select
+          placeholder="{{ 'STAFF.DISPLAY_DATA_FOR' | translate }}"
+          formControlName="userOverrideId"
+        >
+          <mat-option [value]="null">{{ 'STAFF.SELF' | translate }}</mat-option>
+          <mat-option
+            *ngFor="let displayDataFor of displayDataForList"
+            [value]="displayDataFor.objectId"
+          >
+            {{ displayDataFor.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Designation and Department -->
+      <div layout="row">
+        <!-- Designation -->
+        <div layout="row" flex="50">
+          <mat-form-field flex>
+            <mat-select
+              placeholder="{{ 'STAFF.DESIGNATION' | translate }}"
+              formControlName="designation"
+            >
+              <mat-option [value]="null">{{
+                'GENERAL.CLEAR_SELECTION' | translate
+              }}</mat-option>
+              <mat-option
+                *ngFor="
+                  let dropList of dropLists
+                    | filterDropListByCategory: dropLists:'Designation'
+                "
+                [value]="dropList.description"
+              >
+                {{ dropList.description }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <button
+            mat-icon-button
+            class="droplist-add-button"
+            (click)="addToDropList('designation', 'DESIGNATION')"
+          >
+            <mat-icon>add_box</mat-icon>
+          </button>
+        </div>
+
+        <!-- Department -->
+        <div layout="row" flex="50" flex-offset="5">
+          <mat-form-field flex>
+            <mat-select
+              placeholder="{{ 'STAFF.DEPARTMENT' | translate }}"
+              formControlName="department"
+            >
+              <mat-option [value]="null">{{
+                'GENERAL.CLEAR_SELECTION' | translate
+              }}</mat-option>
+              <mat-option
+                *ngFor="
+                  let dropList of dropLists
+                    | filterDropListByCategory: dropLists:'Department'
+                "
+                [value]="dropList.description"
+              >
+                {{ dropList.description }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <button
+            mat-icon-button
+            class="droplist-add-button"
+            (click)="addToDropList('department', 'DEPARTMENT')"
+          >
+            <mat-icon>add_box</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <!-- Phone and Mobile -->
+      <div layout="row">
+        <mat-form-field flex="50">
+          <input
+            matInput
+            placeholder="{{ 'STAFF.PHONE' | translate }}"
+            formControlName="phone"
+          />
+        </mat-form-field>
+
+        <mat-form-field flex="50" flex-offset="5">
+          <input
+            matInput
+            placeholder="{{ 'STAFF.MOBILE' | translate }}"
+            formControlName="mobile"
+          />
+        </mat-form-field>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Form tools -->
+<div layout="row" layout-align="end center" layout-margin>
+  <button
+    type="reset"
+    mat-button
+    (click)="close()"
+    [disabled]="appComponentStateService.isSaving"
+  >
+    {{ 'GENERAL.BTN_CANCEL' | translate }}
+  </button>
+  <button
+    type="button"
+    mat-raised-button
+    flex="none"
+    flex-offset="2"
+    color="primary"
+    (click)="saveRecord()"
+    [disabled]="!employeeForm.valid || appComponentStateService.isSaving"
+  >
+    {{ 'GENERAL.BTN_SAVE' | translate }}
+  </button>
+</div>

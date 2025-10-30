@@ -1,0 +1,23 @@
+{
+    "en": {
+        "EMAIL_TEMPLATE_MOST_LIKELY": "Most Likely",
+        "EMAIL_TEMPLATE_LEAST_LIKELY": "Least Likely",
+        "EMAIL_TEMPLATE_UNSUBSCRIBE": "Unsubscribe Me",
+        "EMAIL_TEMPLATE_EMAIL_NOT_DISPLAYING": "Email not displaying properly",
+        "EMAIL_TEMPLATE_CLICK_HERE": "Click Here",
+
+        "BOT_HEADING_1": "You selected",
+        "BOT_HEADING_2": "We are sorry to hear that."
+    },
+
+    "dl": {
+        "EMAIL_TEMPLATE_MOST_LIKELY": "Hoogstwaarschijnlijk",
+        "EMAIL_TEMPLATE_LEAST_LIKELY": "Minst waarschijnlijk",
+        "EMAIL_TEMPLATE_UNSUBSCRIBE": "Meld mij af",
+        "EMAIL_TEMPLATE_EMAIL_NOT_DISPLAYING": "E-mail wordt niet goed weergegeven",
+        "EMAIL_TEMPLATE_CLICK_HERE": "Klik hier",
+
+        "BOT_HEADING_1": "Jij hebt geselecteerd",
+        "BOT_HEADING_2": "Het spijt ons dat te horen."
+    }
+}

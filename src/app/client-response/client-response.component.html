@@ -1,0 +1,270 @@
+<div class="mat-table client-responses">
+  <div class="mat-header-row">
+    <div class="mat-header-cell" flex="10">
+      {{ 'CLIENT_RESPONSE.SCORE' | translate }}
+    </div>
+    <div
+      class="mat-header-cell"
+      flex="13"
+      matTooltip="{{ 'CLIENT_RESPONSE.TOOLTIP_CLIENT' | translate }}"
+    >
+      {{ 'CLIENT_RESPONSE.CLIENT' | translate }}
+    </div>
+    <div class="mat-header-cell" flex="20">
+      {{ 'CLIENT_RESPONSE.COMMENT' | translate }}
+    </div>
+    <div class="mat-header-cell" flex="20">
+      {{ 'CLIENT_RESPONSE.OTHER_FEEDBACK' | translate }}
+    </div>
+    <div class="mat-header-cell" flex="10">
+      {{ 'CLIENT_RESPONSE.DATE' | translate }}
+    </div>
+    <div
+      class="mat-header-cell"
+      flex="5"
+      matTooltip="{{ 'CLIENT_RESPONSE.TOOLTIP_CALL_NOW' | translate }}"
+    >
+      {{ 'CLIENT_RESPONSE.CALL_NOW' | translate }}
+    </div>
+
+    <div
+      class="mat-header-cell"
+      flex="6"
+      matTooltip="{{ 'CLIENT_RESPONSE.TOOLTIP_SENDTHANKS' | translate }}">
+      {{ 'CLIENT_RESPONSE.SEND_THANKS' | translate }}
+    </div>
+
+    <div
+      class="mat-header-cell"
+      flex="6"
+      matTooltip="{{ 'CLIENT_RESPONSE.TOOLTIP_KUDOS' | translate }}">
+      {{ 'CLIENT_RESPONSE.KUDOS' | translate }}
+    </div>
+
+    <div
+      class="mat-header-cell"
+      flex="5"
+      matTooltip="{{ 'CLIENT_RESPONSE.TOOLTIP_FLAG' | translate }}"
+    >
+      {{ 'CLIENT_RESPONSE.FLAG' | translate }}
+    </div>
+    <div
+      class="mat-header-cell"
+      flex="5"
+      matTooltip="{{ 'CLIENT_RESPONSE.TOOLTIP_NOTE' | translate }}"
+    >
+      {{ 'CLIENT_RESPONSE.NOTE' | translate }}
+    </div>
+  </div>
+
+  <!-- Data -->
+  <div class="mat-row" *ngFor="let obj of filteredScores">
+    <!-- Score -->
+    <div
+      class="mat-cell"
+      flex="10"
+      matTooltip="{{
+        obj.previousScore == undefined
+          ? ''
+          : 'Previous score ' + obj.previousScore
+      }}"
+    >
+      <span
+        class="score"
+        [ngClass]="{
+          promoters: obj.score > 8,
+          neutrals: obj.score > 6 && obj.score <= 8,
+          detractors: obj.score < 7
+        }"
+        >{{ obj.score }}</span
+      >
+      <span
+        class="score-change down"
+        *ngIf="obj.previousScore !== undefined && obj.previousScore > obj.score"
+        ><i class="fa fa-chevron-down"></i
+      ></span>
+      <span
+        class="score-change up"
+        *ngIf="obj.previousScore !== undefined && obj.previousScore < obj.score"
+        ><i class="fa fa-chevron-up"></i
+      ></span>
+      <span
+        class="score-change none"
+        *ngIf="
+          obj.previousScore !== undefined && obj.previousScore == obj.score
+        "
+        ><i class="fa fa-minus"></i
+      ></span>
+      <span class="score-change empty" *ngIf="obj.previousScore == undefined"
+        ><i class="fa fa-minus"></i
+      ></span>
+    </div>
+
+    <!-- Client -->
+    <div class="mat-cell" flex="13">
+      <span class="client-info-link" (click)="openClientInfo(obj)">{{
+        obj.name
+      }}</span>
+      <div class="client">{{ obj.drlName }}</div>
+      <div class="client" *ngFor="let staff of obj.drlInclude">{{ staff }}</div>
+
+      
+      <!-- <span class="client" toggleSibling><i class="text-secondary fa"></i> {{obj.name}}</span>
+      <div class="push-top-xs collapsed">
+        <p>
+          <a href="mailto:{{obj.email}}"><i class="fa fa-envelope-o"></i> {{obj.email}}</a><br/>
+          <i class="fa fa-phone"></i> <span *ngIf="obj.phone">{{obj.phone}}</span><span *ngIf="!obj.phone" class="text-secondary">{{'GENERAL.NOT_AVAILABLE' | translate}}</span><br/>
+          <i class="fa fa-user"></i> {{obj.drlName}}
+        </p>
+      </div> -->
+    </div>
+
+    <!-- Comments -->
+    <div class="mat-cell" flex="20">
+      <span *ngIf="obj.comments">{{ obj.comments }}</span>
+      <span *ngIf="!obj.comments" class="text-secondary">{{
+        'GENERAL.NO_COMMENTS_PROVIDED' | translate
+      }}</span>
+      <span
+        *ngIf="obj.previousComment"
+        class="text-secondary"
+        style="cursor: pointer;"
+        matTooltip="{{ obj.previousComment }}"
+      >
+        &nbsp;[{{ 'GENERAL.PREVIOUS_COMMENT' | translate }}]
+      </span>
+      <span *ngIf="obj.additionalQuestions && obj.additionalQuestions.length">
+        &nbsp;<i
+          class="fa fa-file-text-o app-primary-fg"
+          matTooltip="{{ 'GENERAL.MORE_DETAILS' | translate }}"
+          (click)="showAdditionalQuestions(obj)"
+          style="cursor: pointer;"
+        ></i>
+      </span>
+    </div>
+
+    <!-- Other feedback -->
+    <div class="mat-cell" flex="20">
+      <div *ngIf="obj.loyaltyDrivers && obj.loyaltyDrivers.length">
+        <div *ngIf="obj.score >=9" class="text-secondary text-bold">Why you'd recommend</div>
+        <div *ngIf="obj.score <9" class="text-secondary text-bold">Improvement needed to recommend</div>
+        <div *ngFor="let ld of obj.loyaltyDrivers" [ngClass]="{'text-bold': false,'app-promoter-fg': obj.score>=9,'app-detractor-fg': obj.score<9}">
+          {{ ld }}
+        </div>
+      </div>
+
+      <div *ngIf="obj.howToImproveComments" class="push-top-lg">
+        <div class="text-secondary text-bold">Improvement suggestions</div>
+        <div class="">{{ obj.howToImproveComments }}</div>
+      </div>
+
+      <div *ngIf="obj.howToImproveComments2" class="push-top-lg">
+        <div class="text-secondary text-bold">Additional Comments</div>
+        <div class="">{{ obj.howToImproveComments2 }}</div>
+      </div>
+
+      <!-- <div *ngIf="obj.callRequest === 1" class="push-top-lg">
+        <div class="text-secondary text-bold">Call-back</div>
+        <div class="">Client requested a call-back</div>
+      </div>
+
+      <div *ngIf="obj.callRequest === 2" class="push-top-lg">
+        <div class="text-secondary text-bold">Call-back</div>
+        <div class="">Client asked not to be contacted at this stage</div>
+      </div> -->
+
+    </div>
+
+    <!-- Date -->
+    <div class="mat-cell" flex="10">
+      {{ obj.responseDate | utcToLocal: 'MMM DD YYYY' }}
+    </div>
+
+    <!-- Call now -->
+    <div class="mat-cell" flex="5">
+      <mat-icon
+        class="material-symbols-outlined client-response-icon"
+
+        [ngClass]="{
+          promoters: obj.score > 8,
+          neutrals: obj.score > 6 && obj.score <= 8,
+          detractors: obj.score < 7
+        }"
+        (click)="openClientInfo(obj,2)"
+      >
+        perm_phone_msg
+      </mat-icon>
+    </div>
+
+    <!-- Thanks -->
+    <div class="mat-cell" flex="6">
+      <div class="clickable-icon-link" (click)="sendKudos(obj, 'CLIENT')">
+        <span fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="start center">
+          <span matBadge="{{obj.kudos?.thanks?.length }}" [matBadgeHidden]="!obj.kudos?.thanks?.length" fxFlex="none" class="material-symbols-outlined client-response-icon promoters" [ngClass]="{
+            promoters: obj.score > 8,
+            neutrals: obj.score > 6 && obj.score <= 8,
+            detractors: obj.score < 7
+          }">mail</span>
+          
+        </span>
+      </div>
+    </div>
+
+    <!-- Kudos -->
+    <div class="mat-cell" flex="6">
+      <div *ngIf="obj.score >=9" class="clickable-icon-link" (click)="sendKudos(obj, 'TEAM')">
+        <span fxLayout="row" fxLayoutGap="4px" fxLayoutAlign="start center">
+          <span matBadge="{{obj.kudos?.kudos?.length }}" [matBadgeHidden]="!obj.kudos?.kudos?.length" class="client-response-icon promoters material-symbols-outlined" [ngClass]="{
+            promoters: obj.score > 8,
+            neutrals: obj.score > 6 && obj.score <= 8,
+            detractors: obj.score < 7
+          }">
+            editor_choice
+            </span>
+          
+        </span>
+      </div>
+    </div>
+
+    <!-- Flag -->
+    <div class="mat-cell" flex="5">
+      <mat-icon
+        class="material-symbols-outlined client-response-icon"
+        [ngClass]="{ flagged: obj.flagged == 1 }"
+        (click)="toggleFlag(obj, $event)"
+      >
+        flag
+      </mat-icon>
+    </div>
+
+    <!-- Note -->
+    <div class="mat-cell" flex="5">
+      <mat-icon
+        class="material-symbols-outlined client-response-icon"
+        [ngClass]="{ note: obj.note }"
+        (click)="addNote(obj)"
+      >
+        textsms
+      </mat-icon>
+    </div>
+  </div>
+</div>
+
+<mat-menu #menu="matMenu" class="feedback-menu">
+  <button mat-menu-item>
+    {{ 'CLIENT_RESPONSE.CALL_CLIENT' | translate }}
+  </button>
+  <button mat-menu-item>{{ 'CLIENT_RESPONSE.SEND_THANKS' | translate }}</button>
+  <button mat-menu-item>{{ 'CLIENT_RESPONSE.TESTIMONIAL' | translate }}</button>
+  <mat-divider></mat-divider>
+  <button mat-menu-item>
+    {{ 'CLIENT_RESPONSE.SHARE_INTERNALLY' | translate }}
+  </button>
+  <button mat-menu-item>{{ 'CLIENT_RESPONSE.GIVE_KUDOS' | translate }}</button>
+  <mat-divider></mat-divider>
+  <button mat-menu-item>{{ 'CLIENT_RESPONSE.FLAG' | translate }}</button>
+  <button mat-menu-item>{{ 'CLIENT_RESPONSE.NOTE' | translate }}</button>
+  <button mat-menu-item>
+    {{ 'CLIENT_RESPONSE.CLIENT_HISTORY' | translate }}
+  </button>
+</mat-menu>

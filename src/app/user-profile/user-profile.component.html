@@ -1,0 +1,139 @@
+<!-- Loading component -->
+<app-loading placeholder="{{'PROFILE.VIEW_TITLE' | translate}}" [hidden]="!appComponentStateService.isLoading || appComponentStateService.hasError"></app-loading>
+
+<!-- Error handler component -->
+<app-error-handler [hidden]="!appComponentStateService.hasError" (refresh)="loadData()"></app-error-handler>
+
+<!-- User profile view -->
+<div [hidden]="appComponentStateService.isLoading || appComponentStateService.hasError">
+  <!-- Heading -->
+  <div class="card-header">
+    <!-- Icon + header text -->
+    <div fxLayout="row" fxLayoutAlign="start center" class="text-muted2">
+      <span fxFlex="none" class="mat-headline">{{'PROFILE.HEADING' | translate}}</span>
+    </div>
+  </div>
+</div>
+
+<!-- Content -->
+<div fxLayout="row" fxLayoutAlign="start start" class="profile-container"  [hidden]="appComponentStateService.isLoading || appComponentStateService.hasError">
+
+  <div fxFlex="66">
+    <!-- User profile form -->
+    <form [formGroup]="userProfileForm" fxLayout="column" novalidate>
+      <!-- About you heading -->
+      <h2 class="mat-title pull-bottom" fxFlex="none">{{'PROFILE.ABOUT_YOU' | translate}}</h2>
+      <mat-divider class="divider"></mat-divider>
+      <!-- First/last name -->
+      <div fxLayout="row" class="push-top-xl">
+        <mat-form-field fxFlex="50">
+          <input matInput maxlength="45" placeholder="{{'PROFILE.FIRST_NAME' | translate}}" formControlName="firstName" required>
+          <mat-error ngxErrors="firstName">
+            <div ngxError="required" when="touched">
+              {{'PROFILE.FIRST_NAME_ERROR' | translate}}
+            </div>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field fxFlex="50" fxFlexOffset="52px">
+          <input matInput maxlength="45" placeholder="{{'PROFILE.LAST_NAME' | translate}}" formControlName="lastName" required>
+          <mat-error ngxErrors="lastName">
+            <div ngxError="required" when="touched">
+              {{'PROFILE.LAST_NAME_ERROR' | translate}}
+            </div>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <!-- Email address -->
+      <div fxLayout="row">
+        <mat-form-field fxFlex="50">
+          <input type="text" matInput maxlength="45" placeholder="{{'PROFILE.EMAIL' | translate}}" formControlName="email" required>
+          <mat-error ngxErrors="email">
+            <div [ngxError]="['required','email']" when="touched">
+              {{'PROFILE.EMAIL_ERROR' | translate}}
+            </div>
+          </mat-error>
+        </mat-form-field>
+        <!-- Dummy placeholder for sizing -->
+        <div fxFlex="50" fxFlexOffset="52px"></div>
+      </div>
+      <!-- Phone/mobile -->
+      <div fxLayout="row">
+        <mat-form-field fxFlex="50">
+          <input matInput maxlength="45" placeholder="{{'PROFILE.PHONE' | translate}}" formControlName="phone">
+        </mat-form-field>
+    
+        <mat-form-field fxFlex="50" fxFlexOffset="52px">
+          <input matInput maxlength="45" placeholder="{{'PROFILE.MOBILE' | translate}}" formControlName="mobile">
+        </mat-form-field>
+      </div>
+      <!-- Update button -->
+      <div fxLayout="row">
+        <div fxFlex="grow"></div>
+        <button type="button" fxFlex="none" mat-raised-button color="primary" (click)="saveChanges()" [disabled]="!userProfileForm.valid || appComponentStateService.isSaving">{{'GENERAL.UPDATE' | translate | uppercase}}</button>
+      </div>
+    </form>
+    <!-- Profile photo -->
+    <h2 class="mat-title">{{'PROFILE.PHOTO' | translate}}</h2>
+    <mat-divider class="divider"></mat-divider>
+    <div class="image-upload-wrapper push-top-md push-bottom-xl">
+      <div class="image" [ngStyle]="{'background-image': 'url(' + profilePictureSource + ')'}"></div>
+  
+      <div class="toolbar mat-body">
+        <a href="#" (click)="openImageCropperModal($event)">{{'PROFILE.UPDATE_PHOTO' | translate | uppercase}}</a>
+        <!-- <button mat-icon-button color="primary" (click)="openImageCropperModal()"><mat-icon>add</mat-icon></button>
+        <button mat-icon-button color="warn" [disabled]="profilePictureSource===emptyProfilePictureFile" (click)="clearLogo()"><mat-icon>remove</mat-icon></button> -->
+      </div>
+    </div>
+    <!-- Password -->
+    <h2 class="mat-title">{{'PROFILE.PASSWORD_HEADING' | translate}}</h2>
+    <mat-divider class="push-bottom"></mat-divider>
+    <div class="push-bottom"></div>
+    <a href="#" (click)="togglePasswordUpdateView($event)" [hidden]="passwordUpdateViewVisible">{{'PROFILE.PASSWORD_CHANGE' | translate}}</a>
+    
+    <div [hidden]="!passwordUpdateViewVisible">
+      <div fxFlexLayout="row" >
+        <mat-form-field fxFlex="30">
+          <input matInput type="password" maxlength="10" [(ngModel)]="password" placeholder="{{'PROFILE.PASSWORD' | translate}}">
+        </mat-form-field>
+        <mat-form-field fxFlex="30" fxFlexOffset="32px">
+          <input matInput type="password" maxlength="10" [(ngModel)]="passwordRepeat" placeholder="{{'PROFILE.PASSWORD_REPEAT' | translate}}">
+        </mat-form-field>
+      </div>
+      <div fxFlexLayout="row">
+        <div fxFlex="grow"></div>
+        <button fxFlex="none" type="button" color="warn" mat-raised-button (click)="modifyPassword()" [disabled]="!(password && password.length >=6 && passwordRepeat && password==passwordRepeat)">{{'GENERAL.UPDATE' | translate | uppercase}}</button>
+        <button fxFlex="none" fxFlexOffset="16px" mat-raised-button (click)="togglePasswordUpdateView($event)">{{'GENERAL.CANCEL' | translate | uppercase}}</button>
+      </div>
+    </div>
+
+    <div class="push-bottom-xxl"></div>
+  </div>
+
+  <div fxFlex="400px" fxFlexOffset="50px">
+    <!-- Login history -->
+    <mat-card style="max-height: 350px; overflow: auto;">
+      <h2 class="mat-title">{{'PROFILE.LOGIN_HISTORY' | translate}}</h2>
+      <div class="mat-table">
+        <div class="mat-header-row">
+          <div class="mat-header-cell" fxFlex="60">
+              {{'PROFILE.DATE' | translate}}
+          </div>
+          <div class="mat-header-cell" fxFlex="40">
+              {{'PROFILE.IP_ADDRESS' | translate}}
+          </div>
+        </div>
+        <div class="mat-row" *ngFor="let row of userProfileForm.value.loginHistory">
+          <div class="mat-cell" fxFlex="60">
+              <span class="text-sm">{{row.createdAt | utcToLocal}}</span>
+          </div>
+          <div class="mat-cell" fxFlex="40">
+              <span class="text-sm">{{row.ipAddress}}</span>
+          </div>
+        </div>
+      </div>
+     
+    </mat-card>
+
+  </div>
+
+</div>

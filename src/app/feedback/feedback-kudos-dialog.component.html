@@ -1,0 +1,97 @@
+<h2 class="mat-title">
+    <div *ngIf="dialogData.type === 'CLIENT'">
+        {{ 'KUDOS.HEADING_THANKYOU' | translate }}
+    </div>
+
+    <div *ngIf="dialogData.type === 'TEAM'">
+        {{ 'KUDOS.HEADING_KUDOS' | translate }}
+    </div>
+</h2>
+<h3 class="mat-subheading-2 text-secondary">
+    <div *ngIf="dialogData.type === 'CLIENT'">
+        {{ 'KUDOS.SUB_HEADING_THANKYOU' | translate }}
+    </div>
+
+    <div *ngIf="dialogData.type === 'TEAM'">
+        {{ 'KUDOS.SUB_HEADING_KUDOS' | translate }}
+    </div>
+
+</h3>
+<mat-divider></mat-divider>
+
+<!-- Content -->
+<mat-dialog-content fxLayout="column" fxLayoutGap="16px">
+
+    <!-- Client info -->
+    <div fxLayout="column" fxLayoutGap="16px">
+        <div class="client-info" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
+            <span>{{ 'KUDOS.CLIENT_INFO' | translate }}:</span>
+            <span><strong>{{ dialogData.obj.name }}<{{ dialogData.obj.email }}></strong></span>
+        </div>
+    </div>
+
+    <!-- Dept -->
+    <div *ngIf="department && dialogData.type==='TEAM' && !isProcessing" style="font-size: 0.8rem; font-weight: 700;">Department: {{ this.department }}</div>
+
+    <mat-spinner [diameter]="30" *ngIf="isProcessing"></mat-spinner>
+
+    <!-- Staff selection -->
+    <mat-form-field *ngIf="!isProcessing && dialogData.type==='TEAM'" appearance="fill">
+        <mat-label>{{ 'KUDOS.SELECT_STAFF' | translate }}</mat-label>
+        <mat-chip-list #chipList>
+          <mat-chip
+            *ngFor="let staff of staffs"
+            (removed)="remove(staff)">
+            {{staff.fullName}}
+            <button matChipRemove>
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip>
+          <input
+            placeholder="Add staff..."
+            #staffInput
+            [formControl]="staffCtrl"
+            [matAutocomplete]="auto"
+            [matChipInputFor]="chipList"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+            (matChipInputTokenEnd)="add($event)">
+        </mat-chip-list>
+        <mat-autocomplete #auto="matAutocomplete" [autoActiveFirstOption]="true" (optionSelected)="selected($event)">
+          <mat-option *ngFor="let staff of filteredStaffs | async" [value]="staff.fullName">
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
+                <span>{{staff.fullName}}</span>
+                <span class="highlight" *ngIf="staff.teamMember">(team member)</span>
+            </div>
+            
+          </mat-option>
+        </mat-autocomplete>
+
+        <div *ngIf="dialogData.type==='TEAM'" fxLayout="row" fxLayoutGap="8px" style="margin-top: 6px;">
+            <button (click)="addClearStaff('TEAM')" mat-button color="primary" style="font-size: 0.75rem; height:30px; line-height: 1;">Add Team</button>
+            <button (click)="addClearStaff('DEPARTMENT')" mat-button color="primary" style="font-size: 0.75rem; height:30px; line-height: 1;">Add Department</button>
+            <button (click)="addClearStaff('ADD')" mat-button color="primary" style="font-size: 0.75rem; height:30px; line-height: 1;">Add All</button>
+            <button (click)="addClearStaff('CLEAR')" mat-button color="primary" style="font-size: 0.75rem; height:30px; line-height: 1;">Clear All</button>
+        </div>
+
+    </mat-form-field>
+
+    
+    <!-- Text -->
+    <mat-form-field *ngIf="!isProcessing" appearance="fill">
+        <mat-label>Message – placeholder text</mat-label>
+        <textarea matInput rows="10" [(ngModel)]="comments"></textarea>
+    </mat-form-field>
+
+</mat-dialog-content>
+
+<!-- Dialog actions -->
+<mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+
+    <button mat-raised-button color="primary" (click)="sendKudos()" [disabled]="!comments || (this.dialogData.type === 'TEAM' && this.staffs.length === 0) || this.isProcessing">
+        {{ 'KUDOS.SEND_EMAIL' | translate }}
+    </button>
+
+    <button mat-raised-button mat-dialog-close>
+      {{ 'GENERAL.CLOSE' | translate }}
+    </button>
+</mat-dialog-actions>

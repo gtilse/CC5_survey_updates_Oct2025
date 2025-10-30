@@ -1,0 +1,6 @@
+[Type] ErrorException [Message] Undefined index: surveyId [File] C:\Projects\ClientCulture5\src\survey\survey_emailer.php [Line] 28
+[Type] ErrorException [Message] Array to string conversion [File] C:\Projects\ClientCulture5\src\survey\survey_emailer.php [Line] 28
+[Type] ErrorException [Message] Undefined index: surveyId [File] C:\Projects\ClientCulture5\src\survey\survey_emailer.php [Line] 28
+[Type] ErrorException [Message] Undefined index: surveyId [File] C:\Projects\ClientCulture5\src\survey\survey_emailer.php [Line] 28
+[Type] ErrorException [Message] Undefined index: surveyId [File] C:\Projects\ClientCulture5\src\survey\survey_emailer.php [Line] 40
+[Type] ErrorException [Message] Undefined property: PDOStatement::$fetchAll [File] C:\Projects\ClientCulture5\src\survey\survey_emailer.php [Line] 114

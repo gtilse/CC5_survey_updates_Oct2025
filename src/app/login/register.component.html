@@ -1,0 +1,136 @@
+<div class="register-account-container">
+  <!-- Heading -->
+  <h2 class="mat-title push-top-xl">
+    {{ 'LOGIN.REGISTER_ACCOUNT_HEADING' | translate }}
+  </h2>
+
+  <!-- Contents -->
+  <form [formGroup]="registerForm" class="push-top-xl" novalidate>
+    <div fxLayout="column" fxLayoutAlign="start">
+      <!-- Company name -->
+      <mat-form-field>
+        <input
+          matInput
+          placeholder="{{ 'LOGIN.COMPANY_NAME' | translate }}"
+          formControlName="companyName"
+        />
+        <mat-error ngxErrors="companyName">
+          <div ngxError="required" when="touched">
+            {{ 'LOGIN.COMPANY_NAME_ERROR' | translate }}
+          </div>
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Email address -->
+      <mat-form-field>
+        <input
+          matInput
+          placeholder="{{ 'LOGIN.ADMIN_EMAIL' | translate }}"
+          formControlName="email"
+          email
+        />
+        <mat-error ngxErrors="email">
+          <div [ngxError]="['required', 'email']" when="touched">
+            {{ 'LOGIN.ADMIN_EMAIL_ERROR' | translate }}
+          </div>
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Primary Contact -->
+      <mat-form-field>
+        <input
+          matInput
+          placeholder="{{ 'LOGIN.PRIMARY_CONTACT' | translate }}"
+          formControlName="primaryContact"
+        />
+        <mat-error ngxErrors="primaryContact">
+          <div ngxError="required" when="touched">
+            {{ 'LOGIN.PRIMARY_CONTACT_ERROR' | translate }}
+          </div>
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Username -->
+      <mat-form-field>
+        <input
+          matInput
+          placeholder="{{ 'LOGIN.NEW_USERNAME' | translate }}"
+          formControlName="username"
+        />
+        <mat-error ngxErrors="username">
+          <div ngxError="required" when="touched">
+            {{ 'LOGIN.USERNAME_ERROR' | translate }}
+          </div>
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Password -->
+      <div fxLayout="row">
+        <mat-form-field fxFlex="50">
+          <input
+            type="password"
+            matInput
+            placeholder="{{ 'LOGIN.NEW_PASSWORD' | translate }}"
+            formControlName="password"
+          />
+          <mat-hint>{{ 'LOGIN.PASSWORD_HINT' | translate }}</mat-hint>
+          <mat-error ngxErrors="username">
+            <div ngxError="required" when="touched">
+              {{ 'LOGIN.PASSWORD_ERROR' | translate }}
+            </div>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field fxFlex="50" fxFlexOffset="5">
+          <input
+            type="password"
+            matInput
+            placeholder="{{ 'LOGIN.NEW_PASSWORD_AGAIN' | translate }}"
+            formControlName="passwordAgain"
+          />
+        </mat-form-field>
+      </div>
+
+      <div fxLayout="row" fxLayoutAlign="start center" class="push-top-xl">
+        <!-- Terms and privacy policy -->
+        <div fxFlex="grow" fxLayout="row" fxLayoutAlign="start start">
+          <mat-checkbox #acceptTermsPrivacyCheckbox>&nbsp;</mat-checkbox>
+          <span
+            flex
+            class="text-md mat-checkbox-label"
+            [innerHtml]="
+              'LOGIN.ACCEPT_TERMS'
+                | translate
+                  : {
+                      value: appStateService.appConfig.company.termsConditions,
+                      value2: appStateService.appConfig.company.privacyPolicy
+                    }
+            "
+          ></span>
+        </div>
+
+        <button
+          fxFlex="none"
+          fxFlexOffset="10px"
+          type="submit"
+          style="display: block;"
+          mat-raised-button
+          color="primary"
+          (click)="createAccount()"
+          [disabled]="
+            isLoading ||
+            !registerForm.valid ||
+            !acceptTermsPrivacyCheckbox.checked ||
+            f.password.value !== f.passwordAgain.value
+          "
+        >
+          {{ 'LOGIN.SUBMIT' | translate | uppercase }}
+        </button>
+      </div>
+
+      <div class="push-top-xl push-bottom-xl">
+        <a routerLink="/auth/login">{{ 'LOGIN.BACK_TO_LOGIN' | translate }}</a>
+      </div>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,21 @@
+<div fxLayout="column" class="dashboard-card-container">
+  <div
+    class="mat-body-strong"
+    matTooltip="Average score given by clients to the question - how likely are you to recommend on a 0 to 10 scale?"
+  >
+    Client score
+  </div>
+
+  <mat-form-field floatLabel="never" style="width: 210px;">
+    <mat-select [(ngModel)]="mode" (ngModelChange)="changeMode()">
+      <mat-option value="latest-survey">
+        Latest survey
+      </mat-option>
+      <mat-option value="consolidated-result">
+        Consolidated result
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div style="margin-top: 32px" fxFlex="grow" [chart]="chart" (resized)="onResized()"></div>
+</div>

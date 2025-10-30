@@ -1,0 +1,34 @@
+mat-table {
+  height: 100%;
+ overflow-y: auto;
+}
+
+.column-group-header {
+  margin-top: -3px;
+  line-height: 1.875rem;
+  border-bottom: 1px solid #9b9b9b;
+}
+
+.mat-column-group {
+  flex: 0 0 30%;
+}
+
+.mat-column-lastNPS {
+  flex: 0 0 15%;
+}
+
+.mat-column-lastResponseRate {
+  flex: 0 0 15%;
+}
+
+.mat-column-date {
+  flex: 0 0 20%;
+}
+
+.mat-column-consolidatedNPS {
+  flex: 0 0 10%;
+}
+
+.mat-column-consolidatedResponseRate {
+  flex: 0 0 10%;
+}

@@ -1,0 +1,60 @@
+<h2 mat-dialog-title>
+  {{ 'APP_NOTIFICATION.HEADING' | translate }}
+</h2>
+
+<mat-dialog-content>
+  <!-- Loading component -->
+  <app-loading
+    placeholder="{{ 'APP_NOTIFICATION.HEADING' | translate }}"
+    [hidden]="!appComponentStateService.isLoading"
+  ></app-loading>
+
+  <!-- Notifications data -->
+  <div [hidden]="appComponentStateService.isLoading">
+    <div class="mat-table">
+      <div class="mat-header-row">
+        <div class="mat-header-cell" flex="20">
+          {{ 'APP_NOTIFICATION.DATE' | translate }}
+        </div>
+        <div class="mat-header-cell" flex="20">
+          {{ 'APP_NOTIFICATION.TYPE' | translate }}
+        </div>
+        <div class="mat-header-cell" flex="50">
+          {{ 'APP_NOTIFICATION.DESCRIPTION' | translate }}
+        </div>
+        <div class="mat-header-cell" flex="10"></div>
+      </div>
+      <!-- No data -->
+      <div class="mat-row" *ngIf="notifications.length === 0">
+        <div class="mat-cell text-secondary" flex>
+          {{ 'GENERAL.NO_DATA' | translate }}
+        </div>
+      </div>
+
+      <div class="mat-row text-sm" *ngFor="let obj of notifications">
+        <!-- Date -->
+        <div class="mat-cell" flex="20">
+          {{ obj.date | utcToLocal: 'MMM DD, YYYY' }}
+        </div>
+        <!-- Notification type -->
+        <div class="mat-cell" flex="20">
+          {{ notificationType[obj.notificationType] }}
+        </div>
+        <!-- Description -->
+        <div class="mat-cell" flex="50">
+          {{ obj.description }}
+        </div>
+        <!-- Linked -->
+        <div class="mat-cell text-right" flex="10">
+          <a href="#" (click)="goToLink($event, obj)"
+            ><i class="fa fa-external-link"></i
+          ></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>{{ 'GENERAL.CLOSE' | translate }}</button>
+</mat-dialog-actions>

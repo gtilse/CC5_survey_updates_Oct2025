@@ -1,0 +1,29 @@
+mat-sidenav {
+  width: 650px;
+  z-index: 1000;
+}
+
+.mat-column-info {
+  flex: 0 0 100px;
+  justify-content: center;
+}
+
+.mat-column-select {
+  flex: 0 0 100px;
+  justify-content: center;
+}
+
+.mat-column-actions {
+  flex: 0 0 100px;
+  align-items: flex-end;
+}
+
+.client-name {
+  color: var(--app-primary-color);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.mat-header-row {
+  z-index: 10!important;
+}

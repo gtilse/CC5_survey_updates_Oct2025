@@ -1,0 +1,90 @@
+{
+  "company": {
+    "name": "Client Culture",
+    "website": "https://www.clientculture.com",
+    "appWebsite": "https://www.clientculture.net/",
+    "dataDir": "https://www.clientculture.net/app_data/",
+    "supportEmail": "support@clientculture.com",
+    "appSupportEmail": "support@clientculture.net",
+    "termsConditions": "https://clientculture.com/terms",
+    "privacyPolicy": "https://clientculture.com/privacy",
+    "surveyDefaultEmail": "survey@clientculture.net"
+  },
+  "app": {
+    "type": 1,
+    "version": "5.0",
+    "build": "1",
+    "buildDesc": ""
+  },
+
+  "translations": {
+    "en": {
+      "EMAIL_TEMPLATE_MOST_LIKELY": "Most Likely",
+      "EMAIL_TEMPLATE_LEAST_LIKELY": "Least Likely",
+      "EMAIL_TEMPLATE_UNSUBSCRIBE": "Unsubscribe Me",
+      "EMAIL_TEMPLATE_EMAIL_NOT_DISPLAYING": "Email not displaying properly",
+      "EMAIL_TEMPLATE_CLICK_HERE": "Click Here",
+
+      "BOT_HEADING_1_A": "You selected",
+      "BOT_HEADING_1_B": "We are sorry to hear that.",
+
+      "BOT_HEADING_2_A": "Can we ask you to please confirm your score of",
+
+      "BOT_BUTTON_1_A": "Confirm my score of",
+
+      "BOT_FOOTER_1_A": "If you did not mean to select",
+      "BOT_FOOTER_1_B": "you can take the survey again",
+      "BOT_FOOTER_1_C": "here.",
+
+      "SCORE_TEXT": "Please tell us the primary reason for your score of",
+
+      "LOYALTY_DRIVER_1_A": "What are the 3 most important reasons you’d recommend us?",
+
+      "LOYALTY_DRIVER_2_A": "What are the 3 most important areas",
+      "LOYALTY_DRIVER_2_B": "we need to improve",
+      "LOYALTY_DRIVER_2_C": "for you to be more likely to recommend us?",
+
+      "HOW_TO_IMPROVE_1_A": "How could we do even better? What improvements would you like us to make?",
+      "HOW_TO_IMPROVE_2_A": "How would you like us to improve?",
+
+      "BUTTON_SUBMIT_FEEDBACK": "Submit Feedback",
+
+      "THANK_YOU_FEEDBACK": "Thank you for your feedback"
+
+    },
+
+    "dl": {
+        "EMAIL_TEMPLATE_MOST_LIKELY": "Hoogstwaarschijnlijk",
+        "EMAIL_TEMPLATE_LEAST_LIKELY": "Minst waarschijnlijk",
+        "EMAIL_TEMPLATE_UNSUBSCRIBE": "Meld mij af",
+        "EMAIL_TEMPLATE_EMAIL_NOT_DISPLAYING": "E-mail wordt niet goed weergegeven",
+        "EMAIL_TEMPLATE_CLICK_HERE": "Klik hier",
+
+        "BOT_HEADING_1_A": "Jij hebt geselecteerd",
+        "BOT_HEADING_1_B": "Het spijt ons dat te horen.",
+        "BOT_HEADING_2_A": "Mogen wij u vragen uw score van te bevestigen",
+
+        "BOT_BUTTON_1_A": "Bevestig mijn score van",
+
+        "BOT_FOOTER_1_A": "Als het niet de bedoeling was om te selecteren",
+        "BOT_FOOTER_1_B": "U kunt de enquête opnieuw invullen",
+        "BOT_FOOTER_1_C": "hier.",
+
+        "SCORE_TEXT": "Vertel ons alstublieft de voornaamste reden voor uw score van",
+
+        "LOYALTY_DRIVER_1_A": "Wat zijn de 3 belangrijkste redenen waarom u ons zou aanbevelen?",
+
+        "LOYALTY_DRIVER_2_A": "Wat zijn de 3 belangrijkste gebieden",
+        "LOYALTY_DRIVER_2_B": "wij moeten verbeteren",
+        "LOYALTY_DRIVER_2_C": "zodat de kans groter is dat u ons aanbeveelt?",
+
+        "HOW_TO_IMPROVE_1_A": "Hoe zouden we het nog beter kunnen doen? Welke verbeteringen wilt u dat wij doorvoeren?",
+        "HOW_TO_IMPROVE_2_A": "Hoe wilt u dat wij verbeteren?",
+
+        "BUTTON_SUBMIT_FEEDBACK": "Feedback verzenden",
+
+        "THANK_YOU_FEEDBACK": "Bedankt voor uw feedback"
+
+    }
+  }
+}

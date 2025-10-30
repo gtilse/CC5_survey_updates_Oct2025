@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+
+<html ng-app="klientKultureAdmin">
+
+  <head>
+
+    <!-- Meta tags -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Client Culture">
+    <meta name="author" content="Tabraiz">
+
+    <!-- Page title -->
+    <title>Client Culture - Admin Console</title>
+
+    <!-- Style sheet import -->
+    <link rel="stylesheet" href="bootstrap.css" />
+    <link rel="stylesheet" href="font-awesome.css" />
+    <link rel="stylesheet" href="ng-notify.css" />
+
+    <style>
+
+      .container {
+        display: none;
+      }
+
+      .container.visible {
+        display: block;
+      }
+
+      h1,h2,h3,h4 {
+        font-weight: 300;
+      }
+
+      table td {
+        white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+        white-space: -webkit-pre-wrap; /*Chrome & Safari */
+        white-space: -pre-wrap;      /* Opera 4-6 */
+        white-space: -o-pre-wrap;    /* Opera 7 */
+        white-space: pre-wrap;       /* css-3 */
+        word-wrap: break-word;       /* Internet Explorer 5.5+ */
+        word-break: break-all;
+        white-space: normal;
+      }
+
+      .panel-body {
+        max-height: 600px;
+        overflow-y: auto;
+      }
+
+
+    </style>
+  </head>
+
+  <body ng-controller="adminCtrl">
+
+    <!-- Initial Loader -->
+    <div id="imgInitialLoader" ng-show="isLoading" style="position:absolute;left:0;top:0;right:0;bottom:0;margin:auto;width:230px;height:60px;text-align:center">
+      <img src="../../assets/images/app-logo.png" width="230" height="35">
+      <p>Initialising Admin Console...</p>
+    </div>
+
+    <!-- Admin console -->
+    <div class="container" ng-class="{visible:!isLoading}">
+      <div style="margin: 25px 0px;">
+        <img src="../../assets/images/app-logo.png" width="230" height="35" style="float:left">
+        <h3 style="float:right;margin:0px">Admin Console</h3>
+        <div class="clearfix"></div>
+      </div>
+
+      <!-- Organisations -->
+      <div class="panel panel-info">
+        <div class="panel-heading">
+          <h3 class="panel-title">Organisations</h3>
+        </div>
+        <div class="panel-body">
+          <table class="table table-condensed table-responsive table-hover">
+            <thead>
+              <tr>
+                <th>Active</th>
+                <th>Trial</th>
+                <th>Name</th>
+                <th>Primary Contact</th>
+                <th>Email</th>
+                <th>Survey Email</th>
+                <th>Created On</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr ng-repeat="vendor in vendors" style="cursor:pointer" ng-click="editOrganisation(vendor)">
+                <td>{{vendor.active==1?'Yes':'No'}}</td>
+                <td>{{vendor.trial==1?'Yes':'No'}}</td>
+                <td>{{vendor.name}}</td>
+                <td>{{vendor.primaryContact}}</td>
+                <td>{{vendor.email}}</td>
+                <td>{{vendor.surveyEmailFrom}}</td>
+                <td>{{vendor.createdAt | timeStampFormat:'DD MMM YYYY'}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- App log -->
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Application Log (last 1000 entries only)</h3>
+        </div>
+        <div class="panel-body">
+          <table class="table table-condensed table-responsive">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>IP Address</th>
+                <th>Request</th>
+                <th>User Agent</th>
+
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr ng-repeat="appLog in appLogs" style="font-size: 85%">
+                <td style="width:15%">{{appLog.date | timeStampFormat:'DD/MM/YYYY hh:mm:ss'}}</td>
+                <td style="width:10%">{{appLog.ipAddress}}</td>
+                <td style="width:45%" class="wrapword">{{appLog.request}}</td>
+                <td style="width:30%">{{appLog.userAgent}}</td>
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- App log -->
+      <div class="panel panel-danger">
+        <div class="panel-heading">
+          <h3 class="panel-title">Application Errors (last 1000 entries only)</h3>
+        </div>
+        <div class="panel-body">
+          <table class="table table-condensed table-responsive">
+
+            <tbody>
+              <tr ng-repeat="exception in exceptions track by $index" style="font-size: 85%">
+                <td>{{exception}}</td>
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- Javascript -->
+    <script src="./jquery-2.1.4.js"></script>
+    <script src="./angular.js"></script>
+    <script src="./ui-bootstrap-tpls-2.3.0.js"></script>
+    <script src="./ng-notify.js"></script>
+    <script src="./moment.js"></script>
+    <script src="./app.js"></script>
+
+    <script type="text/javascript">
+    </script>
+
+  </body>
+
+</html>

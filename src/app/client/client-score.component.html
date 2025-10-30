@@ -1,0 +1,73 @@
+<!-- Loading component -->
+<app-loading
+  placeholder="{{ 'SCORE_HISTORY.FETCHING_DATA' | translate }}"
+  [hidden]="!appComponentStateService.isLoading"
+></app-loading>
+
+<div [hidden]="appComponentStateService.isLoading">
+  <!-- Heading -->
+  <h2>{{ dialogData.name }}</h2>
+  <span class="text-secondary">{{ dialogData.email }}</span>
+  <!-- Data table -->
+  <div class="mat-table">
+    <!-- Table header -->
+    <div class="mat-header-row">
+      <div class="mat-header-cell" flex="20">
+        {{ 'SCORE_HISTORY.SCORE' | translate }}
+      </div>
+      <div class="mat-header-cell" flex="50">
+        {{ 'SCORE_HISTORY.COMMENTS' | translate }}
+      </div>
+      <div class="mat-header-cell" flex="20">
+        {{ 'SCORE_HISTORY.RECEIVED_ON_DATE' | translate }}
+      </div>
+
+      <div class="mat-header-cell" flex="10">
+        
+      </div>
+
+    </div>
+
+    <ng-container *ngFor="let row of scores">
+
+      <!-- Data -->
+      <div class="mat-row" layout-align="start center">
+        <div class="mat-cell" flex="20">
+          <span
+            class="score-label"
+            [ngClass]="[
+              row.score >= 9 ? 'promoters' : '',
+              row.score > 6 && row.score < 9 ? 'neutrals' : '',
+              row.score <= 6 ? 'detractors' : ''
+            ]"
+            >{{ row.score }}</span
+          >
+        </div>
+        <div class="mat-cell" flex="50">
+          <span class="text-sm">{{ row.comments }}</span>
+        </div>
+  
+        <div class="mat-cell text-sm" flex="20">
+          <span class="text-sm">{{ row.receivedOnDate | utcToLocal }}</span>
+        </div>
+  
+        <div class="mat-cell text-sm" flex="10">
+          <button mat-icon-button color="warn" (click)="row.showDelete=true" [disabled]="row.showDelete"><mat-icon>cancel</mat-icon></button>
+        </div>
+      </div>
+
+      <!-- Record deletion row -->
+      <div class="record-delete-row" *ngIf="row.showDelete">
+        <div>
+          {{ 'SCORE_HISTORY.DELETE_SCORE_TEXT' | translate }}
+        </div>
+        <div>
+          <button mat-raised-button color="warn" [disabled]="isDeleting" (click)="deleteScore(row)">{{ 'SCORE_HISTORY.DELETE_SCORE_BUTTON_YES' | translate }}</button>&nbsp;&nbsp;
+          <button mat-raised-button (click)="row.showDelete=false" [disabled]="isDeleting">{{ 'SCORE_HISTORY.DELETE_SCORE_BUTTON_CANCEL' | translate }}</button>
+        </div>
+      </div>
+    </ng-container>
+
+    
+  </div>
+</div>

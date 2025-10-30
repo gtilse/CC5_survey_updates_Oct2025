@@ -1,0 +1,129 @@
+/*
+ *  Font styles classes
+ *  additionally css classes for material icons defined
+ */
+
+
+/* Text styles */
+.text-normal {
+  font-style: normal; }
+
+.text-center {
+  text-align: center; }
+
+.text-left {
+  text-align: left; }
+
+.text-right {
+  text-align: right; }
+
+.text-xs,
+.text-sm,
+.text-md,
+.text-lg {
+  text-rendering: optimizeLegibility; }
+
+.text-micro {
+  font-size: 10px;
+  font-weight: normal;
+  letter-spacing: 1px; }
+
+.text-xs {
+  font-size: 50%; }
+
+.text-sm {
+  font-size: 70%; }
+
+.text-md {
+  font-size: 80%; }
+
+.text-lg {
+  font-size: 110%; }
+
+.text-xl {
+  font-size: 120%; }
+
+.text-xxl {
+  font-size: 130%; }
+
+.text-super {
+  font-size: 60px; }
+
+.text-wrap {
+  white-space: normal; }
+
+.text-break {
+  word-break: break-word; }
+
+.text-upper {
+  text-transform: uppercase; }
+
+.text-lower {
+  text-transform: lowercase; }
+
+.text-caps {
+  text-transform: capitalize; }
+
+.text-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; }
+
+.text-nodecoration {
+  text-decoration: none; }
+
+
+.text-bold {
+  font-weight: 600;
+}
+
+.text-italic {
+  font-style: italic;
+}
+
+.text-light {
+  font-weight: 300;
+}
+
+/* Material design icons */
+.material-icons.md-18, .material-icons.mat-18 {
+  font-size: 18px;
+  height: 18px;
+  width: 18px; }
+
+.material-icons.md-24, .material-icons.mat-24 {
+  font-size: 24px;
+  height: 24px;
+  width: 24px; }
+
+.material-icons.md-36, .material-icons.mat-36 {
+  font-size: 36px;
+  height: 36px;
+  width: 36px; }
+
+.material-icons.md-48, .material-icons.mat-48 {
+  font-size: 48px;
+  height: 48px;
+  width: 48px; }
+
+.material-icons.md-64, .material-icons.mat-64 {
+  font-size: 64px;
+  height: 64px;
+  width: 64px; }
+
+.material-icons.md-72, .material-icons.mat-72 {
+  font-size: 72px;
+  height: 72px;
+  width: 72px; }
+
+.material-icons.md-dark, .material-icons.mat-dark {
+  color: rgba(0, 0, 0, 0.54); }
+
+.material-icons.md-inactive, .material-icons.mat-inactive {
+  color: rgba(0, 0, 0, 0.26); }
+
+.material-icons.md-light, .material-icons.mat-light {
+  color: white; }
+
+.material-icons.md-light.md-inactive, .material-icons.md-light.mat-inactive {
+  color: rgba(255, 255, 255, 0.3); }

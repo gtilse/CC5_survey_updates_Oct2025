@@ -1,0 +1,194 @@
+<!-- Loading component -->
+<app-loading
+  placeholder="{{ 'CLIENT_RESPONSE.VIEW_TITLE' | translate }}"
+  [hidden]="
+    !appComponentStateService.isLoading || appComponentStateService.hasError
+  "
+></app-loading>
+
+<!-- Error handler component -->
+<app-error-handler
+  [hidden]="!appComponentStateService.hasError"
+  (refresh)="loadData()"
+></app-error-handler>
+
+<div [hidden]="appComponentStateService.isLoading || appComponentStateService.hasError">
+
+  <!-- Heading and filter -->
+  <div class="card-header">
+    <!-- Icon + header text -->
+    <div fxLayout="row" fxLayoutAlign="start center" class="text-muted2">
+      <mat-icon class="md-36" fxFlex="none">message</mat-icon>
+      <span fxFlex="none" fxFlexOffset="16px" class="mat-headline">{{
+        'CLIENT_RESPONSE.HEADING' | translate
+      }}</span>
+    </div>
+
+    <!-- Title -->
+    <div
+      fxLayout="row"
+      fxLayoutAlign="start center"
+      class="dark-theme push-top-xxl push-bottom"
+    >
+      <span
+        class="mat-body-strong"
+        fxFlex="none"
+        matTooltip="{{ 'CLIENT_RESPONSE.TOOLTIP_SUB_HEADING' | translate }}"
+        >{{ 'CLIENT_RESPONSE.SUB_HEADING' | translate }}</span
+      >
+    </div>
+
+    <mat-divider class="divider"></mat-divider>
+
+    <!-- Filter -->
+    <div
+      fxLayout="column"
+      fxLayoutGap="16px"
+      class="push-top-xl filter-box">
+
+      <div fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="start center">
+        <!-- Clients -->
+        <mat-form-field fxFlex floatLabel="never">
+          <mat-select
+            placeholder="{{ 'GENERAL.FILTER_ALL_CLIENTS' | translate }}"
+            [(ngModel)]="filterCriteria.clientFilter"
+          >
+            <mat-option
+              class="clear-selection"
+              [value]="''"
+              [hidden]="!filterCriteria.clientFilter"
+              >{{ 'GENERAL.FILTER_ALL_CLIENTS' | translate }}</mat-option
+            >
+            <mat-optgroup *ngFor="let group of clientListKey" [label]="group">
+              <mat-option
+                *ngFor="let val of clientListValue[group]"
+                [value]="group + '_' + val"
+              >
+                {{ val }}
+              </mat-option>
+            </mat-optgroup>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Score types -->
+        <mat-form-field floatLabel="never" fxFlex>
+          <mat-select
+            placeholder="{{ 'GENERAL.FILTER_ALL_SCORES' | translate }}"
+            [(ngModel)]="filterCriteria.scoreType"
+          >
+            <mat-option class="clear-selection">{{
+              'GENERAL.FILTER_ALL_SCORES' | translate
+            }}</mat-option>
+            <mat-option
+              *ngFor="let scoreType of scoreTypes"
+              [value]="scoreType.VALUE"
+            >
+              {{ scoreType.DESC }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Date -->
+        <mat-form-field floatLabel="never" fxFlex>
+          <mat-select
+            placeholder="{{ 'GENERAL.FILTER_ALL_DATES' | translate }}"
+            [(ngModel)]="filterCriteria.dateRange"
+          >
+            <mat-option class="clear-selection">{{
+              'GENERAL.FILTER_ALL_DATES' | translate
+            }}</mat-option>
+            <mat-option
+              *ngFor="let dateRange of dateRanges"
+              [value]="dateRange.VALUE"
+            >
+              {{ dateRange.DESC }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Staff -->
+        <mat-form-field fxFlex floatLabel="never">
+          <mat-select
+            placeholder="{{ 'GENERAL.FILTER_ALL_STAFF' | translate }}"
+            [(ngModel)]="filterCriteria.staffFilter"
+          >
+            <mat-option
+              class="clear-selection"
+              [value]="''"
+              [hidden]="!filterCriteria"
+              >{{ 'GENERAL.FILTER_ALL_STAFF' | translate }}</mat-option
+            >
+            <mat-option
+              *ngFor="let staff of staffList"
+              [value]="staff.objectId"
+            >
+              {{ staff.fullName }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Search box -->
+        <mat-form-field
+            hideRequiredMarker="true"
+            floatLabel="never"
+            appearance="fill"
+            class="search-box dark-theme"
+            fxFlex
+          >
+            <mat-icon matPrefix color="primary">search</mat-icon>
+            <input
+              matInput
+              placeholder="{{ 'CLIENT_RESPONSE.SEARCH' | translate }}"
+              [(ngModel)]="filterCriteria.searchString"/>
+        </mat-form-field>
+        
+        <!-- Filter button -->
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="loadData()"
+          [disabled]="isFetching"
+          fxFlex="none">
+          {{ 'GENERAL.FILTER' | translate | uppercase }}
+        </button>
+        
+      </div>
+
+      
+    </div>
+  </div>
+
+  <!-- Data -->
+  <div class="data-container">
+    <div class="data-table-container">
+      <div
+        class="push-bottom-md"
+        fxLayout="row"
+        fxLayoutAlign="space-between center"
+      >
+        
+        <div
+          class="mat-body"
+          [hidden]="allScores.length === 0"
+        >
+          {{
+            'GENERAL.RECORD_DISPLAY_COUNT'
+              | translate: { count: allScores.length, totalCount: count }
+          }}
+          &nbsp;&nbsp;
+          <button mat-button color="primary" (click)="exportToCsv()"><mat-icon>file_download</mat-icon>{{ 'GENERAL.EXPORT_CSV' | translate }}</button>
+        </div>
+      </div>
+      <!-- Data table -->
+      <app-client-response
+        [allScores]="allScores"
+        [staffList]="staffList"
+      ></app-client-response>
+
+      <div class="mat-body-strong load-more push-top">
+        <button type="button" mat-stroked-button [disabled]="isFetching" (click)="loadData(false)" [hidden]="!hasMoreRecords">Load more responses</button>
+      </div>
+    </div>
+  </div>
+</div>
+

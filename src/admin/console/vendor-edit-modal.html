@@ -1,0 +1,37 @@
+<div class="modal-header">
+  <h4 class="modal-title">Edit Organisation</h4>
+  <h3 class="modal-title sub-title">{{vendorModel.name}}</h3>
+
+</div>
+
+<div class="modal-body">
+  <form name="vendorModel._form" role="form" novalidate>
+    <!-- Active/Trial -->
+    <div class="form-group">
+      <label class="checkbox-inline">
+        <input type="checkbox" ng-model="vendorModel.active" ng-true-value="1" ng-false-value="0">
+        Active
+      </label>
+
+      <label class="checkbox-inline">
+        <input type="checkbox" ng-model="vendorModel.trial" ng-true-value="1" ng-false-value="0">
+        Trial Account
+      </label>
+
+    </div>
+
+    <!-- Survey email from -->
+    <div class="form-group">
+      <label for="m_txtSurveyEmailFrom">Survey Email From</label>
+      <input class="form-control input-sm" name="m_txtSurveyEmailFrom" id="m_txtSurveyEmailFrom" ng-model="vendorModel.surveyEmailFrom" type="email" required/>
+      <p ng-show="vendorModel._form.m_txtSurveyEmailFrom.$invalid && vendorModel._formSubmitted" class="text-danger">Enter a valid Email address</p>
+    </div>
+  </form>
+
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-default" type="button" ng-click="cancel($event)" ng-disabled="isBusy">Cancel</button>
+    <button class="btn btn-primary" type="button" ng-click="saveRecord($event)" ng-disabled="isBusy">Save</button>
+
+</div>

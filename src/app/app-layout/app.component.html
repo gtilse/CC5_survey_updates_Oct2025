@@ -1,0 +1,165 @@
+<!-- App toolbar -->
+<mat-toolbar class="app-toolbar" color="primary">
+    <!-- Menu toggle button -->
+    <button mat-icon-button (click)="toggleSidenav()">
+        <mat-icon>menu</mat-icon>
+    </button>
+
+    <!-- App logo -->
+    <img class="logo" [src]="appLogo" />
+
+    <!-- Spacer -->
+    <div style="flex: 1 1 auto;"></div>
+
+    <!-- Right action buttons -->
+    <div fxLayout="row" fxLayoutAlign="start center">
+        <!-- Company name -->
+        <div class="mat-body" fxHide.xs>{{ loggedUser.companyName | uppercase }}</div>
+        <!-- App notifications and action items -->
+        <button fxFlexOffset="10px" fxHide.xs mat-icon-button (click)="openNotificationsModal()">
+            <mat-icon matTooltip="{{ 'GENERAL.NOTIFICATIONS' | translate }}">notifications</mat-icon>
+        </button>
+        <button fxHide.xs mat-icon-button [matBadge]="appStateService.pendingActionItemsCount" matBadgeSize="small"
+            matBadgeColor="accent" [matBadgeHidden]="appStateService.pendingActionItemsCount === 0"
+            (click)="openActionItems()">
+            <mat-icon matTooltip="{{ 'GENERAL.ACTION_ITEMS' | translate }}">list</mat-icon>
+        </button>
+        <!-- Profile picture -->
+        <div class="profile-photo" [matMenuTriggerFor]="profileMenu">
+            {{ loggedUser.firstName.slice(0, 1).toUpperCase() }}
+        </div>
+        <!-- Profile picture dropdown menu -->
+        <mat-menu #profileMenu="matMenu">
+            <div class="pad text-secondary text-md">
+                <span>{{ loggedUser.firstName + ' ' + loggedUser.lastName }}</span><br />
+                <span>{{ loggedUser.email }}</span>
+            </div>
+
+            <button mat-menu-item routerLink="/app/profile">
+                <mat-icon>person</mat-icon>
+                <span>{{ 'GENERAL.MY_PROFILE' | translate }}</span>
+            </button>
+            <button mat-menu-item routerLink="/auth/login">
+                <mat-icon>exit_to_app</mat-icon>
+                <span>{{ 'GENERAL.SIGN_OUT' | translate }}</span>
+            </button>
+        </mat-menu>
+    </div>
+</mat-toolbar>
+
+<mat-sidenav-container class="app-nav-container" autosize (backdropClick)="toggleSidenav()">
+    <!-- Side Nav & Content Container -->
+    <mat-sidenav [mode]="mobileQuery.matches && sidenavExpanded ? 'over' : 'side'" opened="true" disableClose="true"
+        #sidenav class="left-sidenav">
+        <!-- Company name -->
+        <div class="company-name" *ngIf="mobileQuery.matches && sidenavExpanded">
+            {{ loggedUser.companyName | uppercase }}
+        </div>
+
+        <!-- Menu Items -->
+        <mat-nav-list [ngStyle]="{ 'min-width': sidenavExpanded ? '200px' : 'auto' }">
+            <!-- Loop through menu items from configuration file and display relevant menu items -->
+            <div *ngFor="let navItem of navItems" routerLinkActive="router-link-active">
+                <!-- Link -->
+                <a *ngIf="
+            navItem.route &&
+            (navItem.accessRights || loggedUser.accessLevel == 1)
+          " mat-list-item (click)="menuItemClick()" [routerLink]="[navItem.route]">
+                    <mat-icon [matTooltip]="sidenavExpanded ? '' : navItem.text" *ngIf="navItem.accessRights == 1"
+                        [ngClass]="{ 'push-right-lg': sidenavExpanded }">{{ navItem.icon }}</mat-icon><span
+                        *ngIf="sidenavExpanded" [ngClass]="{ 'admin-menu-item': navItem.accessRights === 0 }">{{
+                        navItem.text }}</span>
+                </a>
+                <!-- Heading -->
+                <div *ngIf="
+            sidenavExpanded &&
+            navItem.type == 'HEADING' &&
+            (navItem.accessRights || loggedUser.accessLevel == 1)
+          " class="push-left push-top push-bottom">
+                    {{ navItem.text }}&nbsp;&nbsp;
+                    <mat-icon style="vertical-align: bottom;">settings</mat-icon>
+                </div>
+                <!-- Separator -->
+                <mat-divider class="divider" *ngIf="
+            sidenavExpanded &&
+            navItem.type === 'SEPARATOR' &&
+            (navItem.accessRights || loggedUser.accessLevel == 1)
+          "></mat-divider>
+            </div>
+        </mat-nav-list>
+    </mat-sidenav>
+
+    <!-- Main Content/Components in AppModule are displayed here based on router outlet -->
+    <mat-sidenav-content class="app-content">
+        <router-outlet></router-outlet>
+    </mat-sidenav-content>
+
+    <!-- Right side nav -->
+    <mat-sidenav [mode]="rightSidenavExpanded ? 'over' : 'side'" position="end" opened="true" disableClose="true"
+        #rightSideNav class="right-sidenav" style="z-index: 1000;" fxHide fxShow.gt-md>
+        <div fxLayout="row" class="pad-top" [ngStyle]="{
+        width: rightSidenavExpanded ? '350px' : 'auto',
+        height: '100%'
+      }">
+            <!-- Icon buttons -->
+            <div fxFlex="none" fxLayout="column" fxLayoutAlign="start center" class="nav-buttons"
+                style="width: 60px; border-right: 1px solid #eee;">
+                <button fxFlex="none" mat-icon-button matTooltip="{{ 'GENERAL.HELP2' | translate }}"
+                    (click)="toggleRightSidenav('HELP')">
+                    <mat-icon [ngClass]="{
+              selected: rightSidenavExpanded && rightSidenavSection === 'HELP'
+            }">help_outline</mat-icon>
+                </button>
+                <button fxFlex="none" mat-icon-button fxFlexOffset="16px"
+                    matTooltip="{{ 'GENERAL.FEEDBACK' | translate }}" (click)="toggleRightSidenav('FEEDBACK')">
+                    <mat-icon [ngClass]="{
+              selected:
+                rightSidenavExpanded && rightSidenavSection === 'FEEDBACK'
+            }">mail_outline</mat-icon>
+                </button>
+            </div>
+
+            <!-- Help section -->
+            <div fxFlex="grow" class="content-area help"
+                [hidden]="!rightSidenavExpanded || rightSidenavSection !== 'HELP'" [innerHtml]="helpText"></div>
+
+            <!-- Feedback section -->
+            <div fxFlex="grow" class="content-area"
+                [hidden]="!rightSidenavExpanded || rightSidenavSection !== 'FEEDBACK'">
+                <div class="text-secondary">{{ 'FEEDBACK.HEADING' | translate }}</div>
+                <form fxLayout="column" novalidate>
+                    <mat-form-field fxFlex fxFlexOffset="16px">
+                        <mat-select [(value)]="appFeedbackSelectedOption" placeholder="{{
+                'FEEDBACK.FEEDBACK_TYPE_PLACEHOLDER' | translate
+              }}">
+                            <mat-option *ngFor="let option of appFeedbackOptions" [value]="option">
+                                {{ option }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" fxFlex fxFlexOffset="16px">
+                        <textarea #feedbackText matInput maxlength="500" name="appFeedbackText" placeholder="{{
+                'FEEDBACK.FEEDBACK_TEXT_PLACEHOLDER' | translate
+              }}" rows="6" [(ngModel)]="appFeedbackText"></textarea>
+                        <mat-hint align="end">{{ feedbackText.value?.length || 0 }}/500</mat-hint>
+                    </mat-form-field>
+                    <div fxLayout="row" fxFlexOffset="32px">
+                        <div fxFlex></div>
+                        <button fxFlex="none" mat-raised-button color="primary" (click)="submitAppFeedback()"
+                            [disabled]="
+                appFeedbackSubmitting ||
+                !(appFeedbackSelectedOption && appFeedbackText)
+              ">
+                            {{ 'FEEDBACK.SUBMIT' | translate | uppercase }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </mat-sidenav>
+
+</mat-sidenav-container>
+
+<!-- Application Footer -->
+<app-footer></app-footer>
+

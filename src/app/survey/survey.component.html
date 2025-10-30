@@ -1,0 +1,232 @@
+<!-- Loading component -->
+<app-loading placeholder="{{'SURVEY.SURVEY' | translate}}" [hidden]="!appComponentStateService.isLoading || appComponentStateService.hasError"></app-loading>
+<!-- Error handler component -->
+<app-error-handler [hidden]="!appComponentStateService.hasError" (refresh)="loadData()"></app-error-handler>
+
+<!-- Survey listing container -->
+<!-- Sidenav container -->
+<mat-sidenav-container class="data-container" [hidden]="
+    appComponentStateService.isLoading || appComponentStateService.hasError
+  " (backdropClick)="recordSaveCancelled($event)">
+
+    <!-- Side nav editor -->
+    <mat-sidenav mode="over" position="end" [opened]="editorOpened" fixedInViewport="true" fixedTopGap="52"
+        disableClose="true">
+        <app-survey-edit 
+            [staffSelectList]="staffSelectList"
+            [dropLists]="dropLists"
+            (recordSaved)="recordSaved($event)"
+            (recordSaveCancelled)="recordSaveCancelled($event)">
+        </app-survey-edit>
+    </mat-sidenav>
+
+    <!-- Main content -->
+    <mat-sidenav-content>
+        <div class="component-container" fxLayout="column" fxLayoutGap="32px">
+            
+            <div class="card-header" fxFlex="none">
+                <!-- Icon + header text -->
+                <div fxLayout="row" fxLayoutAlign="start center" class="text-muted2">
+                    <!-- <mat-icon class="md-36" fxFlex="none">people</mat-icon> -->
+                    <span fxFlex="none" fxFlexOffset="16px" class="mat-headline">{{
+                        'SURVEY.HEADING' | translate
+                        }}</span>
+                </div>
+            
+                <!-- Title -->
+                <div fxLayout="row" fxLayoutAlign="start flex-end" class="dark-theme push-top-xxl push-bottom">
+                    <span class="mat-body-strong" fxFlex="none">{{
+                        'SURVEY.SUB_HEADING' | translate
+                        }}</span>
+                    <span fxFlex></span>
+                    <button type="button" fxFlex="none" mat-flat-button color="primary" (click)="addRecord()">
+                        <mat-icon>add</mat-icon>&nbsp;{{
+                        'GENERAL.ADD' | translate | uppercase
+                        }}
+                    </button>
+                    
+                </div>
+            
+                <mat-divider class="divider"></mat-divider>
+            
+                <!-- Filter -->
+                <div class="push-top-xl filter-box">
+                    
+                    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="16px">
+                        <!-- Search text -->
+                        <mat-form-field hideRequiredMarker="true" floatLabel="never" fxFlex>
+                            <input matInput placeholder="{{ 'SURVEY.SEARCH' | translate }}" [(ngModel)]="filterCriteria.filterString" />
+                        </mat-form-field>
+
+                        <!-- Filter button -->
+                        <button mat-raised-button color="primary" fxFlex="none" (click)="filter()">
+                            {{ 'GENERAL.FILTER' | translate | uppercase }}
+                        </button>
+                    </div>
+                
+                    <!-- Record count -->
+                    <div class="record-count">{{ "GENERAL.RECORD_DISPLAY_COUNT" | translate:{ count: surveys.length, totalCount: _surveys.length } }}</div>
+                </div>
+            </div>
+            
+            <!-- Data table -->
+            <mat-table
+                [dataSource]="surveys"
+                matSort
+                (matSortChange)="sortData($event)"
+                matSortActive="information"
+                matSortDirection="desc"
+                matSortDisableClear
+                fxFlex="grow" 
+                class="mat-table-container">
+
+                <!-- Information -->
+                <ng-container matColumnDef="information">
+                    <mat-header-cell mat-sort-header *matHeaderCellDef fxFlex="10"></mat-header-cell>
+                    <mat-cell *matCellDef="let row" fxFlex="10"><mat-icon class="tc-grey-500" matTooltipPosition="right" matTooltip="{{'GENERAL.CREATED_AT' | translate}}:&nbsp;{{row.createdAt | utcToLocal}}&#10;{{'GENERAL.UPDATED_AT' | translate}}:&nbsp;{{row.updatedAt | utcToLocal}}">info_outline</mat-icon></mat-cell>
+                </ng-container>
+
+                <!-- Description -->
+                <ng-container matColumnDef="description">
+                    <mat-header-cell mat-sort-header *matHeaderCellDef>{{'SURVEY.DESCRIPTION' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <div fxLayout="column" fxLayoutGap="8px">
+                            <div>{{ row.description }}</div>
+                            <div [ngSwitch]="row.type">
+                                <span class="survey-type" *ngSwitchCase="0">
+                                    {{'SURVEY.CLIENT_SURVEY' | translate}}
+                                </span>
+                                <span class="survey-type" *ngSwitchCase="1">
+                                    {{'SURVEY.STAFF_SURVEY' | translate}}
+                                </span>
+
+                                <span class="survey-type" *ngSwitchCase="2">
+                                    {{'SURVEY.PULSE_SURVEY' | translate}}
+                                </span>
+
+                                <span class="survey-type" *ngSwitchCase="3">
+                                    {{'SURVEY.MANAGER_SURVEY' | translate}}
+                                </span>
+
+                                <span class="survey-type" *ngSwitchCase="4">
+                                    {{'SURVEY.TRIAGE_SURVEY' | translate}}
+                                </span>
+                            </div>
+                        </div>
+                        
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Options -->
+                <ng-container matColumnDef="options">
+                    <mat-header-cell *matHeaderCellDef>{{'SURVEY.OPTIONS' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <!-- Company logo -->
+                        <div fxLayout="column" fxLayoutGap="2px">
+                            <div *ngIf="row.addLogo" fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="start">
+                                <mat-icon class="md-inactive">check_circle</mat-icon>
+                                <span>{{"SURVEY.ADD_LOGO" | translate }}</span>
+                            </div>
+
+                            <!-- Reminder days -->
+                            <div fxLayout="column" fxLayoutGap="12px">
+                                <div *ngIf="row.reminderDays" fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="start">
+                                    <mat-icon class="md-inactive">check_circle</mat-icon>
+                                    <span>{{"SURVEY.SEND_REMINDER_AFTER_DAYS" | translate }}: <strong>{{row.reminderDays}}</strong> days</span>
+                                </div>      
+                            </div>
+
+                            <!-- Limit to contacts -->
+                            <div fxLayout="column" fxLayoutGap="12px">
+                                <div *ngIf="row.includeDRLS && row.includeDRLS.length" fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="start">
+                                    <mat-icon class="md-inactive">check_circle</mat-icon>
+                                    <span>{{"SURVEY.LIMIT_CLIENTS_CONTACTS" | translate }}: <strong>{{ getClientContactsListForSurvey(row) }}</strong></span>
+                                </div>      
+                            </div>
+
+                            <!-- Limit to client valuations -->
+                            <div fxLayout="column" fxLayoutGap="12px">
+                                <div *ngIf="row.includeCategories.length" fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="start">
+                                    <mat-icon class="md-inactive">check_circle</mat-icon>
+                                    <span>{{"SURVEY.LIMIT_CLIENT_VALUATIONS" | translate }}: <strong>{{ row.includeCategories.join(", ") }}</strong></span>
+                                </div>      
+                            </div>
+
+                            <!-- Exclude employees from survey -->
+                            <div fxLayout="column" fxLayoutGap="12px">
+                                <div *ngIf="row.excludeEmployees.length" fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="start">
+                                    <mat-icon class="md-inactive">check_circle</mat-icon>
+                                    <span>{{"SURVEY.EXCLUDE_EMPLOYEES" | translate }}: <strong>{{ getStaffExclusionListForSurvey(row) }}</strong></span>
+                                </div>      
+                            </div>
+
+                        </div>
+
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Status -->
+                <ng-container matColumnDef="status">
+                    <mat-header-cell mat-sort-header *matHeaderCellDef>{{'SURVEY.STATUS' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <div *ngIf="!row.status" class="text-muted">
+                            {{'SURVEY.NOT_SENT' | translate}}
+                        </div>
+
+                        <div *ngIf="row.status" fxLayout="column" fxLayoutGap="8px">
+                            <div fxLayout="row" fxLayoutGep="8px" fxLayoutAlign="start center">
+                                <span>{{"SURVEY.LAST_SENT_ON" | translate }}:
+                                    <strong>{{row.status.lastSentOn | utcToLocal}}</strong>
+                                </span>
+                            </div>
+                        </div>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Actions -->
+                <ng-container matColumnDef="action">
+                    <mat-header-cell *matHeaderCellDef>{{'SURVEY.ACTIONS' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+
+                        <!-- Menu -->
+                        <mat-menu #surveyMenu="matMenu">
+                            <button mat-menu-item (click)="previewSurvey(row)">{{'SURVEY.PREVIEW' | translate}}</button>
+                            <mat-divider></mat-divider>
+                            <button mat-menu-item (click)="queueSurvey(row)">{{'SURVEY.SEND' | translate}}</button>
+                            <button mat-menu-item (click)="queueSurvey(row, true)">{{'SURVEY.CREATE_PURL' | translate}}</button>
+                            <mat-divider></mat-divider>
+                            <button mat-menu-item (click)="viewQueue(row)">{{'SURVEY.VIEW_QUEUE' | translate}}</button>
+                            <mat-divider></mat-divider>
+                            <button mat-menu-item (click)="viewSurveyStatus(row)">{{'SURVEY.STATUS' | translate}}</button>
+                            <button mat-menu-item (click)="viewList(row)">{{'SURVEY.SHOW_LIST' | translate}}</button>
+                
+                        </mat-menu>
+                
+                        <button color="primary" mat-icon-button (click)="$event.stopPropagation()" [matMenuTriggerFor]="surveyMenu" [hidden]="!row.active">
+                            <mat-icon>menu</mat-icon>
+                        </button>
+
+                        <!-- Edit -->
+                        <button matTooltip="{{'GENERAL.EDIT' | translate}}" matTooltipPosition="above" color="accent" mat-icon-button (click)="$event.stopPropagation();editRecord(row)">
+                            <mat-icon>edit_note</mat-icon>
+                        </button>
+
+                        <!-- Delete -->
+                        <button matTooltip="{{'GENERAL.DELETE' | translate}}" matTooltipPosition="above" color="warn" mat-icon-button (click)="$event.stopPropagation();deleteRecord(row)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                        
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Header and Row Declarations -->
+                <mat-header-row *matHeaderRowDef="displayedColumns;"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+
+            </mat-table>
+        </div>
+    </mat-sidenav-content>
+
+</mat-sidenav-container>
+
+

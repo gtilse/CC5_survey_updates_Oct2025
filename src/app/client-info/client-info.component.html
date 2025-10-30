@@ -1,0 +1,577 @@
+<div
+  class="loading-overlay"
+  [hidden]="!appComponentStateService.isLoading"
+></div>
+
+<mat-progress-bar
+  mode="indeterminate"
+  color="primary"
+  style="position: absolute; top: 0; left: 0; z-index: 20;"
+  [hidden]="!appComponentStateService.isLoading"
+></mat-progress-bar>
+
+<mat-tab-group animationDuration="0ms" [selectedIndex]="tab">
+  <mat-tab label="{{ 'CLIENT_INFO.ABOUT_TAB' | translate }}">
+    <div style="height: 550px; overflow-y: auto;">
+      <!-- Active/subscribed -->
+      <div fxLayout="row" class="push-top">
+        <div fxFlex="grow" fxLayout="row" fxLayoutAlign="start center">
+          <mat-icon
+            fxFlex="none"
+            [color]="clientInfo.active ? 'primary' : 'accent'"
+            >{{ clientInfo.active ? 'check' : 'clear' }}</mat-icon
+          >
+          <div fxFlex="none" fxFlexOffset="8px" class="text-muted">
+            {{ 'CLIENT_INFO.ACTIVE' | translate }}
+          </div>
+          <mat-icon
+            fxFlex="none"
+            fxFlexOffset="32px"
+            [color]="clientInfo.sendSurveyEmail ? 'primary' : 'accent'"
+            >{{ clientInfo.sendSurveyEmail ? 'check' : 'clear' }}</mat-icon
+          >
+          <div fxFlex="none" fxFlexOffset="8px" class="text-muted">
+            {{ 'CLIENT_INFO.SEND_SURVEY_EMAIL' | translate }}
+          </div>
+          <mat-icon
+            fxFlex="none"
+            fxFlexOffset="32px"
+            [color]="
+              clientInfo.recommendedByExistingClient ? 'primary' : 'accent'
+            "
+            >{{
+              clientInfo.recommendedByExistingClient ? 'check' : 'clear'
+            }}</mat-icon
+          >
+          <div fxFlex="none" fxFlexOffset="8px" class="text-muted">
+            {{ 'CLIENT_INFO.RECOMMENDED_BY_EXISTING_CLIENT' | translate }}
+          </div>
+          <mat-icon
+            fxFlex="none"
+            fxFlexOffset="32px"
+            [color]="clientInfo.referredBefore ? 'primary' : 'accent'"
+            >{{ clientInfo.referredBefore ? 'check' : 'clear' }}</mat-icon
+          >
+          <div fxFlex="none" fxFlexOffset="8px" class="text-muted">
+            {{ 'CLIENT_INFO.REFERRED_BEFORE' | translate }}
+          </div>
+        </div>
+
+        <div
+          fxFlex="none"
+          class="text-upper text-bold"
+          [appFormattedText]="clientInfo.category"
+          appFormattedTextPlaceholder="{{
+            'CLIENT_INFO.NOT_GIVEN' | translate
+          }}"
+        ></div>
+      </div>
+
+      <div fxLayout="row" class="push-top-md">
+        <div fxLayout="column" fxFlex="50">
+          <!-- Primary details -->
+          <div class="mat-body-strong push-bottom-sm">
+            {{ 'CLIENT_INFO.CLIENT_DETAILS_HEADING' | translate }}
+          </div>
+          <mat-divider></mat-divider>
+
+          <div fxLayout="row" fxFlexOffset="16px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'CLIENT_INFO.CLIENT_CONTACT' | translate }}
+            </div>
+            <div fxFlex="70" class="text-bold">{{ clientInfo.drlName }}</div>
+          </div>
+
+          <div fxLayout="row" fxFlexOffset="8px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'CLIENT_INFO.2ND_CONTACT' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              [appFormattedText]="clientInfo.secondaryName"
+              appFormattedTextPlaceholder="{{
+                'CLIENT_INFO.NOT_GIVEN' | translate
+              }}"
+            ></div>
+          </div>
+
+          <div fxLayout="row" fxFlexOffset="8px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'CLIENT_INFO.3RD_CONTACT' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              [appFormattedText]="clientInfo.tertiaryName"
+              appFormattedTextPlaceholder="{{
+                'CLIENT_INFO.NOT_GIVEN' | translate
+              }}"
+            ></div>
+          </div>
+
+          <div fxLayout="row" fxFlexOffset="8px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'CLIENT_INFO.CODE' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              [appFormattedText]="clientInfo.code"
+              appFormattedTextPlaceholder="{{
+                'CLIENT_INFO.NOT_GIVEN' | translate
+              }}"
+            ></div>
+          </div>
+          <div fxLayout="row" fxFlexOffset="8px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'CLIENT_INFO.YEAR_OF_BIRTH' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              [appFormattedText]="clientInfo.yearOfBirth"
+              appFormattedTextPlaceholder="{{
+                'CLIENT_INFO.NOT_GIVEN' | translate
+              }}"
+            ></div>
+          </div>
+          <div fxLayout="row" fxFlexOffset="8px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'CLIENT_INFO.CLIENT_SINCE_YEAR' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              [appFormattedText]="clientInfo.clientSinceYear"
+              appFormattedTextPlaceholder="{{
+                'CLIENT_INFO.NOT_GIVEN' | translate
+              }}"
+            ></div>
+          </div>
+
+          <div class="push-top"></div>
+          <mat-divider></mat-divider>
+          <div fxLayout="row" fxFlexOffset="16px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'CLIENT_INFO.GROUP' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              [appFormattedText]="clientInfo.clientGroup"
+              appFormattedTextPlaceholder="{{
+                'CLIENT_INFO.NOT_GIVEN' | translate
+              }}"
+            ></div>
+          </div>
+          <div fxLayout="row" fxFlexOffset="8px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'CLIENT_INFO.ACCOUNT_SIZE' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              [appFormattedText]="clientInfo.accountSize"
+              appFormattedTextPlaceholder="{{
+                'CLIENT_INFO.NOT_GIVEN' | translate
+              }}"
+            ></div>
+          </div>
+          <div fxLayout="row" fxFlexOffset="8px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'CLIENT_INFO.OCCUPATION' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              [appFormattedText]="clientInfo.occupation"
+              appFormattedTextPlaceholder="{{
+                'CLIENT_INFO.NOT_GIVEN' | translate
+              }}"
+            ></div>
+          </div>
+
+          <div fxLayout="row" fxFlexOffset="32px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'CLIENT_INFO.ORGANISATION' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              [appFormattedText]="clientInfo.organisation"
+              appFormattedTextPlaceholder="{{
+                'CLIENT_INFO.NOT_GIVEN' | translate
+              }}"
+            ></div>
+          </div>
+          <div fxLayout="row" fxFlexOffset="8px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'CLIENT_INFO.INDUSTRY' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              [appFormattedText]="clientInfo.industry"
+              appFormattedTextPlaceholder="{{
+                'CLIENT_INFO.NOT_GIVEN' | translate
+              }}"
+            ></div>
+          </div>
+          <div fxLayout="row" fxFlexOffset="8px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'CLIENT_INFO.COMPANY_SIZE' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              [appFormattedText]="clientInfo.companySize"
+              appFormattedTextPlaceholder="{{
+                'CLIENT_INFO.NOT_GIVEN' | translate
+              }}"
+            ></div>
+          </div>
+          <div fxLayout="row" fxFlexOffset="8px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'CLIENT_INFO.JOB_TITLE' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              [appFormattedText]="clientInfo.title"
+              appFormattedTextPlaceholder="{{
+                'CLIENT_INFO.NOT_GIVEN' | translate
+              }}"
+            ></div>
+          </div>
+        </div>
+        <div fxLayout="column" fxFlex="50" fxFlexOffset="64px">
+          <!-- Contact details -->
+          <div class="mat-body-strong push-bottom-sm">
+            {{ 'CLIENT_INFO.CONTACT_DETAILS_HEADING' | translate }}
+          </div>
+          <mat-divider></mat-divider>
+          <div fxLayout="row" fxFlexOffset="16px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'CLIENT_INFO.EMAIL' | translate }}
+            </div>
+            <div fxFlex="70" class="text-bold">{{ clientInfo.email }}</div>
+          </div>
+          <div fxLayout="row" fxFlexOffset="8px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'CLIENT_INFO.PHONE' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              class="text-bold"
+              [appFormattedText]="clientInfo.phone"
+              appFormattedTextPlaceholder="{{
+                'CLIENT_INFO.NOT_GIVEN' | translate
+              }}"
+            ></div>
+          </div>
+          <div fxLayout="row" fxFlexOffset="8px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'CLIENT_INFO.ADDRESS' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              [appFormattedText]="clientInfo.address"
+              appFormattedTextPlaceholder="{{
+                'CLIENT_INFO.NOT_GIVEN' | translate
+              }}"
+            ></div>
+          </div>
+          <!-- <div fxFlexOffset="16px"></div>
+          <mat-divider></mat-divider>
+          <div class="text-bold" fxFlexOffset="16px">
+            {{ 'CLIENT_INFO.SECONDARY_CONTACT_HEADING' | translate }}
+          </div>
+          <div fxLayout="row" fxFlexOffset="16px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'CLIENT_INFO.NAME' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              [appFormattedText]="clientInfo.secondaryName"
+              appFormattedTextPlaceholder="{{
+                'CLIENT_INFO.NOT_GIVEN' | translate
+              }}"
+            ></div>
+          </div>
+          <div fxLayout="row" fxFlexOffset="8px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'CLIENT_INFO.EMAIL' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              [appFormattedText]="clientInfo.secondaryEmail"
+              appFormattedTextPlaceholder="{{
+                'CLIENT_INFO.NOT_GIVEN' | translate
+              }}"
+            ></div>
+          </div>
+          <div fxLayout="row" fxFlexOffset="8px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'CLIENT_INFO.PHONE' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              [appFormattedText]="clientInfo.secondaryPhone"
+              appFormattedTextPlaceholder="{{
+                'CLIENT_INFO.NOT_GIVEN' | translate
+              }}"
+            ></div>
+          </div>
+          <div fxFlexOffset="16px"></div>
+          <mat-divider></mat-divider>
+          <div fxFlexOffset="16px" class="text-bold">
+            {{ 'CLIENT_INFO.TERTIARY_CONTACT_HEADING' | translate }}
+          </div>
+          <div fxLayout="row" fxFlexOffset="16px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'CLIENT_INFO.NAME' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              [appFormattedText]="clientInfo.tertiaryName"
+              appFormattedTextPlaceholder="{{
+                'CLIENT_INFO.NOT_GIVEN' | translate
+              }}"
+            ></div>
+          </div>
+          <div fxLayout="row" fxFlexOffset="8px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'CLIENT_INFO.EMAIL' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              [appFormattedText]="clientInfo.tertiaryEmail"
+              appFormattedTextPlaceholder="{{
+                'CLIENT_INFO.NOT_GIVEN' | translate
+              }}"
+            ></div>
+          </div>
+          <div fxLayout="row" fxFlexOffset="8px">
+            <div fxFlex="30" class="text-muted text-light">
+              {{ 'CLIENT_INFO.PHONE' | translate }}
+            </div>
+            <div
+              fxFlex="70"
+              [appFormattedText]="clientInfo.tertiaryPhone"
+              appFormattedTextPlaceholder="{{
+                'CLIENT_INFO.NOT_GIVEN' | translate
+              }}"
+            ></div>
+          </div> -->
+        </div>
+      </div>
+    </div>
+  </mat-tab>
+
+  <mat-tab label="{{ 'CLIENT_INFO.SURVEY_TAB' | translate }}">
+    <div
+      class="mat-table client-responses"
+      style="height: 550px; overflow-y: auto;"
+    >
+      <div class="mat-header-row">
+        <div class="mat-header-cell" fxFlex="10">
+          {{ 'CLIENT_INFO.SURVEY_SENT_ON' | translate }}
+        </div>
+        <div class="mat-header-cell" fxFlex="10">
+          {{ 'CLIENT_INFO.SURVEY_RESPONSE_RECEIVED_ON' | translate }}
+        </div>
+        <div class="mat-header-cell" fxFlex="10">
+          {{ 'CLIENT_INFO.SURVEY_SCORE' | translate }}
+        </div>
+        <div class="mat-header-cell" fxFlex="15">
+          {{ 'CLIENT_INFO.CLIENT_CONTACT' | translate }}
+        </div>
+        <div class="mat-header-cell" fxFlex="25">
+          {{ 'CLIENT_INFO.SURVEY_COMMENTS' | translate }}
+        </div>
+        <div class="mat-header-cell" fxFlex="30">
+          {{ 'CLIENT_INFO.SURVEY_OTHER_FEEDBACK' | translate }}
+        </div>
+      </div>
+      <!-- Data -->
+      <div class="mat-row" fxLayout="row wrap" *ngFor="let obj of surveys">
+        <div class="mat-cell" fxFlex="10">
+          {{ obj.sentOnDate | utcToLocal: 'DD/MM/YYYY' }}
+        </div>
+        <div class="mat-cell" fxFlex="10" *ngIf="obj.receivedOnDate">
+          {{ obj.receivedOnDate | utcToLocal: 'DD/MM/YYYY' }}
+        </div>
+        <div class="mat-cell" fxFlex="10" *ngIf="obj.receivedOnDate">
+          <span
+            class="score"
+            [ngClass]="{
+              promoters: obj.score > 8,
+              neutrals: obj.score > 6 && obj.score <= 8,
+              detractors: obj.score < 7
+            }"
+            >{{ obj.score }}</span
+          >
+        </div>
+        <div class="mat-cell" fxFlex="15" (dblclick)="openEditMode(obj)">
+          <div *ngIf="!obj.editMode">{{ obj.drlName }}</div>
+          <div *ngIf="obj.editMode">
+            <mat-form-field appearance="outline">
+              <mat-label>Select Staff</mat-label>
+              <mat-select [(ngModel)]="obj.drlId">
+                <mat-option *ngFor="let staff of staffList" [value]="staff.objectId">
+                  {{staff.fullName}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div fxLayout="row" fxLayoutGap="8px">
+              <button mat-icon-button color="primary" (click)="editRecord(obj, 'SAVE')"><mat-icon>check</mat-icon></button>
+              <button mat-icon-button (click)="editRecord(obj, 'CANCEL')"><mat-icon>close</mat-icon></button>
+            </div>
+
+          </div>
+          
+        </div>
+        <div class="mat-cell" fxFlex="25" *ngIf="obj.receivedOnDate">
+          {{ obj.comments }}
+        </div>
+        <div class="mat-cell" fxFlex="30" *ngIf="obj.receivedOnDate">
+          <div *ngIf="obj.loyaltyDrivers && obj.loyaltyDrivers.length">
+            <div *ngIf="obj.score >=9" class="text-secondary text-bold">Why you'd recommend</div>
+            <div *ngIf="obj.score <9" class="text-secondary text-bold">Improvement needed to recommend</div>
+            <div *ngFor="let ld of obj.loyaltyDrivers" [ngClass]="{'text-bold': false,'app-promoter-fg': obj.score>=9,'app-detractor-fg': obj.score<9}">
+              {{ ld }}
+            </div>
+          </div>
+    
+          <div *ngIf="obj.howToImproveComments" class="push-top-lg">
+            <div class="text-secondary text-bold">Improvement suggestions</div>
+            <div class="">{{ obj.howToImproveComments }}</div>
+          </div>
+        </div>
+        <!-- No response row -->
+        <div class="mat-cell" fxFlex="15" *ngIf="!obj.receivedOnDate">
+          <span class="text-muted mat-body">{{
+            'CLIENT_INFO.NO_RESPONSE' | translate
+          }}</span>
+        </div>
+        <div class="mat-cell" fxFlex="20" *ngIf="!obj.receivedOnDate">
+          <span class="mat-body text-muted">{{
+            emailStatusDesc[obj.emailStatus]
+          }}</span>
+        </div>
+        <!-- Kudos -->
+        <div class="mat-cell bg-light text-md pad-md" fxFlex="100" *ngIf="obj.kudos?.kudos?.length || obj.kudos?.thanks?.length">
+          <div *ngFor="let kudos of obj.kudos.kudos">
+            <div fxLayout="row" fxLayoutAlign="start center">
+              <span class="material-symbols-outlined" style="color:#11c598; font-size: 1.3em;line-height: 1.5em;">
+                editor_choice
+                </span>&nbsp;<span class="text-bold">{{ kudos.fromDrlName }} | {{ kudos.date | date:'shortDate' }}</span>
+            </div>
+            <span class="text-bold">To: {{ getNames(kudos.to) }}</span>
+            <div>{{ kudos.message }}</div>
+            <hr/>
+          </div>
+          <div *ngFor="let kudos of obj.kudos.thanks">
+            <div fxLayout="row" fxLayoutAlign="start center">
+              <span><mat-icon fxFlex="none" style="color:#11c598; font-size: 1.3em;line-height: 1.5em;">mail</mat-icon></span>&nbsp;<span class="text-bold">{{ kudos.fromDrlName }} | {{ kudos.date | date:'shortDate' }}</span>
+              
+            </div>
+            
+            <div>{{ kudos.message }}</div>
+            <hr/>
+          </div>  
+
+        </div> 
+        <!-- Note row -->
+        <div class="mat-cell bg-light text-md pad-md" fxFlex="100" *ngIf="obj.note">
+          <i class="fa fa-file-o text-muted2"></i>&nbsp;{{ obj.note }}
+        </div>
+        <!-- Resolved row -->
+        <div
+          class="mat-cell bg-light text-md pad-md"
+          fxFlex="100"
+          *ngIf="obj.followupOnDate"
+        >
+          <span class="text-muted"
+            >{{ 'CLIENT_INFO.FOLLOWUP' | translate }}:&nbsp;{{
+              obj.followupByName
+            }}&nbsp;|&nbsp;{{ obj.followupOnDate | utcToLocal: 'DD/MM/YYYY'
+            }}<br
+          /></span>
+          <i class="fa fa-file-o text-muted2"></i>&nbsp;{{
+            obj.followupComments
+          }}
+        </div>
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab label="{{ 'CLIENT_INFO.FOLLOW_UP_TAB' | translate }}">
+    <div style="height: 550px; overflow-y: auto;" class="pad-lg">
+      <div class="mat-body push-top push-bottom-md">
+        Say thanks and learn more
+      </div>
+
+      <div
+        fxLayout="row"
+        fxLayoutAlign="space-between center"
+        class="push-bottom-sm"
+      >
+        <div fxLayout="row">
+          <div fxFlex="none" class="text-muted text-light">
+            {{ 'CLIENT_INFO.PHONE' | translate }}:&nbsp;
+          </div>
+          <div
+            class="text-muted text-light"
+            fxFlex="none"
+            [appFormattedText]="clientInfo.phone"
+            appFormattedTextPlaceholder="{{
+              'CLIENT_INFO.NOT_GIVEN' | translate
+            }}"
+          ></div>
+        </div>
+        <div class="mat-body app-primary-fg">
+          <a *ngIf="surveyScore>8" target="_blank" href="https://clientculture.com/insights/how-to-follow-up-with-promoter-clients-in-nps">See our call guides - promoters</a>
+          <a *ngIf="surveyScore>6 && surveyScore<=8" target="_blank" href="https://clientculture.com/insights/how-to-follow-up-with-neutral-clients-in-nps">See our call guides - neutrals and passives</a>
+          <a *ngIf="surveyScore<=6" target="_blank" href="https://clientculture.com/insights/how-to-talk-detractors">See our call guides - detractors</a>
+        </div>
+      </div>
+
+      <div
+        class="pull-left-lg pull-right-lg pad-left-lg pad-right-lg pad-top pad-bottom"
+        style="background-color: #eee;"
+      >
+        <mat-form-field
+          class="full-width"
+          hintLabel="{{ 'NOTE_DIALOG.MAX_2000' | translate }}"
+        >
+          <textarea
+            matInput
+            maxlength="2000"
+            matTextareaAutosize
+            matAutosizeMinRows="4"
+            matAutosizeMaxRows="6"
+            [(ngModel)]="followupComments"
+          >
+          </textarea>
+          <mat-hint align="end">{{ followupComments?.length || 0 }}/2000</mat-hint>
+        </mat-form-field>
+        <div fxLayout="row" fxLayoutAlign="end center" class="push-top">
+          <button
+            mat-button
+            color="primary"
+            (click)="saveFollowupComments()"
+            [disabled]="isProcessing || !followupComments"
+          >
+            {{ 'GENERAL.SAVE' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </mat-tab>
+</mat-tab-group>
+
+<div class="mat-body-strong client-info-name app-accent-fg text-upper">
+  {{ clientInfo.name }}
+</div>
+
+<div fxLayout="row" fxLayoutAlign="end center">
+  <div fxFlex="none">
+    <span class="text-muted text-md"
+      >{{ 'CLIENT_INFO.CREATED_AT' | translate
+      }}{{ clientInfo.createdAt | utcToLocal: 'DD/MM/YYYY' }}&nbsp;|&nbsp;</span
+    >
+    <span class="text-muted text-md"
+      >{{ 'CLIENT_INFO.UPDATED_AT' | translate }}
+      {{ clientInfo.updatedAt | utcToLocal: 'DD/MM/YYYY' }}</span
+    >
+  </div>
+</div>

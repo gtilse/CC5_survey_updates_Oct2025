@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Client Culture Survey</title>
+
+    <style type="text/css">
+      body {
+        background-color:#F6F6F6;
+        color: #000000;
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.6em;margin: 0;
+        padding: 0;
+        -webkit-font-smoothing: antialiased;
+        -webkit-text-size-adjust: none;
+        width: 100% !important;
+      }
+
+      h1, h2, h3, h4, h5, h6 {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+      }
+
+      p {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        font-size: 16px;
+      }
+
+      h1, h2, h3, h4, h5, h6,
+      .h1, .h2, .h3, .h4, .h5, .h6 {
+        margin-bottom: 0.5rem;
+        font-family: inherit;
+        font-weight: 500;
+        line-height: 1.2;
+        color: inherit;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+      }
+
+      h2 {
+        font-size: 2rem;
+      }
+
+      h3 {
+        font-size: 1.75rem;
+      }
+
+      h4 {
+        font-size: 1.5rem;
+      }
+
+      h5 {
+        font-size: 1.25rem;
+      }
+
+      h6 {
+        font-size: 1rem;
+      }
+
+      table {
+        border-collapse: collapse;
+        border-spacing: 0;
+      }
+
+
+      .email-container {
+        background-color:#FFFFFF;
+        margin-top:20px;
+        margin-bottom:20px;
+      }
+
+      .survey-button {
+        border-left:18px solid #D0D0D0;
+        border-right:18px solid #D0D0D0;
+        border-top:18px solid #D0D0D0;
+        border-bottom:18px solid #D0D0D0;
+        line-height: 2;
+        color: #505050!important;
+        background-color: #D0D0D0;
+        border-radius: 5px;
+        display:inline-block;
+        font-weight:bold;
+        text-decoration:none;
+      }
+
+      .footer-text {
+        display: block;
+        margin-top: 10px;
+        margin-bottom:0px;
+        padding: 0;
+        font-weight: normal;
+        font-size: 14px;
+        color: #666666;
+      }
+
+      .footer-link {
+
+        padding: 0;
+        color: #999999!important;
+      }
+
+    </style>
+
+    <!--[if gte mso 9]>
+      <style type="text/css">
+        body,table tr,table td,a,p, span,table.MsoNormalTable {  font-family: Arial, sans-serif !important; font-size: 12px!important  }
+        p {margin-bottom:10px!important;}
+      </style>
+    <![endif]-->
+
+  </head>
+
+  <body>
+    <!-- Outer container -->
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" class="email-wrapper">
+      <tr>
+        <td align="center" valign="top">
+
+          <!-- Contents table -->
+          <table border="0" cellpadding="10" cellspacing="0" width="600" class="email-container">
+
+            <!-- Logo Image -->
+            <tr>
+              <td align="center" valign="top">
+                {{LOGO_IMAGE}}
+              </td>
+            </tr>
+
+            <!-- Email contents -->
+            <tr>
+              <td align="center" valign="top">
+                {{EMAIL_HTML}}
+              </td>
+            </tr>
+
+            <!-- Survey buttons -->
+            <tr>
+              <td align="center" valign="top">
+                <table border="0" cellpadding="0" cellspacing="5" width="100%">
+                  <tr>
+                    <td align="center" valign="top">
+                      <a class="survey-button" href="{{WEB_ROOT}}survey?id={{OBJECTID}}&type={{SURVEY_TYPE}}" target="_blank"><!--[if mso]>&nbsp;<![endif]-->Open Survey<!--[if mso]>&nbsp;<![endif]--></a>
+                    </td>
+                  </tr>
+
+                </table>
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td align="center" valign="top">
+                <p class="footer-text"><a class="footer-link" href="{{COMPANY_WEBSITE}}">Powered by {{COMPANY_NAME}}</a></p>
+                {{UNSUBSCRIBE_LINK}}
+                {{WEB_LINK}}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <div style="display:none">{{UTRACK}}</div>
+
+  </body>
+</html>

@@ -1,0 +1,444 @@
+<!-- Loading component -->
+<app-loading
+  placeholder="{{ 'ACTION_ITEM.HEADING' | translate }}"
+  [hidden]="!appComponentStateService.isLoading"
+></app-loading>
+
+<!-- Error handler component -->
+<app-error-handler
+  [hidden]="!appComponentStateService.hasError"
+  (refresh)="loadData()"
+></app-error-handler>
+
+<!-- Component container -->
+<div
+  [hidden]="
+    appComponentStateService.isLoading || appComponentStateService.hasError
+  "
+>
+  <div class="card-header">
+    <!-- Icon + header text -->
+    <div fxLayout="row" fxLayoutAlign="start center" class="text-muted2">
+      <mat-icon class="md-36" fxFlex="none">phone_in_talk</mat-icon>
+      <span fxFlex="none" fxFlexOffset="16px" class="mat-headline">{{
+        'ACTION_ITEM.HEADING' | translate
+      }}</span>
+    </div>
+
+    <!-- Title -->
+    <div class="push-top-xxl push-bottom">
+      <span
+        class="mat-body-strong"
+        matTooltip="{{ 'ACTION_ITEM.SUB_HEADING_TOOLTIP' | translate }}"
+        >{{ 'ACTION_ITEM.SUB_HEADING' | translate }}
+      </span>
+    </div>
+    <mat-divider class="divider"></mat-divider>
+
+    <!-- Filter -->
+    <div fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="start center" class="push-top-xl filter-box">
+      <!-- Open/resolved -->
+      <mat-form-field fxFlex floatLabel="never">
+        <mat-select
+          placeholder="{{ 'ACTION_ITEM.CHOOSE_STATUS' | translate }}"
+          [(ngModel)]="filterCriteria.followup"
+        >
+          <mat-option
+          *ngFor="let f of followup"
+          [value]="f.VALUE"
+          >
+            {{ f.DESC }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Score types -->
+      <mat-form-field fxFlex floatLabel="never">
+        <mat-select
+          placeholder="{{ 'GENERAL.FILTER_ALL_SCORES' | translate }}"
+          [(ngModel)]="filterCriteria.scoreType"
+        >
+          <mat-option class="clear-selection">{{
+            'GENERAL.FILTER_ALL_SCORES' | translate
+          }}</mat-option>
+          <mat-option
+            *ngFor="let scoreType of scoreTypes"
+            [value]="scoreType.VALUE"
+          >
+            {{ scoreType.DESC }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Date range select -->
+      <mat-form-field floatLabel="never" fxFlex>
+        <mat-select
+          placeholder="{{ 'GENERAL.FILTER_ALL_DATES' | translate }}"
+          [(ngModel)]="filterCriteria.dateRange"
+        >
+          <mat-option class="clear-selection" [value]="null">{{
+            'GENERAL.FILTER_ALL_DATES' | translate
+          }}</mat-option>
+          <mat-option
+            *ngFor="let dateRange of dateRanges"
+            [value]="dateRange.VALUE"
+          >
+            {{ dateRange.DESC }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Staff select -->
+      <mat-form-field floatLabel="never" fxFlex>
+        <mat-select
+          placeholder="{{ 'GENERAL.FILTER_ALL_STAFF' | translate }}"
+          [(ngModel)]="filterCriteria.staffFilter"
+        >
+          <mat-option class="clear-selection" [value]="null">{{
+            'GENERAL.FILTER_ALL_STAFF' | translate
+          }}</mat-option>
+          <mat-option
+            *ngFor="let staff of staffList"
+            [value]="staff.objectId"
+          >
+            {{ staff.fullName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+       <!-- Search box -->
+       <mat-form-field
+          hideRequiredMarker="true"
+          floatLabel="never"
+          appearance="fill"
+          class="search-box dark-theme"
+          fxFlex
+        >
+          <mat-icon matPrefix color="primary">search</mat-icon>
+          <input
+            matInput
+            placeholder="{{ 'CLIENT_RESPONSE.SEARCH' | translate }}"
+            [(ngModel)]="filterCriteria.searchString"/>
+      </mat-form-field>
+      
+      <!-- Filter button -->
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="loadData()"
+        [disabled]="isFetching"
+        fxFlex="none">
+        {{ 'GENERAL.FILTER' | translate | uppercase }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Data table container -->
+  <div class="data-table-container">
+    <div
+      class="push-bottom-md"
+      fxLayout="row"
+      fxLayoutAlign="space-between center"
+    >
+      <div
+        class="mat-body"
+      >
+      {{
+        'GENERAL.RECORD_DISPLAY_COUNT'
+          | translate: { count: actionItems.length, totalCount: count }
+      }}
+      </div>
+    </div>
+    <!-- Open action items -->
+    <div class="mat-table client-responses" *ngIf="viewState === 1">
+      <div class="mat-header-row">
+        <div class="mat-header-cell" flex="10">
+          {{ 'CLIENT_RESPONSE.SCORE' | translate }}
+        </div>
+        <div class="mat-header-cell" flex="15">
+          {{ 'CLIENT_RESPONSE.CLIENT' | translate }}
+        </div>
+        <div class="mat-header-cell" flex="25">
+          {{ 'CLIENT_RESPONSE.COMMENT' | translate }}
+        </div>
+        <div class="mat-header-cell" flex="25">
+          {{ 'CLIENT_RESPONSE.OTHER_FEEDBACK' | translate }}
+        </div>
+        <div class="mat-header-cell" flex="10">
+          {{ 'CLIENT_RESPONSE.DATE' | translate }}
+        </div>
+        <div class="mat-header-cell" flex="5">
+          {{ 'CLIENT_RESPONSE.CALL_NOW' | translate }}
+        </div>
+        <div class="mat-header-cell" flex="5">
+          {{ 'CLIENT_RESPONSE.FLAG' | translate }}
+        </div>
+        <div class="mat-header-cell" flex="5">
+          {{ 'CLIENT_RESPONSE.NOTE' | translate }}
+        </div>
+      </div>
+
+      <!-- No data -->
+      <div class="mat-row" *ngIf="!actionItems.length">
+        <div class="mat-cell text-secondary" fxFlex>
+          {{ 'GENERAL.NO_DATA' | translate }}
+        </div>
+      </div>
+
+      <!-- Data -->
+      <ng-container *ngFor="let obj of actionItems">
+        <div class="mat-row" *ngIf="obj.flagged === 1">
+          <!-- Score -->
+          <div
+            class="mat-cell"
+            fxFlex="10"
+            matTooltip="{{
+              obj.previousScore == undefined
+                ? ''
+                : 'Previous score ' + obj.previousScore
+            }}"
+          >
+            <span
+              class="score"
+              [ngClass]="{
+                promoters: obj.score > 8,
+                neutrals: obj.score > 6 && obj.score <= 8,
+                detractors: obj.score < 7
+              }"
+              >{{ obj.score }}</span
+            >
+          </div>
+
+          <!-- Client -->
+          <div class="mat-cell" flex="15">
+            <span class="client-info-link" (click)="openClientInfo(obj)">{{
+              obj.name
+            }}</span>
+            <div class="client">{{ obj.drlName }}</div>
+          </div>
+
+          <!-- Comments -->
+          <div class="mat-cell" flex="25">
+            <span *ngIf="obj.comments">{{ obj.comments }}</span>
+            <span *ngIf="!obj.comments" class="text-secondary">{{
+              'GENERAL.NO_COMMENTS_PROVIDED' | translate
+            }}</span>
+          </div>
+
+          <!-- Improvement suggestions -->
+          <div class="mat-cell" flex="25">
+            <div *ngIf="obj.loyaltyDrivers && obj.loyaltyDrivers.length">
+              <div *ngIf="obj.score >=9" class="text-secondary text-bold">Why you'd recommend</div>
+              <div *ngIf="obj.score <9" class="text-secondary text-bold">Improvement needed to recommend</div>
+              <div *ngFor="let ld of obj.loyaltyDrivers" [ngClass]="{'text-bold': false,'app-promoter-fg': obj.score>=9,'app-detractor-fg': obj.score<9}">
+                {{ ld }}
+              </div>
+            </div>
+      
+            <div *ngIf="obj.howToImproveComments" class="push-top-lg">
+              <div class="text-secondary text-bold">Improvement suggestions</div>
+              <div class="">{{ obj.howToImproveComments }}</div>
+            </div>
+          </div>
+
+          <!-- Date -->
+          <div class="mat-cell" flex="10">
+            {{ obj.receivedOnDate | utcToLocal: 'MMM DD' }}
+          </div>
+
+          <!-- Call now -->
+          <div class="mat-cell" flex="5">
+            <mat-icon
+              class="icon"
+              [ngClass]="{
+                promoters: obj.score > 8,
+                neutrals: obj.score > 6 && obj.score <= 8,
+                detractors: obj.score < 7
+              }"
+              (click)="openClientInfo(obj, 2)"
+            >
+              perm_phone_msg
+            </mat-icon>
+          </div>
+
+          <!-- Flag -->
+          <div class="mat-cell" flex="5">
+            <mat-icon
+              class="icon"
+              [ngClass]="{ flagged: obj.flagged == 1 }"
+              (click)="toggleFlag(obj)"
+            >
+              flag
+            </mat-icon>
+          </div>
+
+          <!-- Note -->
+          <div class="mat-cell" flex="5">
+            <mat-icon
+              class="icon"
+              [ngClass]="{ note: obj.note }"
+              (click)="addNote(obj)"
+            >
+              textsms
+            </mat-icon>
+          </div>
+
+          <!-- Flag -->
+          <!-- <div class="mat-cell" fxFlex="10">
+            <i
+              class="fa fa-flag flag"
+              [ngClass]="{ flagged: obj.flagged == 1 }"
+            ></i
+            >&nbsp;&nbsp;
+            <i
+              class="fa fa-commenting-o flag"
+              [ngClass]="{ note: obj.note }"
+              (click)="addNote(obj)"
+            ></i
+            >&nbsp;&nbsp;
+          </div> -->
+
+          <!-- Resolve button -->
+          <!-- <div class="mat-cell text-center" fxFlex="10">
+            <button type="button" mat-raised-button (click)="resolve(obj)">
+              {{ 'ACTION_ITEM.RESOLVE' | translate }}
+            </button>
+          </div> -->
+        </div>
+      </ng-container>
+    </div>
+
+    <!-- Resolved action items -->
+    <div class="mat-table client-responses" *ngIf="viewState === 2">
+      <div class="mat-header-row">
+        <div class="mat-header-cell" flex="10">
+          {{ 'CLIENT_RESPONSE.SCORE' | translate }}
+        </div>
+        <div class="mat-header-cell" flex="15">
+          {{ 'CLIENT_RESPONSE.CLIENT' | translate }}
+        </div>
+        <div class="mat-header-cell" flex="25">
+          {{ 'CLIENT_RESPONSE.COMMENT' | translate }}
+        </div>
+        <div class="mat-header-cell" flex="25">
+          {{ 'CLIENT_RESPONSE.OTHER_FEEDBACK' | translate }}
+        </div>
+        <div class="mat-header-cell" flex="10">
+          {{ 'CLIENT_RESPONSE.DATE' | translate }}
+        </div>
+        <div class="mat-header-cell" flex="5"></div>
+        <div class="mat-header-cell" flex="25">
+          {{ 'ACTION_ITEM.RESOLVED_COMMENTS' | translate }}
+        </div>
+      </div>
+
+      <!-- No data -->
+      <div class="mat-row" *ngIf="!actionItems.length">
+        <div class="mat-cell text-secondary" fxFlex>
+          {{ 'GENERAL.NO_DATA' | translate }}
+        </div>
+      </div>
+
+      <!-- Data -->
+      <ng-container *ngFor="let obj of actionItems">
+        <div class="mat-row" *ngIf="obj.followupOnDate">
+          <!-- Score -->
+          <div
+            class="mat-cell"
+            flex="10"
+            matTooltip="{{
+              obj.previousScore == undefined
+                ? ''
+                : 'Previous score ' + obj.previousScore
+            }}"
+          >
+            <span
+              class="score"
+              [ngClass]="{
+                promoters: obj.score > 8,
+                neutrals: obj.score > 6 && obj.score <= 8,
+                detractors: obj.score < 7
+              }"
+              >{{ obj.score }}</span
+            >
+          </div>
+
+          <!-- Client -->
+          <div class="mat-cell" flex="15">
+            <span class="client-info-link" (click)="openClientInfo(obj)">{{
+              obj.name
+            }}</span>
+            <div class="client">{{ obj.drlName }}</div>
+          </div>
+
+          <!-- Comments -->
+          <div class="mat-cell" flex="25">
+            <span *ngIf="obj.comments">{{ obj.comments }}</span>
+            <span *ngIf="!obj.comments" class="text-secondary">{{
+              'GENERAL.NO_COMMENTS_PROVIDED' | translate
+            }}</span>
+          </div>
+
+          <!-- Improvement suggestions -->
+          <div class="mat-cell" flex="25">
+            <div *ngIf="obj.loyaltyDrivers && obj.loyaltyDrivers.length">
+              <div *ngIf="obj.score >=9" class="text-secondary text-bold">Why you'd recommend</div>
+              <div *ngIf="obj.score <9" class="text-secondary text-bold">Improvement needed to recommend</div>
+              <div *ngFor="let ld of obj.loyaltyDrivers" [ngClass]="{'text-bold': false,'app-promoter-fg': obj.score>=9,'app-detractor-fg': obj.score<9}">
+                {{ ld }}
+              </div>
+            </div>
+      
+            <div *ngIf="obj.howToImproveComments" class="push-top-lg">
+              <div class="text-secondary text-bold">Improvement suggestions</div>
+              <div class="">{{ obj.howToImproveComments }}</div>
+            </div>
+          </div>
+
+          <!-- Date -->
+          <div class="mat-cell" flex="10">
+            {{ obj.receivedOnDate | utcToLocal: 'MMM DD' }}
+          </div>
+
+          <!-- Flag -->
+          <div class="mat-cell" flex="5">
+            <mat-icon
+              class="icon"
+              [ngClass]="{ note: obj.note }"
+              (click)="addNote(obj)"
+            >
+              textsms
+            </mat-icon>
+          </div>
+
+          <!-- Resolved comments -->
+          <div class="mat-cell" flex="25">
+            <div class="text-secondary">{{ obj.followupByName }}</div>
+            <div class="text-secondary text-md">
+              {{ obj.followupOnDate | utcToLocal: 'MMM DD' }}
+            </div>
+            <div>{{ obj.followupComments }}</div>
+            <a
+              href="#"
+              class="text-md"
+              (click)="editResolvedActionItem($event, obj)"
+              ><i class="fa fa-pencil"></i>&nbsp;{{
+                'GENERAL.EDIT' | translate
+              }}</a
+            >&nbsp;&nbsp;
+            <a
+              href="#"
+              class="text-md"
+              (click)="undoResolvedActionItem($event, obj)"
+              ><i class="fa fa-undo"></i>&nbsp;{{
+                'GENERAL.UNDO' | translate
+              }}</a
+            >
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  
+</div>

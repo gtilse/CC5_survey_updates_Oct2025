@@ -1,0 +1,285 @@
+<!-- Loading component -->
+<app-loading
+  placeholder="{{ 'STAFF.VIEW_TITLE' | translate }}"
+  [hidden]="
+    !appComponentStateService.isLoading || appComponentStateService.hasError
+  "
+></app-loading>
+
+<!-- Error handler component -->
+<app-error-handler
+  [hidden]="!appComponentStateService.hasError"
+  (refresh)="loadData()"
+></app-error-handler>
+
+<!-- Sidenav container -->
+<mat-sidenav-container
+  class="data-container"
+  [hidden]="
+    appComponentStateService.isLoading || appComponentStateService.hasError
+  "
+>
+  <!-- Data editor -->
+  <mat-sidenav
+    mode="over"
+    position="end"
+    [opened]="editorOpened"
+    disableClose="true"
+    fixedInViewport="true"
+    fixedTopGap="52"
+  >
+    <app-employee-edit
+      [dropLists]="dropLists"
+      [employees]="employees"
+      [locations]="locations"
+      (recordSaved)="recordSaved($event)"
+      (recordSaveCancelled)="recordSaveCancelled($event)"
+    >
+    </app-employee-edit>
+  </mat-sidenav>
+
+  <!-- Main view -->
+  <mat-sidenav-content>
+    <div class="card-header">
+      <!-- Icon + header text -->
+      <div fxLayout="row" fxLayoutAlign="start center" class="text-muted2">
+        <span fxFlex="none" class="mat-headline">{{
+          'STAFF.HEADING' | translate
+        }}</span>
+      </div>
+
+      <!-- Title -->
+      <div
+        fxLayout="row"
+        fxLayoutAlign="start center"
+        class="push-top-xxl push-bottom"
+      >
+        <span class="mat-body-strong" fxFlex="none">{{
+          'STAFF.SUB_HEADING' | translate
+        }}</span>
+        <span fxFlex></span>
+        <button
+          type="button"
+          fxFlex="none"
+          mat-raised-button
+          color="primary"
+          (click)="addRecord()"
+        >
+          <mat-icon>add</mat-icon>&nbsp;{{
+            'GENERAL.ADD' | translate | uppercase
+          }}
+        </button>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Filter -->
+      <div fxLayout="row" class="push-top-xl filter-box">
+        <mat-form-field floatLabel="never" fxFlex="30">
+          <input
+            matInput
+            type="text"
+            placeholder="{{ 'STAFF.SEARCH_STAFF' | translate }}"
+            [(ngModel)]="filterVal"
+            (input)="showRecords()"
+          />
+          <button
+            mat-button
+            *ngIf="filterVal"
+            matSuffix
+            mat-icon-button
+            aria-label="Clear"
+            (click)="filterVal = ''; showRecords()"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Data table container -->
+    <div class="data-table-container">
+      <!-- Data table -->
+      <div
+        class="mat-table mat-data-table"
+        matSort
+        (matSortChange)="showRecords()"
+        matSortActive="firstName"
+        matSortDirection="asc"
+        matSortDisableClear
+      >
+        <div class="record-count mat-body" [hidden]="filteredData.length === 0">
+          {{
+            'GENERAL.RECORD_COUNT' | translate: { value: filteredData.length }
+          }}
+        </div>
+        <!-- Table header -->
+        <div class="mat-header-row">
+          <div
+            class="mat-header-cell mat-column-select"
+            flex="10"
+            flex-gt-sm="5"
+          >
+            <mat-checkbox
+              (change)="$event ? masterToggle() : null"
+              [checked]="tableDataSelection.hasValue() && isAllSelected()"
+              [indeterminate]="
+                tableDataSelection.hasValue() && !isAllSelected()
+              "
+            >
+            </mat-checkbox>
+          </div>
+          <div class="mat-header-cell" flex="10" hide-xs hide-sm></div>
+          <div
+            class="mat-header-cell"
+            mat-sort-header="firstName"
+            flex="30"
+            flex-gt-sm="10"
+          >
+            {{ 'STAFF.FIRST_NAME' | translate }}
+          </div>
+          <div
+            class="mat-header-cell"
+            mat-sort-header="lastName"
+            flex="30"
+            flex-gt-sm="10"
+          >
+            {{ 'STAFF.LAST_NAME' | translate }}
+          </div>
+          <div
+            class="mat-header-cell"
+            mat-sort-header="parentId"
+            flex="15"
+            hide-xs
+            hide-sm
+          >
+            {{ 'STAFF.DRL' | translate }}
+          </div>
+          <div
+            class="mat-header-cell"
+            mat-sort-header="email"
+            flex="30"
+            flex-gt-sm="20"
+          >
+            {{ 'STAFF.EMAIL' | translate }}
+          </div>
+          <div
+            class="mat-header-cell"
+            mat-sort-header="designation"
+            flex="15"
+            hide-xs
+            hide-sm
+          >
+            {{ 'STAFF.DESIGNATION' | translate }}
+          </div>
+          <div
+            class="mat-header-cell"
+            mat-sort-header="department"
+            flex="15"
+            hide-xs
+            hide-sm
+          >
+            {{ 'STAFF.DEPARTMENT' | translate }}
+          </div>
+        </div>
+        <!-- Record count and tools -->
+        <div class="mat-row" *ngIf="filteredData.length">
+          <div class="mat-cell" flex>
+            <div layout="row" layout-align="start center">
+              <div
+                flex
+                [style.visibility]="
+                  tableDataSelection.selected.length ? 'visible' : 'hidden'
+                "
+              >
+                <button
+                  mat-raised-button
+                  color="warn"
+                  (click)="deleteSelectedRecords()"
+                >
+                  {{ 'GENERAL.DELETE' | translate }}
+                </button>
+                <button
+                  mat-raised-button
+                  class="push-left"
+                  (click)="deactivateSelectedRecords()"
+                >
+                  {{ 'GENERAL.INACTIVE' | translate }}
+                </button>
+                <!-- <button mat-raised-button class="push-left-lg" (click)="manageLogins()">{{'STAFF.MANAGE_LOGINS' | translate}}</button> -->
+              </div>
+              <!-- <div class="text-secondary">{{"GENERAL.RECORD_COUNT" | translate: {value: filteredData.length} }}</div> -->
+            </div>
+          </div>
+        </div>
+
+        <!-- No data row -->
+        <div class="mat-row" *ngIf="filteredData.length === 0">
+          <div class="mat-cell text-secondary" flex>
+            {{ 'GENERAL.NO_DATA' | translate }}
+          </div>
+        </div>
+        <!-- Data -->
+        <div
+          class="mat-row"
+          *ngFor="let row of filteredData"
+          (click)="editRecord(row)"
+        >
+          <div class="mat-cell mat-column-select" flex="10" flex-gt-sm="5">
+            <mat-checkbox
+              (click)="$event.stopPropagation()"
+              (change)="$event ? tableDataSelection.toggle(row) : null"
+              [checked]="tableDataSelection.isSelected(row)"
+            >
+            </mat-checkbox>
+          </div>
+          <div class="mat-cell" flex="10" hide-xs hide-sm>
+            <mat-icon
+              matTooltipPosition="right"
+              matTooltip="{{ 'GENERAL.CREATED_AT' | translate }}:&nbsp;{{
+                row.createdAt | utcToLocal
+              }}&#10;{{ 'GENERAL.UPDATED_AT' | translate }}:&nbsp;{{
+                row.updatedAt | utcToLocal
+              }}"
+              >info_outline</mat-icon
+            >
+            <mat-icon
+              class="app-primary-fg push-left"
+              *ngIf="row.userName"
+              matTooltipPosition="right"
+              matTooltip="{{ 'STAFF.REMOVE_LOGIN' | translate }}:&nbsp;{{
+                row.userName
+              }}"
+              (click)="$event.stopPropagation(); toggleLogin(row)"
+              >person</mat-icon
+            >
+            <mat-icon
+              class="text-secondary push-left"
+              *ngIf="!row.userName"
+              matTooltipPosition="right"
+              matTooltip="{{ 'STAFF.ASSIGN_LOGIN' | translate }}"
+              (click)="$event.stopPropagation(); toggleLogin(row)"
+              >person</mat-icon
+            >
+          </div>
+          <div class="mat-cell" flex="30" flex-gt-sm="10">
+            {{ row.firstName }}
+          </div>
+          <div class="mat-cell" flex="30" flex-gt-sm="10">
+            {{ row.lastName }}
+          </div>
+          <div class="mat-cell" flex="15" hide-xs hide-sm>
+            {{ row.parentId | employeeIdToName: employees }}
+          </div>
+          <div class="mat-cell" flex="30" flex-gt-sm="20">{{ row.email }}</div>
+          <div class="mat-cell" flex="15" hide-xs hide-sm>
+            {{ row.designation }}
+          </div>
+          <div class="mat-cell" flex="15" hide-xs hide-sm>
+            {{ row.department }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,23 @@
+th,
+td {
+  padding: 10px;
+}
+
+td {
+  vertical-align: top;
+}
+
+.record-delete-row {
+  //border: 1px solid black;
+  background-color: #EEE;
+  font-size: 0.75em;
+  padding: 4px;
+
+  & button {
+    line-height: 24px;
+  }
+
+  & div+div {
+    margin-top: 8px;
+  }
+}

@@ -1,0 +1,120 @@
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  margin-bottom: 75px; /* Margin bottom by footer height */
+}
+
+h1,h2,h3,h4,h5,h6 {
+  font-weight: 300;
+}
+
+.font-500 {
+  font-weight: 500;
+}
+
+.text-underline {
+  text-decoration: underline;
+}
+
+#loading {
+  position:absolute;
+  left:0;
+  top:0;
+  right:0;
+  bottom:0;
+  margin:auto;
+  width:230px;
+  height:60px;
+  text-align:center
+}
+
+#loading img {
+  max-height: 35px;
+}
+
+
+#vendorLogo {
+  display: block;
+  margin:20px auto;
+  max-width:300px;
+}
+
+#divError {
+  margin: 15px;
+}
+
+#divError span.email {
+  font-weight: bold;
+}
+
+#divFeedback, #divFeedbackSent,#divFeedbackSocial, #divConfirmation {
+  width:400px;
+  margin:10px auto;
+  text-align:center;
+}
+
+#divAdditionalQuestions {
+  width: 600px;
+  margin: 50px auto 10px auto;
+}
+
+#divFeedbackSocial > h2, #divFeedbackSocial > button {
+  display: none;
+}
+
+#divFeedbackSocial > a {
+  margin-right: 10px;
+}
+
+#divFeedbackSocial > p {
+  font-size: 100%;
+  font-weight: lighter;
+  margin: 10px 0px;
+  padding: 5px;
+}
+
+#btnSubmitFeedback {
+  margin-top:20px;
+  padding:10px 20px;
+}
+
+#btnSubmitAdditionalQuestions {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+}
+
+#btnSocialContinue {
+  display: none;
+  margin: 45px auto 0px auto!important;
+  text-decoration: underline;
+}
+
+#lblInvalidFeedback {
+  display: none;
+  font-weight: bold;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 60px; /* Set the fixed height of the footer here */
+  line-height: 60px; /* Vertically center the text there */
+  background-color: #f5f5f5;
+  font-size: 13px;
+  text-align: center;
+}
+
+.confirmationButtons {
+
+  margin-bottom: 12px;
+  margin-top: 16px;
+
+  & button {
+    width: 400px;
+    margin-bottom: 8px;
+  }
+}

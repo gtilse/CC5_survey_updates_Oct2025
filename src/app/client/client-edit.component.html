@@ -1,0 +1,586 @@
+<div fxLayout="column" fxLayoutGap="32px">
+  <form [formGroup]="clientForm" novalidate fxFlex="grow">
+    <mat-tab-group [(selectedIndex)]="activeTabIndex">
+      <!-- General tab -->
+      <mat-tab label="{{ 'CLIENT.GENERAL_TAB' | translate }}">
+        <div style="padding:8px" fxLayout="column" fxLayoutGap="16px">
+          <!-- Checkboxes -->
+          <div fxLayout="row" fxLayoutGap="8px">
+            <mat-checkbox
+              color="primary"
+              [checked]="!!clientForm.controls.active.value"
+              (change)="checkboxToggle('active')"
+            >
+              {{ 'CLIENT.ACTIVE' | translate }}
+            </mat-checkbox>
+            <mat-checkbox
+              color="primary"
+              [checked]="!!clientForm.controls.sendSurveyEmail.value"
+              (change)="checkboxToggle('sendSurveyEmail')"
+              class="push-left"
+            >
+              {{ 'CLIENT.SEND_SURVEY_EMAIL' | translate }}
+            </mat-checkbox>
+            <mat-checkbox
+              color="primary"
+              [checked]="
+                !!clientForm.controls.recommendedByExistingClient.value
+              "
+              (change)="checkboxToggle('recommendedByExistingClient')"
+              class="push-left"
+            >
+              {{ 'CLIENT.RECOMMENDED_BY_EXISTING_CLIENT' | translate }}
+            </mat-checkbox>
+            <mat-checkbox
+              class="push-left"
+              color="primary"
+              [checked]="!!clientForm.controls.referredBefore.value"
+              (change)="checkboxToggle('referredBefore')"
+            >
+              {{ 'CLIENT.REFERRED_BEFORE' | translate }}
+            </mat-checkbox>
+          </div>
+
+          <!-- Client tags -->
+          <mat-form-field>
+            <mat-chip-list #tagsList formControlName="tags">
+                <mat-chip *ngFor="let tag of clientForm.get('tags').value" (removed)="removeTag(tag)">
+                    {{tag}}
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                </mat-chip>
+        
+                <input matInput
+                    [matChipInputFor]="tagsList" 
+                    placeholder="Client Tags...." 
+                    (matChipInputTokenEnd)="addTag($event)">
+            </mat-chip-list>
+          </mat-form-field>
+
+          <div fxLayout="column" fxLayoutGap="16px">
+            <!-- Title, name, code -->
+            <div fxLayout="row" fxLayoutGap="16px">
+              
+              <mat-form-field fxFlex>
+                <input
+                  matInput
+                  placeholder="{{ 'CLIENT.NAME' | translate }}"
+                  formControlName="name"
+                  maxlength="45"
+                  required
+                />
+                <mat-error ngxErrors="name">
+                  <div ngxError="required" when="touched">
+                    {{ 'CLIENT.NAME_ERROR' | translate }}
+                  </div>
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field fxFlex>
+                <input
+                  matInput
+                  placeholder="{{ 'CLIENT.TITLE' | translate }}"
+                  formControlName="title"
+                  maxlength="10"
+                />
+              </mat-form-field>
+
+              <mat-form-field fxFlex>
+                <input
+                  matInput
+                  placeholder="{{ 'CLIENT.CODE' | translate }}"
+                  formControlName="code"
+                  maxlength="10"
+                />
+              </mat-form-field>
+            </div>
+  
+            <div fxLayout="row" fxLayoutGap="16px">
+              <!-- Email address -->
+              <mat-form-field fxFlex>
+                <input
+                  type="email"
+                  matInput
+                  placeholder="{{ 'CLIENT.EMAIL' | translate }}"
+                  formControlName="email"
+                  maxlength="45"
+                  required
+                />
+                <mat-error ngxErrors="email">
+                  <div [ngxError]="['required', 'email']" when="touched">
+                    {{ 'CLIENT.EMAIL_ERROR' | translate }}
+                  </div>
+                </mat-error>
+              </mat-form-field>
+  
+              <!-- Phone -->
+              <mat-form-field fxFlex>
+                <input
+                  matInput
+                  placeholder="{{ 'CLIENT.PHONE' | translate }}"
+                  formControlName="phone"
+                  maxlength="40"
+                />
+              </mat-form-field>
+            </div>
+  
+            <!-- Client contact -->
+            <mat-form-field fxFlex>
+              <mat-select
+                placeholder="{{ 'CLIENT.CLIENT_CONTACT' | translate }}"
+                formControlName="drl"
+                required
+              >
+                <mat-option
+                  *ngFor="let clientContact of staffSelectList"
+                  [value]="clientContact.objectId"
+                >
+                  {{ clientContact.name }}
+                </mat-option>
+              </mat-select>
+              <mat-error ngxErrors="drl">
+                <div ngxError="required" when="touched">
+                  {{ 'CLIENT.CLIENT_CONTACT_ERROR' | translate }}
+                </div>
+              </mat-error>
+            </mat-form-field>
+  
+            <!-- Additonal Client contacts -->
+            <mat-form-field fxFlex>
+              <mat-select
+                placeholder="{{ 'CLIENT.DRL_INCLUDE' | translate }}"
+                formControlName="drlInclude"
+                multiple
+              >
+                <mat-option
+                  *ngFor="let clientContact of staffSelectList"
+                  [value]="clientContact.objectId"
+                >
+                  {{ clientContact.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <!-- Client value, Account size -->
+          <div fxLayout="row" fxLayoutGap="16px">
+            <mat-form-field fxFlex>
+              <mat-select
+                placeholder="{{ 'CLIENT.VALUE' | translate }}"
+                formControlName="category"
+              >
+                <mat-option class="clear-selection" [value]="null">{{
+                  'GENERAL.CLEAR_SELECTION' | translate
+                }}</mat-option>
+                <mat-option
+                  *ngFor="let clientValuation of clientValuationList"
+                  [value]="clientValuation"
+                >
+                  {{ clientValuation }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field fxFlex>
+              <mat-select
+                placeholder="{{ 'CLIENT.ACCOUNT_SIZE' | translate }}"
+                formControlName="accountSize"
+              >
+                <mat-option class="clear-selection" [value]="null">{{
+                  'GENERAL.CLEAR_SELECTION' | translate
+                }}</mat-option>
+                <mat-option
+                  *ngFor="let accountSize of accountSizeList"
+                  [value]="accountSize"
+                >
+                  {{ accountSize }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div fxLayout="row" fxLayoutGap="16px">
+            <mat-form-field fxFlex>
+              <mat-select
+                placeholder="{{ 'CLIENT.FREQUENCY_OF_REVIEW' | translate }}"
+                formControlName="frequencyOfReview"
+              >
+                <mat-option class="clear-selection" [value]="null">{{
+                  'GENERAL.CLEAR_SELECTION' | translate
+                }}</mat-option>
+                <mat-option
+                  *ngFor="let frequencyOfReview of frequencyOfReviewList"
+                  [value]="frequencyOfReview"
+                >
+                  {{ frequencyOfReview }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field fxFlex>
+              <input
+                type="number"
+                matInput
+                placeholder="{{ 'CLIENT.YEAR_OF_BIRTH' | translate }}"
+                formControlName="yearOfBirth"
+              />
+              <mat-error ngxErrors="yearOfBirth">
+                <div [ngxError]="['min', 'max']" when="touched">
+                  {{ 'CLIENT.YEAR_OF_BIRTH_ERROR' | translate }}
+                </div>
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Client Since, Group -->
+          <div fxLayout="row" fxLayoutGap="16px">
+            <div fxLayout="row" fxFlex="50" fxLayoutAlign="start center">
+              <mat-form-field fxFlex="grow">
+                <mat-select
+                  placeholder="{{ 'CLIENT.GROUP' | translate }}"
+                  formControlName="clientGroup"
+                >
+                  <mat-option class="clear-selection" [value]="null">{{
+                    'GENERAL.CLEAR_SELECTION' | translate
+                  }}</mat-option>
+                  <mat-option
+                    *ngFor="
+                      let dropList of dropLists
+                        | filterDropListByCategory: dropLists:'Client Category'
+                    "
+                    [value]="dropList.description"
+                  >
+                    {{ dropList.description }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <button
+                fxFlex="none"
+                mat-icon-button
+                (click)="addToDropList('clientGroup', 'CLIENT_CATEGORY')"
+              >
+                <mat-icon class="text-muted3">add_box</mat-icon>
+              </button>
+            </div>
+
+            <mat-form-field fxFlex="50">
+              <mat-select
+                placeholder="{{ 'CLIENT.CLIENT_SINCE' | translate }}"
+                formControlName="clientSinceYear"
+              >
+                <mat-option class="clear-selection" [value]="null">{{
+                  'GENERAL.CLEAR_SELECTION' | translate
+                }}</mat-option>
+                <mat-option
+                  *ngFor="let year of yearSelectionList"
+                  [value]="year"
+                >
+                  {{ year }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+        </div>
+      </mat-tab>
+
+      <!-- Secondary contact tab -->
+      <mat-tab label="{{ 'CLIENT.SECONDARY_CONTACT_TAB' | translate }}">
+        <div fxLayout="column" fxLayoutGap="16px" style="padding: 8px;">
+          <!-- SECONDARY CONTACT -->
+          <h3 class="text-secondary">
+            {{ 'CLIENT.SECONDARY_CONTACT_HEADING' | translate }}
+          </h3>
+
+          <!-- Title, name, code -->
+          <div fxLayout="row" fxLayoutGap="16px">
+            <mat-form-field fxFlex="20">
+              <mat-select
+                placeholder="{{ 'CLIENT.TITLE' | translate }}"
+                formControlName="secondaryTitle"
+              >
+                <mat-option class="clear-selection" [value]="null">{{
+                  'GENERAL.CLEAR_SELECTION' | translate
+                }}</mat-option>
+                <mat-option *ngFor="let title of titleList" [value]="title">
+                  {{ title }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field fxFlex="80">
+              <input
+                matInput
+                placeholder="{{ 'CLIENT.NAME' | translate }}"
+                formControlName="secondaryName"
+                maxlength="45"
+              />
+            </mat-form-field>
+          </div>
+
+          <!-- Email address -->
+          <mat-form-field fxFlex>
+            <input
+              type="email"
+              matInput
+              placeholder="{{ 'CLIENT.EMAIL' | translate }}"
+              formControlName="secondaryEmail"
+              maxlength="45"
+            />
+          </mat-form-field>
+
+          <!-- Phone -->
+          <mat-form-field fxFlex>
+            <input
+              matInput
+              placeholder="{{ 'CLIENT.PHONE' | translate }}"
+              formControlName="secondaryPhone"
+              maxlength="45"
+            />
+          </mat-form-field>
+
+          <!-- TERTIARY CONTACT -->
+          <h3 class="text-secondary" fxFlex>
+            {{ 'CLIENT.TERTIARY_CONTACT_HEADING' | translate }}
+          </h3>
+
+          <!-- Title, name, code -->
+          <div fxLayout="row" fxLayoutGap="16px">
+            <mat-form-field fxFlex="20">
+              <mat-select
+                placeholder="{{ 'CLIENT.TITLE' | translate }}"
+                formControlName="tertiaryTitle"
+              >
+                <mat-option class="clear-selection" [value]="null">{{
+                  'GENERAL.CLEAR_SELECTION' | translate
+                }}</mat-option>
+                <mat-option *ngFor="let title of titleList" [value]="title">
+                  {{ title }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field fxFlex="80">
+              <input
+                matInput
+                placeholder="{{ 'CLIENT.NAME' | translate }}"
+                formControlName="tertiaryName"
+                maxlength="45"
+              />
+            </mat-form-field>
+          </div>
+
+          <!-- Email address -->
+          <mat-form-field fxFlex>
+            <input
+              type="email"
+              matInput
+              placeholder="{{ 'CLIENT.EMAIL' | translate }}"
+              formControlName="tertiaryEmail"
+              maxlength="45"
+            />
+          </mat-form-field>
+
+          <!-- Phone -->
+          <mat-form-field fxFlex>
+            <input
+              matInput
+              placeholder="{{ 'CLIENT.PHONE' | translate }}"
+              formControlName="tertiaryPhone"
+              maxlength="45"
+            />
+          </mat-form-field>
+        </div>
+      </mat-tab>
+
+      <!-- Organisation tab -->
+      <mat-tab label="{{ 'CLIENT.ORGANISATION_TAB' | translate }}">
+        <div fxLayout="column" fxLayoutGap="16px" style="padding: 8px;">
+          <!-- Organisation -->
+          <mat-form-field fxFlex>
+            <input
+              matInput
+              placeholder="{{ 'CLIENT.ORGANISATION' | translate }}"
+              formControlName="organisation"
+              maxlength="45"
+            />
+          </mat-form-field>
+          <!-- Industry -->
+          <div fxFlex fxLayout="row" fxLayoutGap="16px">
+            <mat-form-field fxFlex>
+              <mat-select
+                placeholder="{{ 'CLIENT.INDUSTRY' | translate }}"
+                formControlName="industry"
+              >
+                <mat-option class="clear-selection">{{
+                  'GENERAL.CLEAR_SELECTION' | translate
+                }}</mat-option>
+                <mat-option
+                  *ngFor="
+                    let dropList of dropLists
+                      | filterDropListByCategory: dropLists:'Client Industry'
+                  "
+                  [value]="dropList.description"
+                >
+                  {{ dropList.description }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <button
+              fxFlex="none"
+              mat-icon-button
+              class="droplist-add-button"
+              (click)="addToDropList('industry', 'CLIENT_INDUSTRY')"
+            >
+              <mat-icon>add_box</mat-icon>
+            </button>
+          </div>
+          <!-- Company Size -->
+          <mat-form-field fxFlex>
+            <mat-select
+              placeholder="{{ 'CLIENT.COMPANY_SIZE' | translate }}"
+              formControlName="companySize"
+            >
+              <mat-option class="clear-selection" [value]="null">{{
+                'GENERAL.CLEAR_SELECTION' | translate
+              }}</mat-option>
+              <mat-option
+                *ngFor="let companySize of companySizeList"
+                [value]="companySize"
+              >
+                {{ companySize }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </mat-tab>
+    
+      <!-- Custom Attributes -->
+      <mat-tab label="{{ 'CLIENT.ATTRIBUTE_TAB' | translate }}">
+        <div fxLayout="column" fxLayoutGap="32px" class="pad push-top">
+
+          <div class="form-heading">
+            {{ 'CLIENT.CUSTOM_ATTRIBUTE_HEADING' | translate }}
+          </div>
+
+          <!-- Custom Attribute 1 -->
+          <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="16px">
+
+            <!-- Attribute -->
+            <mat-form-field fxFlex>
+              <mat-select placeholder="{{ 'CLIENT.CUSTOM_ATTRIBUTE' | translate }}" formControlName="customCategory1" #customAttribute1>
+                <mat-option class="clear-selection" [value]="null">{{'GENERAL.CLEAR_SELECTION' | translate}}</mat-option>
+                <mat-option *ngFor="let cat of customDropListCategories" [value]="cat.VALUE">
+                  {{ cat.DESC }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Attribute value -->
+            <mat-form-field fxFlex>
+              <mat-select placeholder="{{ 'CLIENT.CUSTOM_ATTRIBUTE_VALUE' | translate }}" formControlName="customCategory1Desc" >
+                <mat-option class="clear-selection" [value]="null">{{'GENERAL.CLEAR_SELECTION' | translate}}</mat-option>
+                <mat-option *ngFor="let cat of getCustomAttributeValues(customAttribute1.value)" [value]="cat.description">
+                  {{ cat.description }}
+                </mat-option>
+              </mat-select>
+              <mat-error ngxErrors="customCategory1Desc">
+                <div ngxError="required" when="touched">
+                  {{ 'CLIENT.CUSTOM_CATEGORY_ERROR' | translate }}
+                </div>
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Custom Attribute 2 -->
+          <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="16px">
+
+            <!-- Attribute -->
+            <mat-form-field fxFlex>
+              <mat-select placeholder="{{ 'CLIENT.CUSTOM_ATTRIBUTE' | translate }}" #customAttribute2 formControlName="customCategory2">
+                <mat-option class="clear-selection" [value]="null">{{'GENERAL.CLEAR_SELECTION' | translate}}</mat-option>
+                <mat-option *ngFor="let cat of customDropListCategories" [value]="cat.VALUE">
+                  {{ cat.DESC }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Attribute value -->
+            <mat-form-field fxFlex>
+              <mat-select placeholder="{{ 'CLIENT.CUSTOM_ATTRIBUTE_VALUE' | translate }}" formControlName="customCategory2Desc" >
+                <mat-option class="clear-selection" [value]="null">{{'GENERAL.CLEAR_SELECTION' | translate}}</mat-option>
+                <mat-option *ngFor="let cat of getCustomAttributeValues(customAttribute2.value)" [value]="cat.description">
+                  {{ cat.description }}
+                </mat-option>
+              </mat-select>
+
+              <mat-error ngxErrors="customCategory2Desc">
+                <div ngxError="required" when="touched">
+                  {{ 'CLIENT.CUSTOM_CATEGORY_ERROR' | translate }}
+                </div>
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Custom Attribute 3 -->
+          <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="16px">
+
+            <!-- Attribute -->
+            <mat-form-field fxFlex>
+              <mat-select placeholder="{{ 'CLIENT.CUSTOM_ATTRIBUTE' | translate }}" #customAttribute3 formControlName="customCategory3">
+                <mat-option class="clear-selection" [value]="null">{{'GENERAL.CLEAR_SELECTION' | translate}}</mat-option>
+                <mat-option *ngFor="let cat of customDropListCategories" [value]="cat.VALUE">
+                  {{ cat.DESC }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Attribute value -->
+            <mat-form-field fxFlex>
+              <mat-select placeholder="{{ 'CLIENT.CUSTOM_ATTRIBUTE_VALUE' | translate }}" formControlName="customCategory3Desc">
+                <mat-option class="clear-selection" [value]="null">{{'GENERAL.CLEAR_SELECTION' | translate}}</mat-option>
+                <mat-option *ngFor="let cat of getCustomAttributeValues(customAttribute3.value)" [value]="cat.description">
+                  {{ cat.description }}
+                </mat-option>
+              </mat-select>
+
+              <mat-error ngxErrors="customCategory3Desc">
+                <div ngxError="required" when="touched">
+                  {{ 'CLIENT.CUSTOM_CATEGORY_ERROR' | translate }}
+                </div>
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+        </div>
+      </mat-tab>
+
+    </mat-tab-group>
+  </form>
+
+  <!-- Form tools -->
+  <div fxFlex="none" fxLayout="row" fxLayoutGap="16px" fxLayoutAlign="end center" style="padding: 8px">
+    <button
+      fxFlex="none"
+      type="reset"
+      mat-button
+      (click)="close()"
+      [disabled]="appComponentStateService.isSaving"
+    >
+      Cancel
+    </button>
+    <button
+      fxFlex="none"
+      type="button"
+      mat-raised-button
+      color="primary"
+      (click)="saveRecord()"
+      [disabled]="!clientForm.valid || appComponentStateService.isSaving"
+    >
+      Save
+    </button>
+  </div>
+</div>
+
+

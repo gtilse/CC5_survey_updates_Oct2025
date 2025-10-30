@@ -1,0 +1,21 @@
+.component-container {
+    height: calc(100vh - var(--app-toolbar-height) - var(--app-footer-height));
+    min-height: 600px;
+    min-width: 800px;
+    overflow: auto;
+}
+
+.survey-type {
+    // background-color: rgb(255, 255, 255);
+    // color:rgb(107, 107, 107);
+    // padding: 2px;
+    // border: 1px solid transparent;
+    // border-radius: 4px;
+    font-weight: 700;
+    font-size: 0.75em;
+}
+
+mat-sidenav {
+    width: 850px;
+    z-index: 1000;
+}

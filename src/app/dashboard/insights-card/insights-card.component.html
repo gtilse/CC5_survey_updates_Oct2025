@@ -1,0 +1,102 @@
+<div fxLayout="column" class="dashboard-card-container">
+  <div fxLayout="row" fxLayoutAlign="start center">
+    <div class="mat-body-strong" fxFlex="none" style="margin-right: 16px;">Insights</div>
+    <mat-spinner [hidden]="!isLoading" fxFlex="none" [diameter]="16"></mat-spinner>
+  </div>
+  
+
+  <div fxLayout="row" fxLayoutAlign="start center">
+    <mat-form-field fxFlex="20" floatLabel="never">
+      <!-- Select view mode -->
+      <mat-select [(ngModel)]="mode" (ngModelChange)="changeMode()">
+        <mat-option value="team">
+          Team
+        </mat-option>
+        <mat-option value="department">
+          Department
+        </mat-option>
+        <mat-option value="value">
+          Value
+        </mat-option>
+        <mat-option value="industry">
+          Industry
+        </mat-option>
+        <mat-option value="group">
+          Group
+        </mat-option>
+        <mat-option value="clientSince">
+          Client since
+        </mat-option>
+
+        <mat-option *ngFor="let category of customCategories" [value]="category">
+          {{category}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <div fxFlex="10"></div>
+    <!-- Heading -->
+    <div fxFlex="45" class="column-group-header">
+      Lastest survey
+    </div>
+    <div fxFlex="5"></div>
+    <div fxFlex="20" class="column-group-header">
+      Consolidated results
+    </div>
+  </div>
+
+  <!-- Mat Table -->
+  <mat-table [dataSource]="sortedData" matSort (matSortChange)="sortData($event)" class="mat-elevation-z8">
+    <!-- Group Name -->
+    <ng-container matColumnDef="group">
+      <mat-header-cell mat-sort-header *matHeaderCellDef>Group</mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.groupCol}} </mat-cell>
+    </ng-container>
+
+    <!-- Last NPS -->
+    <ng-container matColumnDef="lastNPS">
+      <mat-header-cell mat-sort-header *matHeaderCellDef>Score</mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <span fxFlex="30">{{element.lastNPS}}</span>
+        <span fxFlex="70" [ngClass]="{'app-promoter-fg': element.npsChange > 0, 'app-detractor-fg': element.npsChange < 0 }">
+          <span *ngIf="element.npsChange>0">+</span>{{element.npsChange | number: '1.0-0'}}<span *ngIf="element.npsChange!='-'"></span>
+        </span>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Response Rate -->
+    <ng-container matColumnDef="lastResponseRate">
+      <mat-header-cell mat-sort-header *matHeaderCellDef>Response</mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <span fxFlex="30">{{ element.lastResponseRate | number: '1.0-0' }}<span *ngIf="element.lastResponseRate>0">%</span></span>
+        <span fxFlex="70" [ngClass]="{'app-promoter-fg': element.responseRateChange > 0, 'app-detractor-fg': element.responseRateChange < 0 }">
+          <span *ngIf="element.responseRateChange>0">+</span>{{element.responseRateChange | number: '1.0-0'}}<span *ngIf="element.responseRateChange!='-'">%</span>
+        </span>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Date -->
+    <ng-container matColumnDef="date">
+      <mat-header-cell *matHeaderCellDef>Date</mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.lastSurveyDate}} </mat-cell>
+    </ng-container>
+
+    <!-- Consolidated NPS -->
+    <ng-container matColumnDef="consolidatedNPS">
+      <mat-header-cell mat-sort-header *matHeaderCellDef>Score</mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.consolidatedNPS | number: '1.0-0' }} </mat-cell>
+    </ng-container>
+
+    <!-- Consolidated Response Rate -->
+    <ng-container matColumnDef="consolidatedResponseRate">
+      <mat-header-cell mat-sort-header *matHeaderCellDef>Response</mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        {{ element.consolidatedResponseRate | number: '1.0-0' }}
+        <span *ngIf="element.consolidatedResponseRate!='-'">%</span>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="['group','lastNPS','lastResponseRate','date','consolidatedNPS','consolidatedResponseRate']"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: ['group','lastNPS','lastResponseRate','date','consolidatedNPS','consolidatedResponseRate'];"></mat-row>
+  </mat-table>
+
+</div>

@@ -1,0 +1,32 @@
+<div fxLayout="column" class="dashboard-card-container">
+
+  <div fxLayout="row" fxLayoutAlign="start center">
+    <div fxFlex="none" class="mat-body-strong">Loyalty drivers</div>
+    <div fxFlex="grow"></div>
+    <button mat-icon-button matTooltip="Download CSV" color="primary" (click)="downloadCSV()">
+      <mat-icon>file_download</mat-icon>
+    </button>
+
+  </div>
+  
+
+  <mat-form-field floatLabel="never" style="width: 240px;">
+    <mat-select [(ngModel)]="loyaltyDriverSelectedIndex" (selectionChange)="createChart()" class="mat-body-2">
+      <mat-option [value]="0">Why recommend us</mat-option>
+      <mat-option [value]="1">Improvements needed</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div fxFlex="grow" [chart]="chart" (resized)="onResized()"></div>
+
+  <div style="display: none;">
+    <mat-divider></mat-divider>
+    <div
+      fxLayout="row"
+      fxLayoutAlign="start center"
+      class="push-top card-footer display-personnel-result"
+    >
+      Display your personal results
+    </div>
+  </div>
+</div>

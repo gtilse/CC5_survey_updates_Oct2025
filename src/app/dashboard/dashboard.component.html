@@ -1,0 +1,271 @@
+<!-- Top charts -->
+<!-- Loading component -->
+<app-loading
+  placeholder="{{ 'DASHBOARD.HEADING' | translate }}"
+  [hidden]="!appComponentStateService.isLoading"
+></app-loading>
+
+<!-- Error handler component -->
+<app-error-handler
+  [hidden]="!appComponentStateService.hasError"
+  (refresh)="loadData()"
+></app-error-handler>
+
+<div [hidden]="appComponentStateService.isLoading">
+  <!-- Header -->
+  <div style="position: relative;">
+    <!-- Icon + header text -->
+    <div fxLayout="row" fxLayoutAlign="start center" class="text-muted2">
+      <mat-icon class="md-36" fxFlex="none">home</mat-icon>
+      <span fxFlex="none" fxFlexOffset="16px" class="mat-headline">{{
+        'DASHBOARD.HEADING' | translate
+      }}</span>
+    </div>
+    
+    <!-- Filter -->
+    <div
+      fxLayout="column"
+      fxLayoutGap = "0px"
+      fxLayoutGap.gt-sm = "16px"
+      fxLayoutAlign.gt-sm="start center"
+      fxLayout.gt-sm="row"
+      class="push-top-xl filter-box"
+      
+    >
+      <!-- Logged in user info -->
+      <mat-form-field floatLabel="never" fxFlex.gt-sm="30" fxHide fxShow.gt-sm>
+        <input
+          matInput
+          value="{{ appStateService.loggedUser.firstName }}, {{
+            'DASHBOARD.WELCOME_MESSAGE' | translate
+          }}"
+          readonly
+        />
+      </mat-form-field>
+
+      <div fxHide.gt-sm class="text-xl">
+        {{ appStateService.loggedUser.firstName }}, {{
+          'DASHBOARD.WELCOME_MESSAGE' | translate
+        }}
+      </div>
+
+      <!-- Clients select -->
+      <mat-form-field floatLabel="never" fxFlex.gt-sm="15">
+        <mat-select
+          placeholder="{{ 'GENERAL.FILTER_ALL_CLIENTS' | translate }}"
+          [(ngModel)]="clientFilterParam"
+        >
+          <mat-option
+            class="clear-selection"
+            [value]="''"
+            [hidden]="!clientFilterParam"
+            >{{ 'GENERAL.FILTER_ALL_CLIENTS' | translate }}</mat-option
+          >
+
+          <mat-optgroup *ngFor="let group of clientGroupKeys" [label]="group">
+            <mat-option
+              *ngFor="let val of clientGroups[group]"
+              [value]="group + '_' + val"
+            >
+              {{ val }}
+            </mat-option>
+          </mat-optgroup>
+        </mat-select>
+      </mat-form-field>
+      <!-- Staff select -->
+      <mat-form-field floatLabel="never" fxFlex.gt-sm="15">
+        <mat-select
+          placeholder="{{ 'GENERAL.FILTER_ALL_STAFF' | translate }}"
+          [(ngModel)]="staffFilterParam"
+        >
+          <mat-option
+            class="clear-selection"
+            [value]="''"
+            [hidden]="!staffFilterParam"
+            >{{ 'GENERAL.FILTER_ALL_STAFF' | translate }}</mat-option
+          >
+          <mat-option *ngFor="let staff of staffList" [value]="staff.objectId">
+            {{ staff.fullName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Date Range -->
+      <mat-form-field fxFlex.gt-sm="15">
+        <mat-label>{{ 'GENERAL.SELECT_DATE_RANGE' | translate }}</mat-label>
+        <mat-date-range-input [rangePicker]="picker">
+          <input matStartDate placeholder="{{ 'GENERAL.START_DATE' | translate }}" [(ngModel)]="dateRangeFilterParam.start">
+          <input matEndDate placeholder="{{ 'GENERAL.END_DATE' | translate }}" [(ngModel)]="dateRangeFilterParam.end">
+        </mat-date-range-input>
+        <!-- <mat-hint>DD/MM/YYYY – DD/MM/YYYY</mat-hint> -->
+        <mat-datepicker-toggle matSuffix [for]="picker" style="font-size:20px"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
+
+      <!-- Filter/clear buttons -->
+      <div fxLayout="row" fxLayoutGap="8px" fxFlex.gt-sm="20">
+        <button
+        fxFlex
+        mat-raised-button
+        color="primary"
+        (click)="applyFilters()"
+        [disabled]="isFetchingData"
+        >
+          {{ 'GENERAL.FILTER' | translate | uppercase }}
+        </button>
+        <button
+          fxFlex
+          mat-raised-button
+          (click)="clearFilters()"
+          [hidden]="!(clientFilterParam || staffFilterParam || dateRangeFilterParam.start)"
+          [disabled]="isFetchingData"
+        >
+          {{ 'DASHBOARD.CLEAR_FILTER' | translate | uppercase }}
+        </button>
+      </div>
+      
+    </div>
+
+    <mat-progress-bar
+      mode="indeterminate"
+      class=""
+      *ngIf="isFetchingData"
+    ></mat-progress-bar>
+  </div>
+
+  <!-- Dashboard content -->
+  <div class="app-white-bg dashboard-content">
+    <!-- First row of dashboard -->
+    <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap="32px" class="push-top-lg">
+      <!-- App summary -->
+      <mat-card fxLayout="column" fxFlex.gt-sm="34" class="mat-elevation-z" style="height: 380px;">
+        <app-summary-card [data]="dashboardData.summary"></app-summary-card>
+      </mat-card>
+
+      <!-- Latest survey -->
+      <mat-card
+        fxLayout="column"
+        fxFlex.gt-sm="calc(66% - 32px)"
+        class="mat-elevation-z"
+        style="height: 380px;"
+      >
+        <app-latest-survey-card [data]="latestSurvey" [dateRangeEnabled]="dateRangeEnabled"></app-latest-survey-card>
+      </mat-card>
+    </div>
+
+    <!-- Second row -->
+    <div
+      fxLayout="column" fxLayout.gt-sm="row"
+      fxLayoutGap="32px"
+      class="push-top-xl"
+    >
+
+      <!-- Client Score -->
+      <mat-card
+      fxLayout="column"
+      class="mat-elevation-z"
+      fxFlex="34">
+        <app-client-score-card [data]="dashboardData.clientScore"></app-client-score-card>
+      </mat-card>
+
+       <!-- Loyalty Drivers -->
+       <mat-card
+       fxLayout="column"
+       class="mat-elevation-z"
+       fxFlex="calc(33% - 32px)">
+         <app-our-strength-card [loyaltyDrivers]="loyaltyDrivers"></app-our-strength-card>
+       </mat-card>
+
+      <!-- Consolidated results -->
+      <mat-card
+        fxFlex="calc(33% - 32px)"
+        fxLayout="column"
+        class="mat-elevation-z"
+        style="height: 380px;">
+        <app-consolidated-results-card [data]="consolidatedResult"></app-consolidated-results-card>
+        <!-- <div class="loading-overlay" [hidden]="!isFetchingData"></div>
+        <div fxFlex="none">
+          <h2 class="mat-title">{{ 'DASHBOARD.CLIENT_SCORE' | translate }}</h2>
+          <span class="app-primary-fg">{{
+            'DASHBOARD.CONSOLIDATED' | translate | uppercase
+          }}</span>
+          <div *ngIf="filterText" class="text-muted">{{ filterText }}</div>
+        </div>
+
+        <div
+          fxFlex="grow"
+          fxLayout="row"
+          class="dashboard-no-data-placeholder"
+          *ngIf="!dashboardData.clientScore.hasData"
+        >
+          {{ 'DASHBOARD.NO_DATA' | translate }}
+        </div>
+        <div
+          fxFlex="grow"
+          fxLayout="row"
+          fxLayoutAlign="start end"
+          *ngIf="dashboardData.clientScore.hasData"
+        >
+          <div
+            class="mat-display-3 app-primary-fg"
+            style="margin: 0px; font-size: 100px; line-height: 1em;"
+          >
+            {{ dashboardData.clientScore.score }}
+          </div>
+        </div>
+
+        <div fxFlex="none">
+          <mat-divider></mat-divider>
+          <div class="push-top">
+            <a href="" (click)="clientScoreTypeChange($event)">
+              {{
+                (dashboardData.clientScore.type === 'TEAM'
+                  ? 'DASHBOARD.PERSONAL_CLIENT_SCORE'
+                  : 'DASHBOARD.TEAM_CLIENT_SCORE'
+                )
+                  | translate
+                  | uppercase
+              }}
+            </a>
+            // placeholder button for sizing
+            <button type="button" mat-raised-button style="visibility: hidden;">
+              x
+            </button>
+          </div>
+        </div> -->
+      </mat-card>
+    </div>
+
+    <!-- Third row -->
+    <!-- Insights, Client Followup, Client Score Changes -->
+    <div
+      fxLayout="column"
+      fxLayout.gt-sm="row"
+      fxLayoutGap="32px"
+      class="push-top-xl">
+      <mat-card fxFlex.gt-sm="67" fxLayout="column" class="mat-elevation-z" style="height: 792px;">
+        <app-insights-card [isLoading]="insightsLoading" [results]="dashboardData.insightsPanel.results" (groupChange)="getInsightsData($event)"></app-insights-card>
+      </mat-card>
+
+      <!-- Client followup/score change cards  -->
+      <div fxLayout="column" fxLayoutGap="32px" fxFlex="calc(33% - 32px)">
+
+        <!-- Client Score Change -->
+        <mat-card
+          fxFlex
+          fxLayout="column"
+          class="mat-elevation-z">
+          <app-client-score-change-card [data]="dashboardData.clientScoreChanges"></app-client-score-change-card>
+        </mat-card>
+
+        <!-- Client Followup -->
+        <mat-card fxFlex fxLayout="column" class="mat-elevation-z">
+          <app-client-follow-up-card [data]="dashboardData.clientFollowup"></app-client-follow-up-card>
+        </mat-card>
+
+      </div>
+
+    </div>
+   
+  </div>
+</div>

@@ -1,0 +1,51 @@
+<div fxLayout="column" class="dashboard-card-container">
+  <div
+    class="mat-body-strong"
+    matTooltip="How many clients have improved their score from last time, reduced their score or kept their score the same?"
+  >
+    Client score changes
+  </div>
+
+  <mat-form-field floatLabel="never" style="width: 140px;">
+    <mat-select [(ngModel)]="mode" (ngModelChange)="changeMode()">
+      <mat-option value="improving">
+        Improving
+      </mat-option>
+      <mat-option value="at-risk">
+        At risk
+      </mat-option>
+      <mat-option value="no-change">
+        No change
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div fxFlex="grow" fxLayout="row" fxLayoutAlign="start flex-end">
+    <ng-container *ngIf="mode === 'improving'">
+      <div class="mat-display-3 app-promoter-fg" style="margin: 0;">
+        {{ data.improving }}
+      </div>
+    </ng-container>
+    <ng-container *ngIf="mode === 'at-risk'">
+      <div class="mat-display-3 app-accent-fg" style="margin: 0;">
+        {{ data.atRisk }}
+      </div>
+    </ng-container>
+    <ng-container *ngIf="mode === 'no-change'">
+      <div class="mat-display-3 app-primary-fg" style="margin: 0;">
+        {{ data.noChange }}
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- <div fxFlex="none">
+    <mat-divider></mat-divider>
+    <div
+      fxLayout="row"
+      fxLayoutAlign="start center"
+      class="push-top card-footer display-personnel-result"
+    >
+      Display your personal results
+    </div>
+  </div> -->
+</div>

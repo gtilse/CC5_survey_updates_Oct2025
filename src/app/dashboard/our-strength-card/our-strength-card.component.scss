@@ -1,0 +1,13 @@
+.loyalty-drivers {
+
+    & div {
+        margin-bottom: 12px;
+    }
+    & .list-index {
+        display: inline-block;
+        width: 1.3em;
+
+        &.positive { color: green; }
+        &.negative { color: red; }
+    }
+}

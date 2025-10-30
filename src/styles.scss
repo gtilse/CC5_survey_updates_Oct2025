@@ -1,0 +1,1400 @@
+// ----------------------------------------------------------------------------
+@use '@angular/material' as mat;
+// APP GLOBAL STYLE SHEET
+// ----------------------------------------------------------------------------
+
+@import '~bootstrap/scss/bootstrap-reboot'; // Bootstrap reset - set a base style sheet
+@import '@angular/material/theming'; // Material theme SCSS
+//@import url("//fonts.googleapis.com/icon?family=Material+Icons"); // Material icons
+@import 'palettes'; // Customised color palettes for the application
+
+// Import google fonts for the application
+// Font weights:
+// 300 - light
+// 400 - regular
+// 500 - medium
+// 600 - semi bold
+// 700 - bold
+//@import url("//fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,600,600i,700,700i");
+
+/*#region Theme config */
+
+// ----------------------------------------------------------------------------
+// Theme configuration
+// Angular material design being used here
+// ----------------------------------------------------------------------------
+
+// Custom typography
+$typography: mat.define-typography-config(
+  $font-family: '"Inter", sans-serif',
+  $display-4: mat.define-typography-level(112px, 112px, 300),
+  $display-3: mat.define-typography-level(80px, 92px, 400),
+  $display-2: mat.define-typography-level(45px, 48px, 400),
+  $display-1: mat.define-typography-level(34px, 40px, 400),
+  $headline: mat.define-typography-level(32px, 38px, 300),
+  // mat-h1, mat-headline
+    $title: mat.define-typography-level(24px, 32px, 300),
+  // mat-h2, mat-title
+    $subheading-2: mat.define-typography-level(18px, 28px, 300),
+  // mat-h3, mat-subheading-2
+    $subheading-1: mat.define-typography-level(16px, 24px, 300),
+  // mat-h4, mat-subheading-1
+    $body-2: mat.define-typography-level(14px, 18px, 600),
+  // mat-body-strong
+    $body-1: mat.define-typography-level(14px, 20px, 400),
+  // mat-body
+    $caption: mat.define-typography-level(13px, 20px, 400),
+  // mat-small, mat-caption
+    $button: mat.define-typography-level(14px, 14px, 400),
+  // Line-height must be unit-less fraction of the font-size. $input: mat-typography-level(16px, 1.125, 400)
+);
+
+// Palettes
+$app-primary: mat.define-palette($client-culture-blue);
+$app-accent: mat.define-palette($client-culture-pink);
+$app-warn: mat.define-palette($client-culture-red);
+
+$dark-primary: mat.define-palette($client-culture-gray);
+$dark-accent: mat.define-palette($client-culture-black);
+
+// Setup app theme based on primary, accent and warn palettes
+$app-theme: mat.define-light-theme($app-primary, $app-accent, $app-warn);
+$dark-theme: mat.define-light-theme($dark-primary, $dark-accent);
+
+// Add mat core and material theme to the style sheet
+@include mat.core($typography);
+@include mat.all-component-themes($app-theme);
+@include mat.table-theme($app-theme);
+@include mat.table-typography($typography);
+
+.dark-theme {
+  @include mat.all-component-themes($dark-theme);
+}
+
+/*#endregion */
+
+/*#region Variables */
+
+// ----------------------------------------------------------------------------
+// SCSS variables
+// ----------------------------------------------------------------------------
+
+// Material table
+// We setup a table without angular components
+// Hence using code from material design to match table layout
+$mat-header-row-height: 56px;
+$mat-row-height: 48px;
+$mat-row-horizontal-padding: 24px;
+
+// Some other variables used later in the style sheet
+$app-foreground: map-get($app-theme, foreground);
+$app-background: map-get($app-theme, background);
+$app-primary-color: #3d5afe;
+$app-accent-color: #f50057;
+$app-toolbar-color: #292b32;
+$app-warn-color: mat.get-color-from-palette($app-warn, 500);
+$body-bg-color: #eeeeee;
+$border-color: #bdbdbd;
+$status-bar-color: mat.get-color-from-palette($app-background, status-bar);
+$promoters-background-color: #11c598;
+$neutrals-background-color: darken(mat.get-color-from-palette($app-background, background), 30%);
+$detractors-background-color: #ed265b;
+$muted-color: #9b9b9b;
+$muted-color2: #bdbdbd;
+$muted-color3: #d8d8d8;
+$background-light-color: #f5f5f5;
+
+// App layout variables
+$app-toolbar-height: 52px;
+$app-footer-height: 56px;
+
+/*#endregion */
+
+/*#region Base Styles */
+
+// ----------------------------------------------------------------------------
+// Base styles
+// ----------------------------------------------------------------------------
+
+html {
+  height: 100%;
+}
+
+body {
+  background: white;
+}
+
+a {
+  color: $app-primary-color;
+}
+
+a:hover {
+  color: lighten($app-primary-color, 10%);
+}
+
+button:focus,
+a:focus {
+  // remove outline from buttons and links on focus
+  outline: none !important;
+  // border: 0 !important;
+}
+
+code {
+  color: $app-warn-color;
+  font-weight: 400;
+}
+
+label {
+  margin-bottom: 0px;
+}
+
+*[flex] {
+  min-width: 1px;
+  min-height: 1px;
+}
+
+/*#endregion */
+
+/*#region CSS GLOBAL VARIABLES */
+
+:root {
+
+  // Colors
+  --app-primary-color: #{$app-primary-color};
+  --app-accent-color: #{$app-accent-color};
+  --app-warn-color: #{$app-warn-color};
+
+  // Dimensions
+  --app-toolbar-height: #{$app-toolbar-height};
+  --app-footer-height: #{$app-footer-height};
+}
+
+
+
+/*#endregion */
+
+/*#region Mixins */
+
+// ----------------------------------------------------------------------------
+// Mixins
+// ----------------------------------------------------------------------------
+
+// Score labels
+@mixin score {
+  & .score,
+  & {
+    display: inline-block;
+    margin: 0px auto;
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+
+    background-color: black;
+    color: white;
+    text-align: center;
+
+    &.promoters {
+      background-color: $promoters-background-color;
+    }
+
+    &.neutrals {
+      background-color: $neutrals-background-color;
+    }
+
+    &.detractors {
+      background-color: $detractors-background-color;
+    }
+
+    &.clickable {
+      cursor: pointer;
+    }
+  }
+}
+
+/*#endregion */
+
+/*#region Material customization */
+
+// ----------------------------------------------------------------------------
+// Material classes overrides
+// ----------------------------------------------------------------------------
+
+.mat-drawer-content,
+.mat-drawer-container {
+  // this is needed to maintain z-index context for nested elements with fixed position
+  position: static !important;
+}
+
+.mat-headline {
+  margin-bottom: 0px;
+}
+
+.mat-tab-label,
+.mat-tab-link {
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.mat-card {
+  border: 1px solid #bdbdbd;
+  box-shadow: none;
+  &:hover {
+    box-shadow: 0 1px 3px 1px rgba(66, 66, 66, 0.2),
+      0 2px 8px 4px rgba(66, 66, 66, 0.1);
+  }
+}
+
+.mat-card-header-text {
+  margin: 0px !important;
+}
+
+.mat-checkbox-layout {
+  white-space: normal !important;
+}
+
+.mat-checkbox-frame {
+  border-color: $app-primary-color;
+}
+
+mat-header-cell {
+  &.mat-column-select {
+    overflow: visible !important;
+  }
+}
+
+mat-cell {
+  &.mat-column-select {
+    overflow: visible !important;
+  }
+}
+
+.mat-form-field-underline {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.mat-input-element.table-input {
+  border-bottom: 1px dotted mat.get-color-from-palette($app-foreground, secondary-text);
+  &:focus {
+    border-bottom: 1px dotted $app-primary-color;
+  }
+}
+
+.mat-column-select {
+  overflow: visible !important;
+  padding-left: 16px; // padding needed to display the background circle effectively
+}
+
+.mat-tooltip {
+  white-space: pre-line;
+}
+
+.mat-badge {
+  position: relative;
+
+  & .mat-badge-content {
+    position: absolute;
+    text-align: center;
+    display: inline-block;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    line-height: 22px;
+    right: -5px;
+    top: -1px !important;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 400;
+    &.warn {
+      background: $detractors-background-color;
+    }
+  }
+}
+
+mat-dialog-container {
+  position: relative;
+}
+
+.mat-sort-header-container {
+  align-items: center;
+}
+
+.mat-snack-bar-container {
+  &.success {
+    background-color: $app-primary-color;
+  }
+
+  &.error {
+    background-color: $app-warn-color;
+  }
+
+  .mat-simple-snackbar-action {
+    color: $muted-color;
+  }
+}
+
+.mat-simple-snackbar {
+  &.success {
+    background-color: $app-primary-color;
+  }
+
+  &.error {
+    background-color: $app-warn-color;
+  }
+
+  .mat-simple-snackbar-action {
+    color: $muted-color;
+  }
+}
+
+.mat-table {
+  // Styles from https://github.com/angular/components/blob/master/src/material/table/table.scss
+  display: block;
+  background: mat.get-color-from-palette($app-background, 'card');
+  width: 100%;
+
+  &.app-background {
+    background-color: $body-bg-color;
+  }
+
+  & > .mat-header-row {
+    min-height: $mat-header-row-height;
+    & > .mat-header-cell {
+      color: mat.get-color-from-palette($app-foreground, secondary-text);
+    }
+  }
+
+  & > .mat-row,
+  & > .mat-footer-row {
+    min-height: $mat-row-height;
+    & > .mat-cell,
+    & > .mat-footer-cell {
+      &.text-md {
+        font-size: 0.8em;
+      }
+    }
+  }
+
+  & > .mat-row,
+  & > .mat-header-row,
+  & > .mat-footer-row {
+    display: flex;
+    // Define a border style, but then widths default to 3px. Reset them to 0px except the bottom
+    // which should be 1px;
+    border-width: 0;
+    border-bottom-width: 1px;
+    border-style: solid;
+    align-items: center;
+    box-sizing: border-box;
+    background: inherit;
+    border-bottom-color: mat.get-color-from-palette($app-foreground, divider);
+
+    // Workaround for https://goo.gl/pFmjJD in IE 11. Adds a pseudo
+    // element that will stretch the row the correct height. See:
+    // https://connect.microsoft.com/IE/feedback/details/802625
+    &::after {
+      display: inline-block;
+      min-height: inherit;
+      content: '';
+    }
+
+    // Note: we use `first-of-type`/`last-of-type` here in order to prevent extra
+    // elements like ripples or badges from throwing off the layout (see #11165).
+    & > .mat-cell:first-of-type,
+    & > .mat-header-cell:first-of-type,
+    & > .mat-footer-cell:first-of-type {
+      //padding-left: $mat-row-horizontal-padding;
+
+      [dir='rtl'] & {
+        padding-left: 0;
+        //padding-right: $mat-row-horizontal-padding;
+      }
+    }
+
+    // & > .mat-cell:last-of-type, & > .mat-header-cell:last-of-type, & > .mat-footer-cell:last-of-type {
+    //   padding-right: $mat-row-horizontal-padding;
+
+    //   [dir='rtl'] & {
+    //     padding-right: 0;
+    //     padding-left: $mat-row-horizontal-padding;
+    //   }
+    // }
+
+    & > .mat-cell,
+    & > .mat-header-cell,
+    & > .mat-footer-cell {
+      padding-right: $mat-row-horizontal-padding;
+
+      [dir='rtl'] & {
+        padding-right: 0;
+        padding-left: $mat-row-horizontal-padding;
+      }
+    }
+
+    & > .mat-cell,
+    & > .mat-header-cell,
+    & > .mat-footer-cell {
+      overflow: hidden;
+      word-wrap: break-word;
+      padding-top: 5px;
+      padding-bottom: 5px;
+    }
+
+    & > .mat-cell.mat-column-select,
+    & > .mat-header-cell.mat-column-select,
+    & > .mat-footer-cell.mat-column-select {
+      padding-left: 0;
+    }
+  }
+
+  // Data table styling
+  &.mat-data-table {
+    margin-bottom: 24px;
+
+    & > .mat-row {
+      cursor: pointer;
+      align-items: center;
+      &:hover {
+        background-color: $status-bar-color;
+      }
+
+      &.inactive .mat-cell {
+        color: mat.get-color-from-palette($app-foreground, secondary-text) !important;
+      }
+
+      &.small .mat-cell {
+        font-size: 0.8em;
+      }
+
+      & .mat-cell {
+        @media (max-width: 960px) {
+          font-size: 0.95em;
+        }
+      }
+    }
+
+    & .mat-data-table-footer {
+      padding: 10px;
+      color: mat.get-color-from-palette($app-foreground, secondary-text);
+      font-size: 0.8em;
+    }
+  }
+}
+
+.mat-progress-bar {
+  &.data-filter-progress-bar {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+  }
+}
+
+.mat-select-border {
+  padding-top: 8px;
+  padding-left: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.mat-form-field {
+  line-height: 1.3;
+}
+
+.mat-icon-button.custom {
+  & .mat-icon {
+    color: $muted-color2;
+    &:hover {
+      color: $app-primary-color;
+    }
+  }
+
+  &.large {
+    width: 48px;
+    height: 48px;
+    line-height: 48px;
+
+    .mat-icon {
+      margin-top: -5px;
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+      line-height: 48px;
+    }
+  }
+}
+
+.mat-button,
+.mat-raised-button,
+.mat-stroked-button,
+.mat-flat-button {
+  border-radius: 0 !important;
+  letter-spacing: 0.5px;
+  min-width: 100px !important;
+}
+
+.mat-stroked-button:not([disabled]) {
+  border-color: $app-primary-color;
+}
+
+/*#endregion */
+
+/*#region Custom CSS classes */
+
+// ----------------------------------------------------------------------------
+// App wide css classes to style elements
+// ----------------------------------------------------------------------------
+
+.text-secondary {
+  color: #bdbdbd;
+}
+
+.text-muted {
+  color: $muted-color;
+}
+
+.text-muted2 {
+  color: $muted-color2;
+}
+
+.text-muted3 {
+  color: $muted-color3;
+}
+
+.bg-light {
+  background: $background-light-color;
+}
+
+.app-promoter-fg {
+  color: $promoters-background-color;
+}
+
+.app-neutral-fg {
+  color: $neutrals-background-color;
+}
+
+.app-detractor-fg {
+  color: $detractors-background-color;
+}
+
+.app-primary-fg {
+  color: $app-primary-color;
+}
+
+.app-warn-fg {
+  color: $app-warn-color;
+}
+
+.app-accent-fg {
+  color: $app-accent-color;
+}
+
+.app-white-bg {
+  color: #000000;
+  background: #ffffff;
+}
+
+.app-promoter-bg {
+  color: #fff;
+  background: $promoters-background-color;
+}
+
+.app-warn-bg {
+  color: #fff;
+  background: $app-warn-color;
+}
+
+.app-neutral-bg {
+  color: #fff;
+  background-color: $neutrals-background-color;
+}
+
+.app-detractor-bg {
+  color: #fff;
+  background-color: $detractors-background-color;
+}
+
+.collapsed {
+  display: none;
+}
+
+.loading-content {
+  color: mat.get-color-from-palette($app-foreground, secondary-text);
+  margin-top: 15px;
+  font-weight: 300;
+
+  & > img {
+    width: 32px;
+    height: 32px;
+    -webkit-animation: loadingAnimation 1s infinite alternate;
+    -moz-animation: loadingAnimation 1s infinite alternate;
+    -o-animation: loadingAnimation 1s infinite alternate;
+    animation: loadingAnimation 1s infinite alternate;
+  }
+}
+
+.data-container {
+  & mat-sidenav {
+    z-index: 10;
+  }
+
+  // background-color: inherit;
+  // & .mat-drawer-backdrop.mat-drawer-shown {
+  //   background-color: inherit;
+  // }
+}
+
+.full-width {
+  width: 100%;
+}
+
+.edit-view {
+  padding: 15px;
+}
+
+.card-header {
+  padding: 60px 75px 40px;
+  background: #fff;
+}
+
+.data-table-container {
+  background: $body-bg-color;
+  padding: 32px 75px;
+
+  & .mat-table {
+    background-color: $body-bg-color;
+  }
+
+  & .record-count {
+    margin-bottom: 64px;
+  }
+}
+
+.page-content-container {
+  background: $body-bg-color;
+  padding: 32px 75px;
+}
+
+.dashboard-card-container {
+  height: 100%;
+
+  .item-label {
+    color: #9b9b9b;
+  }
+
+  .card-footer {
+    height: 28px;
+  }
+}
+
+.form-heading {
+  //@include mat.typography-level($typography, title);
+  font-weight: 700;
+  color: mat.get-color-from-palette($app-foreground, secondary-text);
+
+  & mat-icon {
+    font-size: 24px;
+    margin-right: 10px;
+    color: mat.get-color-from-palette($app-foreground, secondary-text);
+  }
+}
+
+.form-sub-heading {
+  @include mat.typography-level($typography, subheading-1);
+  font-weight: 400;
+  margin: 0 0 32px;
+  color: mat.get-color-from-palette($app-foreground, secondary-text);
+}
+
+.form-toolbar {
+  margin-top: 16px;
+  border-top: 1px solid #EEE;
+}
+
+.image-upload-wrapper {
+  width: 220px;
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.24), 0px 0px 2px rgba(0, 0, 0, 0.12);
+  border-radius: 3px;
+
+  & > .image {
+    height: 220px;
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+
+  & > .toolbar {
+    padding: 24px 12px 18px;
+    background: #fff;
+    border-top: 1px solid $status-bar-color;
+  }
+}
+
+.filter-box {
+  & .mat-form-field {
+    font-weight: 600;
+  }
+
+  & .mat-form-field-infix {
+    padding: 0.8em 0;
+  }
+
+  & .mat-form-field-label {
+    color: #000;
+  }
+
+  & .mat-form-field-underline {
+    border: 1px solid #000;
+  }
+
+  & .mat-form-field-label-wrapper {
+    top: -0.54375em;
+  }
+
+  & .record-count {
+    color: $muted-color;
+    font-weight: 500;
+  }
+}
+
+.text-highlight {
+  background-color: mat.get-color-from-palette($app-accent, 200);
+  padding: 2px;
+  &.small {
+    font-size: 0.8em;
+  }
+}
+
+.form-legend {
+  font-size: 22px;
+  font-weight: 300;
+  color: mat.get-color-from-palette($app-foreground, secondary-text);
+  margin: 16px 0px;
+}
+
+.form-sub-legend {
+  color: mat.get-color-from-palette($app-foreground, secondary-text);
+  margin: 8px 0px;
+}
+
+.clear-selection {
+  background-color: mat.get-color-from-palette($app-background, background);
+  color: mat.get-color-from-palette($app-foreground, secondary-text);
+
+  font-style: italic;
+}
+
+.droplist-add-button {
+  margin-left: 5px !important;
+  margin-top: 16px !important;
+  & mat-icon {
+    color: $muted-color;
+  }
+}
+
+.score-label {
+  @include score;
+}
+
+.loading-overlay {
+  position: absolute;
+  background: #fff;
+  opacity: 0.75;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 10;
+}
+
+.dashboard-no-data-placeholder {
+  padding-top: 32px;
+  font-size: 1em;
+  font-weight: 300;
+  color: $muted-color2;
+}
+
+.content-area {
+  height: calc(100vh - #{$app-toolbar-height} - #{$app-footer-height});
+}
+
+.mat-table-container {
+  overflow: auto;
+  background-color: #eee;
+
+  & .mat-table {
+    background-color: #EEE!important;
+  }
+}
+
+.mat-table-actions {
+  padding: 8px;
+}
+
+.mat-table-footer {
+  padding: 8px;
+  background-color: rgb(247, 247, 247);
+}
+
+// Client responses table
+.client-responses {
+  background: #fff;
+  //border: 1px solid $border-color;
+
+  & .mat-row {
+    align-items: flex-start!important;
+  }
+
+  & .mat-cell {
+    padding-top: 15px !important;
+    padding-bottom: 15px !important;
+  }
+
+  & .mat-form-field {
+    padding: 0px;
+    width: 100%;
+  }
+
+  & .score {
+    display: inline-block;
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+
+    background-color: black;
+    color: white;
+    text-align: center;
+
+    &.promoters {
+      background-color: $promoters-background-color;
+    }
+
+    &.neutrals {
+      background-color: $neutrals-background-color;
+    }
+
+    &.detractors {
+      background-color: $detractors-background-color;
+    }
+  }
+
+  & .score-change {
+    margin-left: 5px;
+
+    & i {
+      margin-top: 5px;
+    }
+
+    &.up {
+      color: $promoters-background-color;
+    }
+
+    &.down {
+      color: $detractors-background-color;
+    }
+
+    &.none {
+      color: $neutrals-background-color;
+    }
+
+    &.empty {
+      visibility: hidden;
+    }
+  }
+
+  & .client {
+    margin-top: 2px;
+    color: $muted-color;
+  }
+
+  & .icon {
+    font-size: 1.3em;
+    line-height: 1.3;
+    color: #e0e0e0;
+    cursor: pointer;
+
+    &.flagged {
+      color: $detractors-background-color;
+    }
+
+    &.note {
+      color: $app-primary-color;
+    }
+
+    &.actions {
+      color: $detractors-background-color;
+    }
+
+    &.promoters {
+      color: $promoters-background-color;
+    }
+
+    &.neutrals {
+      color: $neutrals-background-color;
+    }
+
+    &.detractors {
+      color: $detractors-background-color;
+    }
+  }
+}
+
+.feedback-menu {
+  .mat-menu-content:not(:empty) {
+    padding: 0;
+  }
+  .mat-menu-item {
+    height: 32px;
+    line-height: 32px;
+  }
+}
+
+.load-more {
+  color: $app-primary-color;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+// Client/employee info link
+.client-info-link,
+.employee-info-link {
+  display: inline-block;
+  cursor: pointer;
+  text-decoration: underline;
+
+  &:hover {
+    color: lighten(#000000, 10%);
+  }
+}
+
+.display-personnel-result {
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: underline;
+  color: #9b9b9b;
+  cursor: pointer;
+}
+
+// Report
+
+.report {
+  & .mat-row {
+    display: flex;
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+
+  & .score {
+    display: inline-block;
+    margin: 0px auto;
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+
+    background-color: black;
+    color: white;
+    text-align: center;
+
+    &.promoters {
+      background-color: $promoters-background-color;
+    }
+
+    &.neutrals {
+      background-color: $neutrals-background-color;
+    }
+
+    &.detractors {
+      background-color: $detractors-background-color;
+    }
+
+    &.clickable {
+      cursor: pointer;
+    }
+  }
+
+  &.mat-table .mat-row {
+    align-items: center;
+  }
+
+  & .group-header-1 {
+    padding: 18px;
+    font-size: 1.15em;
+    font-weight: 600;
+    background: #f5f5f5;
+  }
+
+  & .group-header-2 {
+    padding: 14px;
+    font-weight: 600;
+    background: #fcfcfc;
+  }
+
+  & .mat-row.small .mat-cell {
+    font-size: 14px !important;
+  }
+}
+
+.search-box {
+  
+  & .mat-form-field {
+    
+  }
+  & .mat-form-field-flex {
+    align-items: center;
+  }
+  & .mat-form-field-infix {
+    border: 0;
+    padding: 1.25em 0.75em;
+  }
+  & .mat-form-field-wrapper {
+    padding: 0;
+  }
+  & .mat-form-field-appearance-fill .mat-form-field-flex {
+    padding: 0 0.75em;
+    background-color: #fafafa;
+  }
+  & .mat-form-field-underline {
+    display: none;
+  }
+}
+
+.client-info-name {
+  position: absolute;
+  top: 38px;
+  right: 24px;
+}
+
+/*#endregion */
+
+
+// ----------------------------------------------------------------------------
+// App components
+// ----------------------------------------------------------------------------
+
+/*#region App Container */
+
+// App container
+app-root {
+  display: block;
+  position: relative;
+  padding-bottom: $app-footer-height;
+  min-height: calc(100vh - #{$app-toolbar-height});
+
+  // top toolbar
+  & > .app-toolbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: $app-toolbar-height;
+    background-color: $app-toolbar-color !important;
+    z-index: 101;
+
+    & .logo {
+      height: 20px;
+      @media (max-width: 600px) {
+        height: 30px;
+      }
+    }
+
+    & .profile-photo {
+      width: 30px;
+      height: 30px;
+      margin-left: 16px;
+      border-radius: 50%;
+      background-color: #11c598;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 16px;
+      cursor: pointer;
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+  }
+
+  // container for left nav and app content
+  & > .app-nav-container {
+    margin-top: $app-toolbar-height;
+
+    & > mat-sidenav-content.app-content {
+      background: $body-bg-color;
+      min-height: calc(100vh - #{$app-footer-height + $app-toolbar-height});
+    }
+
+    & > mat-sidenav.right-sidenav {
+      position: fixed;
+      right: 0;
+      top: #{$app-toolbar-height};
+      height: calc(100vh - #{$app-toolbar-height });
+      padding-bottom: $app-footer-height;
+      overflow-y: auto;
+      background: #ffffff;
+
+      & .nav-buttons {
+        & .mat-icon-button {
+          mat-icon {
+            width: 29px;
+            font-size: 29px;
+            color: $muted-color;
+
+            &:hover,
+            &.selected {
+              color: $app-accent-color;
+            }
+          }
+        }
+      }
+
+      & .content-area {
+        font-size: 0.9em;
+        padding: 16px;
+
+        &.help {
+          & .heading {
+            color: $muted-color;
+            font-size: 2em;
+          }
+
+          & .content {
+            margin-top: 32px;
+          }
+        }
+      }
+    }
+
+    & > mat-sidenav.left-sidenav {
+      position: fixed;
+      left: 0;
+      top: #{$app-toolbar-height};
+      height: calc(100vh - #{$app-toolbar-height + $app-footer-height});
+      //padding-bottom: $app-footer-height;
+      overflow-y: auto;
+      background: #ffffff;
+
+      & .company-name {
+        padding:12px 4px;
+        font-weight: 500;
+        background-color: $app-primary-color;
+        color: white;
+      }
+
+      & > .mat-drawer-inner-container {
+        overflow-x: hidden !important;
+      }
+
+      & mat-icon {
+        color: #bdbdbd;
+      }
+
+      & .mat-list-item {
+        font-size: 14px;
+        font-weight: 400;
+
+        & .admin-menu-item {
+          color: #9b9b9b;
+          font-size: 13px;
+        }
+      }
+
+      & .router-link-active {
+        background: $background-light-color;
+
+        & a {
+          & mat-icon {
+            color: $app-accent-color;
+          }
+        }
+      }
+    }
+
+    &::after {
+      content: '\00a0'; /* &nbsp; */
+      display: block;
+      height: 0px;
+      visibility: hidden;
+    }
+  }
+}
+
+// application footer
+footer {
+  position: fixed;
+  //z-index: 2000;
+  height: #{$app-footer-height};
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  padding: 0 85px 0px 25px;
+  align-items: center;
+  background: #fff;
+  border-top: 1px solid $border-color;
+  a {
+    font-size: 12px;
+  }
+}
+
+/*#endregion */
+
+/*#region Component styling */
+
+// Auth component
+app-auth {
+  & .top-toolbar {
+    padding-left: 16px;
+    background: $app-toolbar-color;
+    height: 56px;
+    & .app-logo {
+      height: 20px;
+    }
+  }
+
+  & .top-header {
+    height: 242px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #e0e0e0;
+    box-shadow: inset 0px 2px 1px rgba(0, 0, 0, 0.5);
+    h1 {
+      font-size: 26px;
+    }
+  }
+}
+
+app-client-follow-up-card,
+app-summary-card,
+app-client-score-change-card,
+app-insights-card,
+app-latest-survey-card,
+app-consolidated-results-card,
+app-our-strength-card,
+app-client-score-card {
+  height: 100%;
+}
+
+// Components within app-auth
+app-login,
+app-forgot-password,
+app-reset-password,
+app-register-account {
+  width: 100%;
+  min-height: 100%;
+  padding: 25px 0px;
+
+  & .app-logo {
+    height: 30px;
+    display: block;
+    margin: 45px auto 0px auto;
+    opacity: 0.5;
+  }
+
+  & .login-container {
+    width: 400px;
+    margin: 60px auto 0;
+    height: auto;
+
+    & .mat-form-field-appearance-legacy .mat-form-field-infix {
+      padding: 1em 0;
+    }
+  }
+
+  & .register-account-container {
+    margin: 45px auto 0px auto;
+    width: 600px;
+  }
+}
+
+// Image Cropper
+app-image-cropper-dialog {
+  .no-file {
+    padding: 50px 0px;
+    text-align: center;
+    border: 1px solid #dcdcdc;
+  }
+
+  img {
+    max-width: 100%;
+    max-height: 600px;
+  }
+
+  mat-dialog-content {
+    padding: 0px;
+  }
+}
+
+// File upload dialog
+app-file-upload {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+
+  & > h2.mat-dialog-title {
+    flex-grow: 0;
+  }
+
+  & > p {
+    color: mat.get-color-from-palette($app-foreground, secondary-text);
+    font-weight: 300;
+  }
+
+  & > mat-dialog-content {
+    flex-grow: 1;
+    height: 1px;
+    max-height: 100vh !important;
+
+    & > .no-file {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      border: 8px dashed lightgray;
+
+      &.file-over {
+        border: 8px dashed $app-primary-color;
+      }
+
+      & > .upload-icon {
+        color: mat.get-color-from-palette($app-background, background);
+        font-size: 120px;
+      }
+
+      & .mat-table {
+        min-width: 500px;
+      }
+
+      & .mat-table + button {
+        margin: auto;
+        margin-top: 16px;
+        display: block;
+      }
+    }
+  }
+
+  & > mat-dialog-actions {
+    flex-grow: 0;
+  }
+}
+
+// App notifications
+app-notification {
+  & .mat-dialog-content {
+    width: 750px;
+    height: 65vh;
+  }
+}
+
+
+/* #endregion */

@@ -1,0 +1,7 @@
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+# if request is not for the /sub-dir/
+RewriteCond %{REQUEST_URI} !^/sub-dir/ [NC]
+# otherwise forward it to root.php
+RewriteRule . root.php [L]

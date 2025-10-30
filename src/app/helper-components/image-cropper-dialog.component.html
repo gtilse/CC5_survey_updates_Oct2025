@@ -1,0 +1,40 @@
+<div class="form-heading">{{ 'IMAGE_CROPPER_MODAL.HEADING' | translate }}</div>
+<div class="form-sub-heading">
+  {{ 'IMAGE_CROPPER_MODAL.SUB_HEADING' | translate }}
+</div>
+<mat-dialog-content>
+  <div class="no-file" [hidden]="file">
+    <input
+      type="file"
+      id="cropper-file-input"
+      (change)="onFileChange($event)"
+      style="display: none;"
+      accept="image/*"
+    />
+    <button
+      type="button"
+      mat-raised-button
+      color="accent"
+      (click)="fileInputClickTrigger($event)"
+    >
+      <mat-icon>attach_file</mat-icon
+      >{{ 'IMAGE_CROPPER_MODAL.SELECT_FILE_BUTTON' | translate }}
+    </button>
+  </div>
+
+  <img id="cropper-image" [src]="file" [hidden]="!file" />
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="!file"
+    (click)="selectImage()"
+  >
+    {{ 'IMAGE_CROPPER_MODAL.SELECT_BUTTON' | translate }}
+  </button>
+  <button mat-button (click)="closeModal()">
+    {{ 'GENERAL.CLOSE_BUTTON' | translate }}
+  </button>
+</mat-dialog-actions>

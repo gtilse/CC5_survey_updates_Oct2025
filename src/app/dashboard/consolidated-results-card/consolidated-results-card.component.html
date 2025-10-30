@@ -1,0 +1,77 @@
+<div fxLayout="column" class="dashboard-card-container">
+  <div
+    class="mat-body-strong"
+    matTooltip="Cumulative results"
+  >
+    Consolidated results
+  </div>
+
+  <mat-form-field floatLabel="never" style="width: 140px;">
+    <mat-select [(ngModel)]="mode" (ngModelChange)="changeMode()">
+      <mat-option value="nps">
+        NPS
+      </mat-option>
+      <mat-option value="response-rate">
+        Response rate
+      </mat-option>
+      <mat-option value="responses">
+        Responses
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  
+  <ng-container *ngIf="mode === 'nps'">
+    <div style="font-size: 12px; color: #9b9b9b;">Firm average {{ data.orgNPS }}</div>
+  </ng-container>
+
+  <ng-container *ngIf="mode === 'response-rate'">
+    <div style="font-size: 12px; color: #9b9b9b;">Firm average {{ data.orgResponseRate }}%</div>
+  </ng-container>
+
+  <div fxFlex="grow" fxLayout="row">
+
+    <!-- NPS -->
+    <ng-container *ngIf="mode === 'nps'">
+      <div fxFlex="65" fxLayout="row" fxLayoutAlign="start flex-end">
+        <div class="mat-display-3 app-promoter-fg" style="margin: 0;">
+          {{ data.nps }}
+          <span class="mat-title app-promoter-fg"></span>
+        </div>
+      </div>
+      <div fxFlex="35" [chart]="chart" (resized)="onResized()"></div>
+    </ng-container>
+
+    <!-- Response Rate -->
+    <ng-container *ngIf="mode === 'response-rate'">
+      <div fxFlex="100" fxLayout="row" fxLayoutAlign="start flex-end">
+        <div class="mat-display-3 app-primary-fg" style="margin: 0;">
+          {{ data.responseRate  | number: '1.0-0' }}<span class="mat-title">%</span>&nbsp;<span
+            class="mat-title app-promoter-fg"
+            ></span
+          >
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Responses -->
+    <ng-container *ngIf="mode === 'responses'">
+      <div fxFlex="100" fxLayout="row" fxLayoutAlign="start flex-end">
+        <div class="mat-display-3 app-primary-fg" style="margin: 0;">
+          {{ data.responses | number }}
+          <span class="mat-title app-promoter-fg"></span>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- <div>
+    <mat-divider></mat-divider>
+    <div
+      fxLayout="row"
+      fxLayoutAlign="start center"
+      class="push-top card-footer display-personnel-result"
+    >
+      Display your personal results
+    </div>
+  </div> -->
+</div>

@@ -1,0 +1,194 @@
+<!-- Loading component -->
+<app-loading
+  placeholder="{{ 'LOCATION.HEADING' | translate }}"
+  [hidden]="
+    !appComponentStateService.isLoading || appComponentStateService.hasError
+  "
+></app-loading>
+
+<!-- Error handler component -->
+<app-error-handler
+  [hidden]="!appComponentStateService.hasError"
+  (refresh)="loadData()"
+></app-error-handler>
+
+<!-- Sidenav container -->
+<mat-sidenav-container
+  class="data-container"
+  [hidden]="
+    appComponentStateService.isLoading || appComponentStateService.hasError
+  "
+>
+  <!-- Sidenav edit component -->
+  <mat-sidenav
+    mode="over"
+    position="end"
+    [opened]="editorOpened"
+    disableClose="true"
+    fixedInViewport="true"
+  >
+    <app-location-edit
+      [dropLists]="dropLists"
+      (recordSaved)="recordSaved($event)"
+      (recordSaveCancelled)="recordSaveCancelled($event)"
+    >
+    </app-location-edit>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <div class="card-header">
+      <!-- Icon + header text -->
+      <div fxLayout="row" fxLayoutAlign="start center" class="text-muted2">
+        <span fxFlex="none" class="mat-headline">{{
+          'LOCATION.HEADING' | translate
+        }}</span>
+      </div>
+      <!-- Title -->
+      <div
+        fxLayout="row"
+        fxLayoutAlign="start center"
+        class="push-top-xxl push-bottom"
+      >
+        <span class="mat-body-strong" fxFlex="none">{{
+          'LOCATION.SUB_HEADING' | translate
+        }}</span>
+        <span fxFlex></span>
+        <button
+          type="button"
+          fxFlex="none"
+          mat-raised-button
+          color="primary"
+          (click)="addRecord()"
+        >
+          <mat-icon>add</mat-icon>&nbsp;{{
+            'GENERAL.ADD' | translate | uppercase
+          }}
+        </button>
+      </div>
+      <mat-divider></mat-divider>
+      <!-- Records filter textbox -->
+      <div fxLayout="row" class="push-top-xl filter-box">
+        <mat-form-field floatLabel="never" fxFlex="30">
+          <input
+            matInput
+            type="text"
+            placeholder="{{ 'LOCATION.SEARCH_LOCATIONS' | translate }}"
+            [(ngModel)]="filterVal"
+            (input)="showRecords()"
+          />
+          <button
+            mat-button
+            *ngIf="filterVal"
+            matSuffix
+            mat-icon-button
+            aria-label="Clear"
+            (click)="filterVal = ''; showRecords()"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Data table -->
+    <div class="data-table-container">
+      <div
+        class="mat-table mat-data-table"
+        matSort
+        (matSortChange)="showRecords()"
+        matSortActive="name"
+        matSortDirection="asc"
+        matSortDisableClear
+      >
+        <div class="record-count mat-body" [hidden]="filteredData.length === 0">
+          {{
+            'GENERAL.RECORD_COUNT' | translate: { value: filteredData.length }
+          }}
+        </div>
+        <!-- Table header -->
+        <div class="mat-header-row">
+          <div class="mat-header-cell mat-column-select" fxFlex="5">
+            <mat-checkbox
+              (change)="$event ? masterToggle() : null"
+              [checked]="tableDataSelection.hasValue() && isAllSelected()"
+              [indeterminate]="
+                tableDataSelection.hasValue() && !isAllSelected()
+              "
+            >
+            </mat-checkbox>
+          </div>
+          <div class="mat-header-cell" fxFlex="5"></div>
+          <div class="mat-header-cell" mat-sort-header="name" fxFlex="20">
+            {{ 'LOCATION.NAME' | translate }}
+          </div>
+          <div class="mat-header-cell" mat-sort-header="address" fxFlex="30">
+            {{ 'LOCATION.ADDRESS' | translate }}
+          </div>
+          <div class="mat-header-cell" mat-sort-header="city" fxFlex="15">
+            {{ 'LOCATION.CITY' | translate }}
+          </div>
+          <div class="mat-header-cell" mat-sort-header="state" fxFlex="15">
+            {{ 'LOCATION.STATE' | translate }}
+          </div>
+          <div class="mat-header-cell" mat-sort-header="postCode" fxFlex="10">
+            {{ 'LOCATION.POST_CODE' | translate }}
+          </div>
+        </div>
+        <!-- Record edit tools -->
+        <div class="mat-row" *ngIf="filteredData.length">
+          <div class="mat-cell" fxFlex>
+            <button
+              [style.visibility]="
+                tableDataSelection.selected.length ? 'visible' : 'hidden'
+              "
+              mat-raised-button
+              color="warn"
+              (click)="deleteSelectedRecords()"
+            >
+              {{ 'GENERAL.DELETE' | translate }}
+            </button>
+          </div>
+        </div>
+        <!-- No data row -->
+        <div class="mat-row" *ngIf="filteredData.length === 0">
+          <div class="mat-cell text-secondary" fxFlex>
+            {{ 'GENERAL.NO_DATA' | translate }}
+          </div>
+        </div>
+        <!-- Data -->
+        <div
+          class="mat-row"
+          *ngFor="let row of filteredData"
+          (click)="editRecord(row)"
+        >
+          <div class="mat-cell mat-column-select" fxFlex="5">
+            <mat-checkbox
+              (click)="$event.stopPropagation()"
+              (change)="$event ? tableDataSelection.toggle(row) : null"
+              [checked]="tableDataSelection.isSelected(row)"
+            >
+            </mat-checkbox>
+          </div>
+          <div class="mat-cell" fxFlex="5">
+            <mat-icon
+              class="tc-grey-500"
+              matTooltipPosition="right"
+              matTooltip="{{ 'GENERAL.CREATED_AT' | translate }}:&nbsp;{{
+                row.createdAt | utcToLocal
+              }}&#10;{{ 'GENERAL.UPDATED_AT' | translate }}:&nbsp;{{
+                row.updatedAt | utcToLocal
+              }}"
+              >info_outline</mat-icon
+            >
+          </div>
+          <div class="mat-cell" fxFlex="20">{{ row.name }}</div>
+          <div class="mat-cell" fxFlex="30">{{ row.address }}</div>
+          <div class="mat-cell" fxFlex="15">{{ row.city }}</div>
+          <div class="mat-cell" fxFlex="15">{{ row.state }}</div>
+          <div class="mat-cell" fxFlex="10">{{ row.postCode }}</div>
+        </div>
+      </div>
+    </div>
+  </mat-sidenav-content>
+  <mat-sidenav-container> </mat-sidenav-container
+></mat-sidenav-container>

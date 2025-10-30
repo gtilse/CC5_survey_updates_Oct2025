@@ -1,0 +1,333 @@
+<div fxLayout="column" fxLayoutGap="32px" class="component-container">
+    <!-- Survey edit form -->
+    <form [formGroup]="surveyForm" novalidate fxFlex="grow" >
+
+        <mat-tab-group [(selectedIndex)]="activeTabIndex" (selectedTabChange)="selectedTabChange($event)">
+    
+            <!-- Survey options -->
+            <mat-tab label="{{'SURVEY.OPTIONS_TAB' | translate}}">
+                <div class="pad">
+        
+                    <!-- Survey type -->
+                    <div class="push-bottom">
+                        <mat-radio-group formControlName="type" class="push-bottom" (change)="surveyTypeChanged($event)">
+                        <mat-radio-button [value]="0" class="push-right">{{'SURVEY.CLIENT_SURVEY' | translate}}</mat-radio-button>
+                        <mat-radio-button [value]="1" class="push-right">{{'SURVEY.STAFF_SURVEY' | translate}}</mat-radio-button>
+                        <mat-radio-button [value]="2" class="push-right">{{'SURVEY.PULSE_SURVEY' | translate}}</mat-radio-button>
+                        <mat-radio-button [value]="3" class="push-right">{{'SURVEY.MANAGER_SURVEY' | translate}}</mat-radio-button>
+                        <mat-radio-button [value]="4" class="push-right">{{'SURVEY.TRIAGE_SURVEY' | translate}}</mat-radio-button>
+            
+                        </mat-radio-group>
+                    </div>
+            
+                    <mat-divider></mat-divider>
+            
+                    <div class="push-top push-bottom">
+                        <mat-checkbox [checked]="!!surveyForm.controls.active.value" (change)="checkboxToggle('active')" >{{'SURVEY.ACTIVE' | translate}}</mat-checkbox>
+                        <mat-checkbox [checked]="!!surveyForm.controls.addLogo.value" (change)="checkboxToggle('addLogo')" class="push-left">{{'SURVEY.ADD_LOGO' | translate}}</mat-checkbox>
+                        <mat-checkbox [checked]="!!surveyForm.controls.newClientsOnly.value" (change)="checkboxToggle('newClientsOnly')" [hidden]="surveyForm.controls.type.value===1 || surveyForm.controls.type.value === 3" class="push-left">{{'SURVEY.LIMIT_NEW_CLIENTS' | translate}}</mat-checkbox>
+                    </div>
+
+                    <div fxLayout="column" fxLayoutGap="16px">
+                        <!-- Survey description -->
+                        <mat-form-field fxFlex>
+                            <input matInput maxlength="45" type="text" placeholder="{{'SURVEY.DESCRIPTION' | translate}}" formControlName="description" required>
+                            <mat-error ngxErrors="description">
+                            <div ngxError="required" when="touched">
+                                {{'SURVEY.DESCRIPTION_ERROR' | translate}}
+                            </div>
+                            </mat-error>
+                        </mat-form-field>
+                
+                        <!-- Survey tags -->
+                        <mat-form-field fxFlex>
+                            <mat-chip-list #tagsList formControlName="tags">
+                                <mat-chip *ngFor="let tag of surveyForm.get('tags').value" (removed)="removeTag(tag)">
+                                    {{tag}}
+                                    <mat-icon matChipRemove>cancel</mat-icon>
+                                </mat-chip>
+                        
+                                <input matInput
+                                    [matChipInputFor]="tagsList" 
+                                    placeholder="Survey Tags..." 
+                                    (matChipInputTokenEnd)="addTag($event)">
+                            </mat-chip-list>
+                        </mat-form-field>
+                
+                        <!-- Reminder days -->
+                        <mat-form-field fxFlex>
+                            <mat-select placeholder="{{'SURVEY.REMINDER_DAYS' | translate}}" formControlName="reminderDays">
+                            <mat-option [value]="null">{{'GENERAL.CLEAR_SELECTION' | translate}}</mat-option>
+                            <mat-option *ngFor="let reminderDay of reminderDaysSelectList" [value]="reminderDay">
+                                {{ reminderDay }}
+                            </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                
+                        <!-- Limit to client contacts -->
+                        <mat-form-field fxFlex [hidden]="surveyForm.controls.type.value===1 || surveyForm.controls.type.value===3">
+                            <mat-select placeholder="{{'SURVEY.LIMIT_CLIENT_CONTACTS' | translate}}" formControlName="includeDRLS" multiple>
+                            <mat-option *ngFor="let clientContact of staffSelectList" [value]="clientContact.objectId">
+                                {{ clientContact.name }}
+                            </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <!-- Client survey months limit -->
+                        <mat-form-field fxFlex [hidden]="surveyForm.controls.type.value===1 || surveyForm.controls.type.value===3">
+                            <mat-select placeholder="{{'SURVEY.CLIENT_SURVEY_MONTHS_LIMIT' | translate}}" formControlName="clientSurveyMonthsLimit">
+                            <mat-option [value]="0">{{'SURVEY.NO_CLIENT_EXCLUSION' | translate}}</mat-option>
+                            <mat-option *ngFor="let month of monthsSelectionList" [value]="month">
+                                {{ month }}
+                            </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                
+                        <!-- Exclude staffs -->
+                        <mat-form-field fxFlex [hidden]="surveyForm.controls.type.value===0 || surveyForm.controls.type.value===2 || surveyForm.controls.type.value===4">
+                            <mat-select placeholder="{{'SURVEY.EXCLUDE_STAFFS' | translate}}" formControlName="excludeEmployees" multiple>
+                            <mat-option *ngFor="let clientContact of staffSelectList" [value]="clientContact.objectId">
+                                {{ clientContact.name }}
+                            </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                
+                        <!-- Limit to client value -->
+                        <mat-form-field fxFlex [hidden]="surveyForm.controls.type.value===1 || surveyForm.controls.type.value===3">
+                            <mat-select placeholder="{{'SURVEY.LIMIT_CLIENT_VALUATIONS' | translate}}" formControlName="includeCategories" multiple>
+                            <mat-option *ngFor="let clientValuation of clientValuations" [value]="clientValuation">
+                                {{ clientValuation }}
+                            </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                         <!-- Custom Client Attribute -->
+                        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="16px" [hidden]="surveyForm.controls.type.value===1 || surveyForm.controls.type.value===3">
+
+                            <!-- Attribute -->
+                            <mat-form-field fxFlex>
+                            <mat-select placeholder="{{ 'SURVEY_EDIT.CUSTOM_CLIENT_ATTRIBUTE' | translate }}" #customAttribute1 formControlName="customClientCategory1">
+                                <mat-option class="clear-selection" [value]="null">{{'GENERAL.CLEAR_SELECTION' | translate}}</mat-option>
+                                <mat-option *ngFor="let cat of customDropListCategories" [value]="cat.VALUE">
+                                {{ cat.DESC }}
+                                </mat-option>
+                            </mat-select>
+                            </mat-form-field>
+
+                            <!-- Attribute value -->
+                            <mat-form-field fxFlex>
+                            <mat-select placeholder="{{ 'SURVEY_EDIT.CUSTOM_CLIENT_ATTRIBUTE_VALUE' | translate }}" formControlName="customClientCategory1Desc">
+                                <mat-option class="clear-selection" [value]="null">{{'GENERAL.CLEAR_SELECTION' | translate}}</mat-option>
+                                <mat-option *ngFor="let cat of getCustomAttributeValues(customAttribute1.value)" [value]="cat.description">
+                                {{ cat.description }}
+                                </mat-option>
+                            </mat-select>
+
+                            <mat-error ngxErrors="customClientCategory1Desc">
+                                <div ngxError="required" when="touched">
+                                {{ 'SURVEY_EDIT.CUSTOM_CLIENT_CATEGORY_ERROR' | translate }}
+                                </div>
+                            </mat-error>
+                            </mat-form-field>
+                        </div>
+                
+                        <!-- Improvement question 1 -->
+                        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="16px">
+                            <mat-checkbox fxFlex="30" [checked]="!!surveyForm.controls.addHowToImproveQuestion.value" (change)="checkboxToggle('addHowToImproveQuestion')" >{{'SURVEY.ADD_EXTRA_QUESTION' | translate}}</mat-checkbox>
+                            <mat-form-field fxFlex="70" [style.visibility]="surveyForm.controls.addHowToImproveQuestion.value==0 ? 'hidden' : 'visible'">
+                                <input matInput maxlength="1000" type="text" placeholder="{{'SURVEY.EXTRA_QUESTION_TEXT_PLACEHOLDER' | translate}}" formControlName="howToImproveQuestionText">
+                            </mat-form-field>
+                        </div>
+                
+                        <!-- Improvement question 2 -->
+                        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="16px">
+                            <mat-checkbox fxFlex="30" [checked]="!!surveyForm.controls.addHowToImproveQuestion2.value" (change)="checkboxToggle('addHowToImproveQuestion2')" >{{'SURVEY.ADD_EXTRA_QUESTION2' | translate}}</mat-checkbox>
+                            <mat-form-field fxFlex="70" [style.visibility]="surveyForm.controls.addHowToImproveQuestion2.value==0 ? 'hidden' : 'visible'">
+                                <input matInput maxlength="1000" type="text" placeholder="{{'SURVEY.EXTRA_QUESTION2_TEXT_PLACEHOLDER' | translate}}" formControlName="howToImproveQuestion2Text">
+                            </mat-form-field>
+                        </div>
+                    </div>
+            
+                </div>
+            </mat-tab>
+        
+            <!-- Email Contents -->
+            <mat-tab label="{{'SURVEY.EMAIL_TAB' | translate}}">
+                <div class="pad" fxLayout="column" fxLayoutGap="16px">
+                    <!-- Email subject -->
+                    <mat-form-field fxFlex>
+                        <input matInput maxlength="100" placeholder="{{'SURVEY.EMAIL_SUBJECT' | translate}}" formControlName="emailSubject" required>
+                        <mat-error ngxErrors="emailSubject">
+                        <div ngxError="required" when="touched">
+                            {{'SURVEY.EMAIL_SUBJECT_ERROR' | translate}}
+                        </div>
+                        </mat-error>
+                    </mat-form-field>
+        
+                    <!-- Hint and buttons -->
+                    <div *ngIf="surveyForm.controls.type.value===0 || surveyForm.controls.type.value===2 || surveyForm.controls.type.value===4" class="push-bottom">{{'SURVEY.SURVEY_HTML_HINT' | translate}}</div>
+                    <div *ngIf="surveyForm.controls.type.value===1 || surveyForm.controls.type.value===3" class="push-bottom">{{'SURVEY.SURVEY_HTML_STAFF_HINT' | translate}}</div>
+                    <div class="push-top push-bottom" style="display:none">
+                        <button mat-raised-button [hidden]="surveyForm.controls.type.value===1" (click)="insertText(surveyHtmlEditor,'CLIENTNAME')">{{'SURVEY.CLIENT_NAME' | translate}}</button>
+                        <button mat-raised-button [hidden]="surveyForm.controls.type.value===1" (click)="insertText(surveyHtmlEditor,'CLIENTCONTACT')">{{'SURVEY.CLIENT_CONTACT' | translate}}</button>
+                        <button mat-raised-button [hidden]="surveyForm.controls.type.value===0" (click)="insertText(surveyHtmlEditor,'STAFFNAME')">{{'SURVEY.STAFF_NAME' | translate}}</button>
+                        <button mat-raised-button (click)="insertText(surveyHtmlEditor,'FIRMNAME')">{{'SURVEY.FIRM_NAME' | translate}}</button>
+                    </div>
+            
+                    <!-- Email contents -->
+                    <quill-editor fxFlex [style]="{height: '200px'}" [modules]="quillModules" formControlName="surveyHtml" #surveyHtmlEditor></quill-editor>
+            
+                </div>
+            </mat-tab>
+
+            <!-- Customization -->
+            <mat-tab label="{{'SURVEY.CUSTOMIZATION_TAB' | translate}}">
+                <div class="pad" fxLayout="column" fxLayoutGap="16px">
+                    <!-- Score left label -->
+                    <mat-form-field fxFlex>
+                        <input matInput maxlength="45" type="text" placeholder="{{'SURVEY.SCORE_LEFT_LABEL' | translate}}" formControlName="scoreLeftLabel">
+                    </mat-form-field>
+                </div>
+
+                <div class="pad" fxLayout="column" fxLayoutGap="16px">
+                    <!-- Score right label -->
+                    <mat-form-field fxFlex>
+                        <input matInput maxlength="45" type="text" placeholder="{{'SURVEY.SCORE_RIGHT_LABEL' | translate}}" formControlName="scoreRightLabel">
+                    </mat-form-field>
+                </div>
+            </mat-tab>
+        
+            <!-- Reminder contents -->
+            <mat-tab label="{{'SURVEY.REMINDER_TAB' | translate}}">
+                <div class="pad" fxLayout="column" fxLayoutGap="16px">
+                    <!-- Email subject -->
+                    <mat-form-field fxFlex>
+                        <input matInput maxlength="100" placeholder="{{'SURVEY.EMAIL_SUBJECT' | translate}}" formControlName="emailSubjectReminder" required>
+                        <mat-error ngxErrors="emailSubjectReminder">
+                        <div ngxError="required" when="touched">
+                            {{'SURVEY.EMAIL_SUBJECT_ERROR' | translate}}
+                        </div>
+                        </mat-error>
+                    </mat-form-field>
+            
+                    <!-- Hint -->
+                    <div *ngIf="surveyForm.controls.type.value===0 || surveyForm.controls.type.value===2 || surveyForm.controls.type.value===4" class="push-bottom">{{'SURVEY.SURVEY_HTML_HINT' | translate}}</div>
+                    <div *ngIf="surveyForm.controls.type.value===1 || surveyForm.controls.type.value===3" class="push-bottom">{{'SURVEY.SURVEY_HTML_STAFF_HINT' | translate}}</div>
+                    <div class="push-top push-bottom" style="display:none">
+                        <button mat-raised-button [hidden]="surveyForm.controls.type.value===1" (click)="insertText(reminderHtmlEditor,'CLIENTNAME')">{{'SURVEY.CLIENT_NAME' | translate}}</button>
+                        <button mat-raised-button [hidden]="surveyForm.controls.type.value===1" (click)="insertText(reminderHtmlEditor,'CLIENTCONTACT')">{{'SURVEY.CLIENT_CONTACT' | translate}}</button>
+                        <button mat-raised-button [hidden]="surveyForm.controls.type.value===0" (click)="insertText(reminderHtmlEditor,'STAFFNAME')">{{'SURVEY.STAFF_NAME' | translate}}</button>
+                        <button mat-raised-button (click)="insertText(reminderHtmlEditor,'FIRMNAME')">{{'SURVEY.FIRM_NAME' | translate}}</button>
+                    </div>
+            
+                    <!-- Email contents -->
+                    <quill-editor fxFlex [style]="{height: '200px'}" [modules]="quillModules" formControlName="reminderHtml" #reminderHtmlEditor></quill-editor>
+            
+                </div>
+            </mat-tab>
+
+            <!-- Loyalty Drivers -->
+            <mat-tab label="{{'SURVEY.LOYALTY_DRIVERS_TAB' | translate}}">
+                <div class="pad" fxLayout="column" fxLayoutGap="16px" cdkDropList (cdkDropListDropped)="drop($event)">
+                    <div fxLayout="row" fxLayoutAlign="start center">
+                        <button matTooltip="{{'SURVEY.ADD_LOYALTY_DRIVER_HINT' | translate}}" fxFlex="none" type="button" color="primary" mat-mini-fab (click)="addLoyaltyDriver()"><mat-icon>add</mat-icon></button>
+                        <span class="mat-caption pad-left" fxFlex="grow" >{{'SURVEY.LOYALTY_DRIVER_HEADING' | translate}}</span>
+                    </div>
+            
+                    <mat-card formArrayName="loyaltyDrivers"
+                        class="pad"
+                        *ngFor="let question of surveyForm.get('loyaltyDrivers')['controls']; let i = index;"
+                        cdkDrag>
+            
+                        <div [formGroupName]="i" fxLayout="column" fxLayoutGap="16px">
+
+                            <div fxLayout="row" fxLayoutGap="16px" fxLayoutAlign="start center">
+                                <!-- Heading -->
+                                <mat-form-field fxFlex>
+                                    <input matInput maxlength="200" type="text" placeholder="{{'SURVEY.LOYALTY_DRIVER_TEXT_PLACEHOLDER' | translate}}" formControlName="heading" required>
+                                </mat-form-field>
+                            
+                                <!-- Remove button -->
+                                <div fxLayout="row" fxFlex="none">
+                                    <div fxFlex="grow"></div>
+                                    <button type="button" mat-mini-fab fxFlex="none" (click)="removeLoyaltyDriver(i)"><mat-icon>clear</mat-icon></button>
+                                </div>
+                            </div>
+                            
+                        </div>
+            
+                    </mat-card>
+                </div>
+            </mat-tab>
+            
+            <!-- Additional Questions -->
+            <mat-tab label="{{'SURVEY.ADDITIONAL_QUESTIONS_TAB' | translate}}">
+                <div class="pad" fxLayout="column" fxLayoutGap="16px">
+                    <div fxLayout="row" fxLayoutAlign="start center">
+                        <button matTooltip="{{'SURVEY.ADD_QUESTION_HINT' | translate}}" fxFlex="none" type="button" color="primary" mat-mini-fab (click)="addAdditionalQuestion()"><mat-icon>add</mat-icon></button>
+                        <span class="mat-caption pad-left" fxFlex="grow" >{{'SURVEY.ADDITIONAL_QUESTION_HEADING' | translate}}</span>
+                    </div>
+            
+                    <mat-card formArrayName="additionalQuestions"
+                        class="pad"
+                        *ngFor="let question of surveyForm.get('additionalQuestions')['controls']; let i = index;">
+            
+                        <div [formGroupName]="i" fxLayout="column" fxLayoutGap="16px">
+                            <!-- Heading -->
+                            <mat-form-field fxFlex>
+                                <input matInput maxlength="300" type="text" placeholder="{{'SURVEY.QUESTION_HEADING' | translate}}" formControlName="heading" required>
+                            </mat-form-field>
+                            <!-- Sub Heading -->
+                            <mat-form-field fxFlex>
+                                <input matInput maxlength="300" type="text" placeholder="{{'SURVEY.QUESTION_SUB_HEADING' | translate}}" formControlName="subHeading">
+                            </mat-form-field>
+                            <!-- Question type -->
+                            <div fxFlex>
+                                <mat-radio-group formControlName="type">
+                                    <mat-radio-button [value]="0" class="push-right">{{'SURVEY.QUESTION_TYPE_TEXT' | translate}}</mat-radio-button>
+                                    <mat-radio-button [value]="1" class="push-right">{{'SURVEY.QUESTION_TYPE_SINGLE_SELECT' | translate}}</mat-radio-button>
+                                    <mat-radio-button [value]="2">{{'SURVEY.QUESTION_TYPE_MULTIPLE_SELECT' | translate}}</mat-radio-button>
+                                </mat-radio-group>
+                            </div>
+                            <!-- Options -->
+                            <div [hidden]="question.controls.type.value==0">
+                                <mat-chip-list #optionList>
+                                <mat-chip *ngFor="let option of surveyForm.get('additionalQuestions')['controls'][i]['controls'].options.value;let optionIndex=index;"
+                                            removable="true"
+                                            (remove)="removeQuestionOption(i,optionIndex)">
+                                    {{option}}
+                                    <mat-icon matChipRemove>cancel</mat-icon>
+                                </mat-chip>
+                                <input placeholder="Options..."
+                                        [matChipInputFor]="optionList"
+                                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                                        [matChipInputAddOnBlur]="true"
+                                        (matChipInputTokenEnd)="addQuestionOption(i,$event)" />
+                                </mat-chip-list>
+                            </div>
+                
+                            <!-- Remove button -->
+                            <div fxLayout="row">
+                                <div fxFlex="grow"></div>
+                                <button type="button" matTooltip="{{'SURVEY.REMOVE_QUESTION_HINT' | translate}}" mat-mini-fab fxFlex="none" (click)="removeAdditionalQuestion(i)"><mat-icon>clear</mat-icon></button>
+                            </div>
+            
+        
+                        </div>
+            
+                    </mat-card>
+                </div>
+        
+            </mat-tab>
+    
+        </mat-tab-group>
+    
+    </form>
+
+    <!-- Form tools -->
+    <div fxFlex="none" fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="16px" class="pad form-toolbar">
+        <button type="reset" mat-stroked-button color="primary" (click)="close()" [disabled]="appComponentStateService.isSaving">{{'GENERAL.CLOSE' | translate}}</button>
+        <button type="button" mat-raised-button flex="none" flex-offset="2" color="primary" (click)="saveRecord()" [disabled]="!surveyForm.valid || appComponentStateService.isSaving" >{{'GENERAL.SAVE' | translate}}</button>
+    </div>
+</div>
+  

@@ -1,0 +1,128 @@
+<div fxLayout="column" class="dashboard-card-container">
+  <div class="mat-body-strong">Summary</div>
+
+  <mat-form-field floatLabel="never" style="width: 140px;">
+    <mat-select [(ngModel)]="mode" (ngModelChange)="changeMode()">
+      <mat-option value="program">
+        Program
+      </mat-option>
+      <mat-option value="client">
+        Clients
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div fxFlex="grow" class="card-content">
+    <ng-container *ngIf="mode === 'program'">
+      <div fxLayout="row" fxLayoutAlign="start center" style="height: 40px;">
+        <div
+          fxFlex="50"
+          class="item-label"
+          matTooltip="{{
+            'DASHBOARD.SUMMARY_CLIENT_CHECK_IN_TOOLTIP' | translate
+          }}"
+        >
+          {{ 'DASHBOARD.SUMMARY_CLIENT_CHECK_IN_LABEL' | translate }}
+        </div>
+        <div fxFlex="50" fxFlexOffset="32px">
+          {{ data.clientCheckIn }}
+        </div>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="start center" style="height: 40px;">
+        <div
+          fxFlex="50"
+          class="item-label"
+          matTooltip="{{
+            'DASHBOARD.SUMMARY_SURVEY_SCHEDULE_TOOLTIP' | translate
+          }}"
+        >
+          {{ 'DASHBOARD.SUMMARY_SURVEY_SCHEDULE_LABEL' | translate }}
+        </div>
+        <div fxFlex="50" fxFlexOffset="32px">
+          {{ data.surveySchedule }}
+        </div>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="start center" style="height: 40px;">
+        <div fxFlex="50" class="item-label">
+          {{ 'DASHBOARD.SUMMARY_LAST_SURVEY_LABEL' | translate }}
+        </div>
+        <div fxFlex="50" fxFlexOffset="32px">{{ data.lastSurvey }}</div>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="start center" style="height: 40px;">
+        <div fxFlex="50" class="item-label">
+          {{ 'DASHBOARD.SUMMARY_NEXT_SURVEY_LABEL' | translate }}
+        </div>
+        <div fxFlex="50" fxFlexOffset="32px">{{ data.nextSurvey }}</div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="mode == 'client'">
+      <div fxLayout="row" fxLayoutAlign="start center" style="height: 40px;">
+        <div
+          fxFlex="50"
+          class="item-label"
+          matTooltip="{{ 'DASHBOARD.SUMMARY_ACTIVE_TOOLTIP' | translate }}"
+        >
+          {{ 'DASHBOARD.SUMMARY_ACTIVE_LABEL' | translate }}
+        </div>
+        <div fxFlex="50" fxFlexOffset="32px">
+          {{ data.activeClients }}
+        </div>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="start center" style="height: 40px;">
+        <div
+          fxFlex="50"
+          class="item-label"
+          matTooltip="{{ 'DASHBOARD.SUMMARY_SHARED_TOOLTIP' | translate }}"
+        >
+          {{ 'DASHBOARD.SUMMARY_SHARED_LABEL' | translate }}
+        </div>
+        <div fxFlex="50" fxFlexOffset="32px">
+          {{ data.sharedClients }}
+        </div>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="start center" style="height: 40px;">
+        <div
+          fxFlex="50"
+          class="item-label"
+          matTooltip="{{ 'DASHBOARD.SUMMARY_CLIENT_REFERRALS_TOOLTIP' | translate }}"
+        >
+          {{ 'DASHBOARD.SUMMARY_CLIENT_REFERRALS_LABEL' | translate }}
+        </div>
+        <div fxFlex="50" fxFlexOffset="32px">
+          {{ data.referredClients }}
+        </div>
+      </div>
+      <!-- <div fxLayout="row" fxLayoutAlign="start center" style="height: 40px">
+        <div
+          fxFlex="50"
+          class="item-label"
+          matTooltip="{{ 'DASHBOARD.SUMMARY_UNSUBSCRIBED_TOOLTIP' | translate }}"
+        >
+          {{ 'DASHBOARD.SUMMARY_UNSUBSCRIBED_LABEL' | translate }}
+        </div>
+        <div fxFlex="50" fxFlexOffset="32px">{{ data.unsubscribedClients }}</div>
+      </div> -->
+    </ng-container>
+  </div>
+
+  <div *ngIf="mode === 'program'">
+    <mat-divider></mat-divider>
+    <div
+      fxLayout="row"
+      fxLayoutAlign="start center"
+      class="card-footer push-top"
+    >
+      <div
+        fxFlex="50"
+        class="item-label"
+        matTooltip="{{ 'DASHBOARD.SUMMARY_LEVEL_TOOLTIP' | translate }}"
+      >
+        {{ 'DASHBOARD.SUMMARY_LEVEL_LABEL' | translate | uppercase }}
+      </div>
+      <div fxFlex="50" fxFlexOffset="32px">
+        {{ data.vendorLevel }}
+      </div>
+    </div>
+  </div>
+</div>

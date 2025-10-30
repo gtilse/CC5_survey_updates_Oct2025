@@ -1,0 +1,117 @@
+<!-- Loading component -->
+<app-loading placeholder="{{ 'DROPLIST.HEADING' | translate }}" [hidden]="
+    !appComponentStateService.isLoading || appComponentStateService.hasError
+  "></app-loading>
+
+<!-- Error handler component -->
+<app-error-handler [hidden]="!appComponentStateService.hasError" (refresh)="loadData()"></app-error-handler>
+
+<!-- Sidenav container -->
+<mat-sidenav-container class="data-container"
+    [hidden]="appComponentStateService.isLoading || appComponentStateService.hasError">
+
+    <!-- Data editor -->
+    <mat-sidenav mode="over" position="end" [opened]="editorOpened" disableClose="true" fixedInViewport="true"
+        fixedTopGap="52" disableClose="true">
+        <app-drop-list-edit (recordSaved)="recordSaved($event)" (recordSaveCancelled)="recordSaveCancelled($event)">
+        </app-drop-list-edit>
+    </mat-sidenav>
+
+    <!-- Main view -->
+    <mat-sidenav-content>
+
+        <div class="content-area" fxLayout="column">
+
+            <div class="card-header" fxFlex="none">
+                <!-- Icon + header text -->
+                <div fxLayout="row" fxLayoutAlign="start center" class="text-muted2">
+                    <mat-icon class="md-36" fxFlex="none">category</mat-icon>
+                    <span fxFlex="none" fxFlexOffset="16px" class="mat-headline">{{ 'DROPLIST.HEADING' | translate}}</span>
+                </div>
+
+                <!-- Title -->
+                <div fxLayout="row" fxLayoutAlign="start flex-end" class="dark-theme push-top-xxl push-bottom">
+                    <span class="mat-body-strong" fxFlex="none">{{ 'DROPLIST.SUB_HEADING' | translate }}</span>
+                    <span fxFlex></span>
+                    <button type="button" fxFlex="none" mat-flat-button color="primary" (click)="addRecord()">
+                        <mat-icon>add</mat-icon>&nbsp;{{
+                        'GENERAL.ADD' | translate | uppercase
+                        }}
+                    </button>
+                    
+                </div>
+
+                <mat-divider class="divider"></mat-divider>
+
+                <!-- Filter box -->
+
+                <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="16px" class="push-top-xl filter-box">
+                    <mat-form-field floatLabel="never" fxFlex>
+                        <mat-select #categoryFilter placeholder="{{ 'DROPLIST.CATEGORY_FILTER' | translate }}"
+                            [(ngModel)]="filterVal">
+                            <mat-option [value]="''">{{ 'GENERAL.SHOW_ALL' | translate }}
+                            </mat-option>
+                            <mat-option *ngFor="let dropList of dropListCategories" [value]="dropList.VALUE">
+                                {{ dropList.DESC }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <!-- Filter button -->
+                    <button mat-raised-button color="primary" fxFlex="none" (click)="showRecords()">{{ 'GENERAL.FILTER' | translate | uppercase }}</button>
+                
+                </div>
+            </div>
+
+            <div class="mat-table-actions" fxFlex="none" fxLayoutGap="16px">
+                <!-- Table actions -->
+                <div class="mat-table-actions" fxFlex="none" fxLayoutGap="16px">
+                    <button fxFlex="none" mat-raised-button color="warn" (click)="deleteSelectedRecords()" [disabled]="this.tableDataSelection.selected.length===0">{{ 'GENERAL.DELETE' | translate }}</button>
+                </div>
+            </div>
+            
+            <!-- Data table -->
+            <div class="mat-table-container" fxFlex="grow">
+                <mat-table [dataSource]="filteredData" matSort (matSortChange)="showRecords()" matSortActive="category" matSortDirection="asc" matSortDisableClear class="mat-elevation-z8">
+                    <!-- tableDataSelection -->
+                    <ng-container matColumnDef="select">
+                        <mat-header-cell *matHeaderCellDef>
+                            <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="tableDataSelection.hasValue() && isAllSelected()" [indeterminate]="tableDataSelection.hasValue() && !isAllSelected()"></mat-checkbox>
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? tableDataSelection.toggle(element) : null" [checked]="tableDataSelection.isSelected(element)">
+                            </mat-checkbox>
+                        </mat-cell>
+                    </ng-container>
+
+                    <!-- Category -->
+                    <ng-container matColumnDef="category">
+                        <mat-header-cell mat-sort-header *matHeaderCellDef> {{ 'DROPLIST.CATEGORY' | translate }}</mat-header-cell>
+                        <mat-cell *matCellDef="let element">{{element.category}}</mat-cell>
+                    </ng-container>
+
+                    <!-- Description -->
+                    <ng-container matColumnDef="description">
+                        <mat-header-cell mat-sort-header *matHeaderCellDef> {{ 'DROPLIST.DESCRIPTION' | translate }}</mat-header-cell>
+                        <mat-cell *matCellDef="let element">{{element.description}}</mat-cell>
+                    </ng-container>
+
+                    <!-- Actions -->
+                    <ng-container matColumnDef="actions">
+                        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                        <mat-cell *matCellDef="let element"><button mat-icon-button type="button" (click)="editRecord(element)"><mat-icon>mode_edit</mat-icon></button></mat-cell>
+                    </ng-container>
+
+                    <mat-header-row *matHeaderRowDef="columns;sticky: true"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: columns"></mat-row>
+
+                </mat-table>
+            </div>
+
+            <div class="mat-table-footer" fxFlex="none" fxLayoutAlign="start center">
+                <div fxFlex="grow">{{ "GENERAL.RECORD_DISPLAY_COUNT" | translate:{ count: filteredData.length, totalCount: dropLists.length} }}</div>
+            </div>
+
+         </div>
+    </mat-sidenav-content>
+</mat-sidenav-container>

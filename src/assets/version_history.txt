@@ -1,0 +1,14 @@
+=================================
+RELEASE UPDATE - January 15, 2019
+Version: 3.0.0
+=================================
+
+First release of version 3.0
+
+Fixes
+-----
+N/A
+
+Improvements
+------------
+N/A

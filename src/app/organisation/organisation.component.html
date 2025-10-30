@@ -1,0 +1,293 @@
+<!-- Loading component -->
+<app-loading
+  placeholder="{{ 'ORGANISATION.HEADING' | translate }}"
+  [hidden]="
+    !appComponentStateService.isLoading || appComponentStateService.hasError
+  "
+></app-loading>
+
+<!-- Error handler component -->
+<app-error-handler
+  [hidden]="!appComponentStateService.hasError"
+  (refresh)="loadData()"
+></app-error-handler>
+
+<!-- Organiation setting view -->
+<div
+  [hidden]="
+    appComponentStateService.isLoading || appComponentStateService.hasError
+  "
+>
+  <!-- Heading -->
+  <div class="card-header">
+    <!-- Icon + header text -->
+    <div fxLayout="row" fxLayoutAlign="start center" class="text-muted2">
+      <span fxFlex="none" class="mat-headline">{{
+        'ORGANISATION.SUB_HEADING' | translate
+      }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- Organisation form -->
+<div
+  fxLayout="row"
+  fxLayoutAlign="start start"
+  class="page-content-container"
+  [hidden]="
+    appComponentStateService.isLoading || appComponentStateService.hasError
+  "
+>
+  <div fxFlex="60" fxFlex.lt-md="100">
+    <form [formGroup]="organisationForm" fxLayout="column" novalidate>
+      <!-- About section -->
+      <h2 class="mat-title" fxFlexOffset="32px">
+        {{ 'ORGANISATION.HEADING_ABOUT' | translate }}
+      </h2>
+      <mat-divider></mat-divider>
+      <!-- Name -->
+      <mat-form-field fxFlexOffset="32px">
+        <input
+          matInput
+          maxlength="45"
+          placeholder="{{ 'ORGANISATION.NAME' | translate }}"
+          formControlName="name"
+          required
+        />
+        <mat-error ngxErrors="name">
+          <div ngxError="required" when="touched">
+            {{ 'ORGANISATION.NAME_ERROR' | translate }}
+          </div>
+        </mat-error>
+      </mat-form-field>
+      <!-- Email address -->
+      <mat-form-field fxFlexOffset="16px">
+        <input
+          type="email"
+          maxlength="45"
+          matInput
+          placeholder="{{ 'ORGANISATION.EMAIL' | translate }}"
+          formControlName="email"
+          required
+        />
+        <mat-error ngxErrors="email">
+          <div [ngxError]="['required', 'email']" when="touched">
+            {{ 'ORGANISATION.EMAIL_ERROR' | translate }}
+          </div>
+        </mat-error>
+      </mat-form-field>
+      <!-- Primary contact -->
+      <mat-form-field fxFlexOffset="32px">
+        <input
+          matInput
+          maxlength="45"
+          placeholder="{{ 'ORGANISATION.PRIMARY_CONTACT' | translate }}"
+          formControlName="primaryContact"
+          required
+        />
+        <mat-error ngxErrors="primaryContact">
+          <div ngxError="required" when="touched">
+            {{ 'ORGANISATION.PRIMARY_CONTACT_ERROR' | translate }}
+          </div>
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Contact info section -->
+      <h2 class="mat-title" fxFlexOffset="32px">
+        {{ 'ORGANISATION.HEADING_CONTACT' | translate }}
+      </h2>
+      <mat-divider></mat-divider>
+      <!-- Address -->
+      <mat-form-field fxFlexOffset="32px">
+        <textarea
+          matInput
+          maxlength="250"
+          placeholder="{{ 'ORGANISATION.ADDRESS' | translate }}"
+          formControlName="address"
+        ></textarea>
+      </mat-form-field>
+
+      <!-- City, state, post code -->
+      <div fxLayout="row" fxFlexOffset="16px">
+        <div fxLayout="row" fxFlex="33">
+          <mat-form-field fxFlex>
+            <mat-select
+              placeholder="{{ 'ORGANISATION.CITY' | translate }}"
+              formControlName="city"
+            >
+              <mat-option
+                *ngFor="
+                  let dropList of dropLists
+                    | filterDropListByCategory: dropLists:'City'
+                "
+                [value]="dropList.description"
+              >
+                {{ dropList.description }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <button
+            mat-icon-button
+            class="droplist-add-button"
+            (click)="addToDropList('city', 'CITY')"
+          >
+            <mat-icon>add_box</mat-icon>
+          </button>
+        </div>
+
+        <div fxLayout="row" fxFlex="33">
+          <mat-form-field fxFlex fxFlexOffset="16px">
+            <mat-select
+              placeholder="{{ 'ORGANISATION.STATE' | translate }}"
+              flex="33"
+              formControlName="state"
+            >
+              <mat-option
+                *ngFor="
+                  let dropList of dropLists
+                    | filterDropListByCategory: dropLists:'State'
+                "
+                [value]="dropList.description"
+              >
+                {{ dropList.description }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <button
+            mat-icon-button
+            class="droplist-add-button"
+            (click)="addToDropList('state', 'STATE')"
+          >
+            <mat-icon>add_box</mat-icon>
+          </button>
+        </div>
+
+        <div fxLayout="row" fxFlex="33">
+          <mat-form-field fxFlex fxFlexOffset="16px">
+            <mat-select
+              placeholder="{{ 'ORGANISATION.POST_CODE' | translate }}"
+              flex="33"
+              formControlName="postCode"
+            >
+              <mat-option
+                *ngFor="
+                  let dropList of dropLists
+                    | filterDropListByCategory: dropLists:'PostCode'
+                "
+                [value]="dropList.description"
+              >
+                {{ dropList.description }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <button
+            mat-icon-button
+            class="droplist-add-button"
+            (click)="addToDropList('postCode', 'POST_CODE')"
+          >
+            <mat-icon>add_box</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <!-- phone, fax, mobile -->
+      <div fxLayout="row" fxFlexOffset="16px">
+        <mat-form-field fxFlex="33">
+          <input
+            matInput
+            maxlength="45"
+            placeholder="{{ 'ORGANISATION.PHONE' | translate }}"
+            formControlName="phone"
+          />
+        </mat-form-field>
+
+        <mat-form-field fxFlex="33" fxFlexOffset="16px">
+          <input
+            matInput
+            maxlength="45"
+            placeholder="{{ 'ORGANISATION.FAX' | translate }}"
+            formControlName="fax"
+          />
+        </mat-form-field>
+
+        <mat-form-field fxFlex="33" fxFlexOffset="16px">
+          <input
+            matInput
+            maxlength="45"
+            placeholder="{{ 'ORGANISATION.MOBILE' | translate }}"
+            formControlName="mobile"
+          />
+        </mat-form-field>
+      </div>
+
+      <!-- Secondary contact section -->
+      <h2 class="mat-title" fxFlexOffset="32px">
+        {{ 'ORGANISATION.HEADING_SECONDARY_CONTACT' | translate }}
+      </h2>
+      <mat-divider></mat-divider>
+      <!-- Secondary name -->
+      <mat-form-field fxFlexOffset="32px">
+        <input
+          matInput
+          maxlength="45"
+          placeholder="{{ 'ORGANISATION.SECONDARY_CONTACT' | translate }}"
+          formControlName="secondaryContact"
+        />
+      </mat-form-field>
+      <!-- Email address -->
+      <mat-form-field fxFlexOffset="16px">
+        <input
+          type="email"
+          maxlength="45"
+          matInput
+          placeholder="{{ 'ORGANISATION.ALTERNATE_EMAIL' | translate }}"
+          formControlName="alternateEmail"
+        />
+      </mat-form-field>
+
+      <div fxLayout="row" fxFlexOffset="32px">
+        <span flex></span>
+        <button
+          type="button"
+          mat-raised-button
+          color="primary"
+          (click)="saveChanges()"
+          [disabled]="
+            !organisationForm.valid || appComponentStateService.isSaving
+          "
+        >
+          {{ 'GENERAL.UPDATE' | translate | uppercase }}
+        </button>
+      </div>
+
+      <!-- Organisation logo section -->
+      <h2 class="mat-title" fxFlexOffset="32px">
+        {{ 'ORGANISATION.HEADING_LOGO' | translate }}
+      </h2>
+      <mat-divider></mat-divider>
+      <div
+        class="image-upload-wrapper"
+        style="width: 150px;"
+        fxFlex="none"
+        fxFlexOffset="32px"
+      >
+        <div
+          class="image"
+          style="height: 112px;"
+          [ngStyle]="{ 'background-image': 'url(' + logoSource + ')' }"
+        ></div>
+
+        <div class="toolbar">
+          <a href="#" (click)="openImageCropperModal($event)">{{
+            'ORGANISATION.UPDATE_LOGO' | translate | uppercase
+          }}</a>
+          <!-- <button mat-icon-button color="primary" (click)="openImageCropperModal()"><mat-icon>add</mat-icon></button>
+          <button mat-icon-button color="warn" [disabled]="logoSource===emptyLogoFile" (click)="clearLogo()"><mat-icon>remove</mat-icon></button> -->
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

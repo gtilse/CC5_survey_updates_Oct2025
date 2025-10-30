@@ -1,0 +1,1006 @@
+/**
+ * Dashboard Component
+ */
+
+// Imports
+import * as _ from 'lodash';
+import { Component, OnInit, HostListener } from '@angular/core';
+import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
+import * as moment from 'moment';
+import * as d3 from 'd3';
+import { AppStateService } from '../services/app-state.service';
+import { AppDataService } from '../services/app-data.service';
+import { AppComponentStateService } from '../services/app-component-state.service';
+import { APPSHARED } from '../app-setting';
+import { AppNotificationService } from '../services/app-notification.service';
+
+// Dashboard component
+@Component({
+  selector: 'app-dashboard',
+  styles: [
+    `
+      :host {
+      }
+    `
+  ],
+  templateUrl: './dashboard2.component.html',
+  providers: [AppComponentStateService]
+})
+export class Dashboard2Component implements OnInit {
+  // Component properties
+  public responsesTypeList = APPSHARED.RESPONSES_TYPE_SELECT_LIST;
+
+  public allScores: Array<any> = [];
+
+  public surveySummary: any = {};
+
+  // Constructor
+  constructor(
+    private router: Router,
+    private translateService: TranslateService,
+    public appStateService: AppStateService,
+    private appDataService: AppDataService,
+    public appComponentStateService: AppComponentStateService,
+    private dialog: MatDialog,
+    private appNotificationService: AppNotificationService
+  ) {}
+
+  // Component init
+  ngOnInit() {
+    this.loadData();
+  }
+
+  // Window resize event
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.dashboardCharts.displayAllCharts();
+  }
+
+  // Load data
+  public loadData() {
+    this.appComponentStateService.isLoading = true;
+    this.appDataService.getDashboardForLoggedUser({}).subscribe(
+      (response) => {
+        this.appComponentStateService.isLoading = false;
+
+        if (!(response.responses && response.responses.constructor === Array)) {
+          return;
+        }
+        this.allScores = this.appDataService.dataFormat.formatResponses(
+          response.responses
+        );
+
+        this.dashboardCharts.createAllData();
+        this.dashboardCharts.displayAllCharts();
+
+        const surveySummaries = this.appDataService.dataFormat.formatSurveySummary(
+          response.surveySummary
+        );
+        this.surveySummary = surveySummaries[0];
+      },
+      (err) => {
+        // TODO: handle dashboard data load error
+      }
+    );
+  }
+
+  // Top chart type change
+  public topChartChange($event) {
+    switch (this.dashboardCharts.topChart.chartType) {
+      case 'RESPONSES':
+        this.dashboardCharts.displayResponsesChart();
+        break;
+      case 'SCORE_BREAKDOWN':
+        this.dashboardCharts.displayScoreBreakdownChart();
+        break;
+      case 'NPS':
+        this.dashboardCharts.displayNPSChart();
+        break;
+    }
+  }
+
+  // Data and rendering of the charts
+  public dashboardCharts: any = {
+    // Options for top chart
+    topChart: {
+      chartType: 'RESPONSES',
+      chartSubType: 'DATE'
+    },
+
+    // Chart data
+    responsesChartData: [],
+    scoreBreakdownChartData: [],
+    npsChartData: [],
+    npsSummaryChartData: {},
+    clientScoreChartData: {},
+    npsType: 'TEAM',
+    clientScoreType: 'TEAM',
+
+    // Create data for all charts
+    createAllData: () => {
+      this.dashboardCharts.createResponsesChartData();
+      this.dashboardCharts.createScoreBreakdownChartData();
+      this.dashboardCharts.createNPSChartData();
+      this.dashboardCharts.createNPSSummaryChartData();
+      this.dashboardCharts.createClientScoreChartData();
+    },
+
+    // Display all charts on the dashboard
+    displayAllCharts: () => {
+      // Show selected top chart
+      switch (this.dashboardCharts.topChart.chartType) {
+        case 'RESPONSES':
+          this.dashboardCharts.displayResponsesChart();
+          break;
+        case 'SCORE_BREAKDOWN':
+          this.dashboardCharts.displayScoreBreakdownChart();
+          break;
+        case 'NPS':
+          this.dashboardCharts.displayNPSChart();
+          break;
+      }
+
+      // NPS Summary chart
+      this.dashboardCharts.displayNPSSummaryChart();
+
+      // Client Score chart
+      this.dashboardCharts.displayClientScoreChart();
+    },
+
+    // Responses chart
+    createResponsesChartData: () => {
+      // Prepare data for the chart
+      const data = _.extend([], this.allScores);
+      let chartData = [];
+
+      let propName: string = '';
+
+      switch (this.dashboardCharts.topChart.chartSubType) {
+        case 'STAFF':
+          propName = 'drlName';
+          break;
+
+        case 'CLIENT_CATEGORY':
+          propName = 'category';
+          break;
+
+        case 'CLIENT_INDUSTRY':
+          propName = 'industry';
+          break;
+      }
+
+      // Based on selected chart sub type, create the x/y data
+      switch (this.dashboardCharts.topChart.chartSubType) {
+        case 'DATE':
+          data.forEach((o, index) => {
+            const receivedDates = o.allReceivedOnDates.split(',');
+            const scores = o.allScores.split(',');
+
+            receivedDates.forEach((o1, index1) => {
+              const i = chartData
+                .map(function (e) {
+                  return e.label;
+                })
+                .indexOf(moment.utc(o1).local().format('DD MMM YY'));
+
+              if (i == -1) {
+                chartData.push({
+                  date: moment.utc(o1).local().format('DDMMYYYY'),
+                  label: moment.utc(o1).local().format('DD MMM YY'),
+                  promoters: APPSHARED.scoreType.isPromoter(
+                    parseInt(scores[index1])
+                  )
+                    ? 1
+                    : 0,
+                  neutrals: APPSHARED.scoreType.isNeutral(
+                    parseInt(scores[index1])
+                  )
+                    ? 1
+                    : 0,
+                  detractors: APPSHARED.scoreType.isDetractor(
+                    parseInt(scores[index1])
+                  )
+                    ? 1
+                    : 0
+                });
+              } else if (
+                APPSHARED.scoreType.isPromoter(parseInt(scores[index1]))
+              ) {
+                chartData[i].promoters++;
+              } else if (
+                APPSHARED.scoreType.isNeutral(parseInt(scores[index1]))
+              ) {
+                chartData[i].neutrals++;
+              } else {
+                chartData[i].detractors++;
+              }
+            });
+          });
+
+          chartData.sort(function (a, b) {
+            return moment(a.date, 'DDMMYYYY') > moment(b.date, 'DDMMYYYY')
+              ? 1
+              : -1;
+          });
+
+          break;
+
+        case 'STAFF':
+        case 'CLIENT_CATEGORY':
+        case 'CLIENT_INDUSTRY':
+          data.forEach((o, index) => {
+            const receivedDates = o.allReceivedOnDates.split(',');
+            const scores = o.allScores.split(',');
+            const i = chartData
+              .map(function (e) {
+                return e.label;
+              })
+              .indexOf(o[propName] ? o[propName] : 'NA');
+
+            if (i == -1) {
+              chartData.push({
+                label: o[propName] ? o[propName] : 'NA',
+                promoters: APPSHARED.scoreType.isPromoter(parseInt(o.score))
+                  ? 1
+                  : 0,
+                neutrals: APPSHARED.scoreType.isNeutral(parseInt(o.score))
+                  ? 1
+                  : 0,
+                detractors: APPSHARED.scoreType.isDetractor(parseInt(o.score))
+                  ? 1
+                  : 0
+              });
+            } else if (APPSHARED.scoreType.isPromoter(parseInt(o.score))) {
+              chartData[i].promoters++;
+            } else if (APPSHARED.scoreType.isNeutral(parseInt(o.score))) {
+              chartData[i].neutrals++;
+            } else {
+              chartData[i].detractors++;
+            }
+          });
+
+          chartData.sort(function (a, b) {
+            return a.label > b.label ? 1 : -1;
+          });
+
+          break;
+      }
+
+      // Take 25 right most data points
+      // If data points < 25 add dummy data for sizing
+      const empty = '  ';
+      chartData = _.takeRight(chartData, 25);
+
+      if (chartData.length < 15) {
+        for (let i = chartData.length; i < 15; i++) {
+          chartData.push({
+            label: empty.repeat(i + 1),
+            promoters: 0,
+            neutrals: 0,
+            detractors: 0
+          });
+        }
+      }
+      this.dashboardCharts.responsesChartData = chartData;
+    },
+
+    // Responses chart display
+    displayResponsesChart: () => {
+      // Draw the chart
+      const parentDiv = document.getElementById('dashboard-responses-chart');
+      const chartContainer = d3.select('#dashboard-responses-chart');
+      chartContainer.selectAll('*').remove();
+      const svg = chartContainer
+        .append('svg')
+        .attr('class', 'd3-chart')
+        .attr('width', `${parentDiv.clientWidth}`)
+        .attr('height', '600');
+
+      const margins = { top: 60, right: 20, bottom: 75, left: 40 };
+      const width = +svg.attr('width') - margins.left - margins.right;
+      const height = +svg.attr('height') - margins.top - margins.bottom;
+      const chart = svg
+        .append('g')
+        .attr('transform', `translate(${margins.left},${margins.top})`);
+
+      // Set the x scale
+      const x = d3
+        .scaleBand()
+        .rangeRound([0, width])
+        .paddingInner(0.05)
+        .align(0.1);
+
+      // set y scale
+      const y = d3.scaleLinear().rangeRound([height, 0]);
+
+      // set the colors of stacks
+      const z = d3
+        .scaleOrdinal()
+        .range([
+          APPSHARED.COLORS.PROMOTER,
+          APPSHARED.COLORS.NEUTRAL,
+          APPSHARED.COLORS.DETRACTOR
+        ]);
+
+      const keys = ['promoters', 'neutrals', 'detractors'];
+
+      // Set the domains for x,y,z
+      x.domain(
+        this.dashboardCharts.responsesChartData.map(function (d) {
+          return d.label;
+        })
+      );
+      y.domain([0, <any>d3.max(
+          this.dashboardCharts.responsesChartData,
+          function (d: any) {
+            return d.promoters + d.neutrals + d.detractors;
+          }
+        )]);
+      z.domain(keys);
+
+      // Create and display the chart
+      chart
+        .append('g')
+        .selectAll('g')
+        // Chart data
+        .data(d3.stack().keys(keys)(this.dashboardCharts.responsesChartData))
+        // Groups
+        .enter()
+        .append('g')
+        .attr('fill', function (d) {
+          return <any>z(d.key);
+        })
+        // Rect for group
+        .selectAll('rect')
+        .data(function (d) {
+          return d;
+        })
+        .enter()
+        .append('rect')
+        // show/hide tooltip
+        .on('mouseover', function (d) {
+          divTooltip.transition().duration(200).style('opacity', 0.9);
+
+          divTooltip
+            .html(`${d.data.label}<br/><strong>Count: ${d[1] - d[0]}</strong>`)
+            .style('top', `${d3.mouse(<any>chartContainer.node())[1]}px`)
+            .style('left', `${d3.mouse(<any>chartContainer.node())[0]}px`);
+
+          d3.select(this).style('stroke', 'black');
+        })
+        .on('mouseout', function (d) {
+          divTooltip.transition().duration(500).style('opacity', 0);
+
+          d3.select(this).style('stroke', null);
+        })
+        // animate bars
+        .attr('x', function (d: any) {
+          return <any>x(d.data.label);
+        })
+        .attr('y', (d) => {
+          return height;
+        })
+        .attr('width', x.bandwidth())
+        .attr('height', 0)
+        .transition()
+        .duration(200)
+        .delay(function (d, i) {
+          return i * 150;
+        })
+        .attr('y', function (d) {
+          return y(d[1]);
+        })
+        .attr('height', (d) => {
+          return y(d[0]) - y(d[1]);
+        });
+
+      // Draw the legend
+      let leftPos = 0;
+      let prevLeftPos = 0;
+      const rectOffset = 20;
+      const textOffset = 10;
+      const widthHeight = 20;
+
+      const legend = svg
+        .append('g')
+        .attr('transform', `translate(${margins.left},15)`)
+        .selectAll('.legend')
+        .data(keys)
+        .enter()
+        .append('g')
+        .attr('class', 'legend')
+        .attr('transform', function (d, i) {
+          if (i === 0) {
+            leftPos =
+              widthHeight +
+              textOffset +
+              rectOffset +
+              APPSHARED.textSize(d, 12).width;
+            return 'translate(0,0)';
+          }
+          prevLeftPos = leftPos;
+          leftPos +=
+            widthHeight +
+            textOffset +
+            rectOffset +
+            APPSHARED.textSize(d, 12).width;
+          return `translate(${prevLeftPos},0)`;
+        });
+
+      legend
+        .append('rect')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', widthHeight)
+        .attr('height', widthHeight)
+        .style('fill', <any>function (d, i) {
+          return z(d);
+        });
+
+      legend
+        .append('text')
+        .attr('x', textOffset + rectOffset)
+        .attr('y', 5)
+        .text(function (d, i) {
+          return d.charAt(0).toUpperCase() + d.slice(1);
+        })
+        .style('text-anchor', 'start')
+        .style('dominant-baseline', 'hanging')
+        .style('font-size', 12);
+
+      // Define the div for the tooltip
+      const divTooltip = chartContainer
+        .append('div')
+        .attr('class', 'd3-tooltip')
+        .style('opacity', 0);
+
+      // x axis
+      chart
+        .append('g')
+        .attr('class', 'axis')
+        .attr('transform', `translate(0,${height})`)
+        .call(d3.axisBottom(x))
+        .selectAll('text')
+        .attr('y', 0)
+        .attr('x', 9)
+        .attr('dy', '0.35em')
+        .attr('transform', 'rotate(90)')
+        .style('text-anchor', 'start');
+
+      // y axis
+      chart.append('g').attr('class', 'axis').call(d3.axisLeft(y));
+    },
+
+    createScoreBreakdownChartData: () => {
+      const data = _.extend([], this.allScores);
+
+      const chartData = [
+        { label: '0', value: 0 },
+        { label: '1', value: 0 },
+        { label: '2', value: 0 },
+        { label: '3', value: 0 },
+        { label: '4', value: 0 },
+        { label: '5', value: 0 },
+        { label: '6', value: 0 },
+        { label: '7', value: 0 },
+        { label: '8', value: 0 },
+        { label: '9', value: 0 },
+        { label: '10', value: 0 }
+      ];
+
+      data.forEach((o, index) => {
+        chartData[o.score].value++;
+      });
+
+      this.dashboardCharts.scoreBreakdownChartData = chartData;
+    },
+
+    displayScoreBreakdownChart: () => {
+      // Draw the chart
+      const parentDiv = document.getElementById('dashboard-responses-chart');
+      const chartContainer = d3.select('#dashboard-responses-chart');
+      chartContainer.selectAll('*').remove();
+      const svg = chartContainer
+        .append('svg')
+        .attr('class', 'd3-chart')
+        // .attr('width',`${parentDiv.clientWidth}`)
+        .attr('width', '960')
+        .attr('height', '600');
+
+      const margins = { top: 60, right: 20, bottom: 20, left: 40 };
+      const width = +svg.attr('width') - margins.left - margins.right;
+      const height = +svg.attr('height') - margins.top - margins.bottom;
+      const chart = svg
+        .append('g')
+        .attr('transform', `translate(${margins.left},${margins.top})`);
+
+      // Set the x scale
+      const x = d3
+        .scaleBand()
+        .rangeRound([0, width - 250])
+        .paddingInner(0.05)
+        .align(0.1);
+
+      // set y scale
+      const y = d3.scaleLinear().rangeRound([height, 0]);
+
+      // set the colors of stacks
+      const z = d3
+        .scaleOrdinal()
+        .range([
+          APPSHARED.COLORS.DETRACTOR,
+          APPSHARED.COLORS.DETRACTOR,
+          APPSHARED.COLORS.DETRACTOR,
+          APPSHARED.COLORS.DETRACTOR,
+          APPSHARED.COLORS.DETRACTOR,
+          APPSHARED.COLORS.DETRACTOR,
+          APPSHARED.COLORS.DETRACTOR,
+          APPSHARED.COLORS.NEUTRAL,
+          APPSHARED.COLORS.NEUTRAL,
+          APPSHARED.COLORS.PROMOTER,
+          APPSHARED.COLORS.PROMOTER
+        ]);
+
+      const keys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+
+      // Set the domains for x,y,z
+      x.domain(
+        this.dashboardCharts.scoreBreakdownChartData.map(function (d) {
+          return d.label;
+        })
+      );
+      y.domain([0, <any>d3.max(
+          this.dashboardCharts.scoreBreakdownChartData,
+          function (d: any) {
+            return d.value;
+          }
+        )]);
+      z.domain(keys);
+
+      chart
+        .append('g')
+        .selectAll('rect')
+        .data(this.dashboardCharts.scoreBreakdownChartData)
+        .enter()
+        .append('rect')
+
+        // animate bars
+        .style('fill', function (d: any, i) {
+          return <any>z(d.label);
+        })
+        .attr('x', function (d: any) {
+          return <any>x(d.label);
+        })
+        .attr('y', (d) => {
+          return height;
+        })
+        .attr('width', x.bandwidth())
+        .attr('height', 0)
+        .transition()
+        .duration(200)
+        .delay(function (d, i) {
+          return i * 150;
+        })
+        .attr('y', (d: any) => {
+          return y(d.value);
+        })
+        .attr('height', (d: any) => {
+          return height - y(d.value);
+        });
+
+      // x axis
+      chart
+        .append('g')
+        .attr('class', 'axis')
+        .attr('transform', `translate(0,${height})`)
+        .call(d3.axisBottom(x));
+
+      // y axis
+      chart.append('g').attr('class', 'axis').call(d3.axisLeft(y));
+
+      // y axis ticks
+      chart
+        .append('g')
+        .attr('class', 'grid')
+        .call(
+          d3
+            .axisLeft(y)
+            .tickSize(-width)
+            .tickFormat((d, n) => '')
+        );
+
+      // Draw the legend
+      const dataSummary = [
+        { text: 'Promoters', value: 0 },
+        { text: 'Neutrals', value: 0 },
+        { text: 'Detractors', value: 0 }
+      ];
+      this.dashboardCharts.scoreBreakdownChartData.forEach((o, i) => {
+        if (APPSHARED.scoreType.isPromoter(parseInt(o.label))) {
+          dataSummary[0].value += o.value;
+        } else if (APPSHARED.scoreType.isNeutral(parseInt(o.label))) {
+          dataSummary[1].value += o.value;
+        } else {
+          dataSummary[2].value += o.value;
+        }
+      });
+
+      let leftPos = 0;
+      let prevLeftPos = 0;
+      const rectOffset = 10;
+      const widthHeight = 20;
+      const textOffset = 20;
+      const fontSize = 12;
+      const colors = [
+        APPSHARED.COLORS.PROMOTER,
+        APPSHARED.COLORS.NEUTRAL,
+        APPSHARED.COLORS.DETRACTOR
+      ];
+
+      const legend = svg
+        .append('g')
+        .attr('transform', `translate(${margins.left},15)`)
+        .selectAll('.legend')
+        .data(dataSummary)
+        .enter()
+        .append('g')
+        .attr('class', 'legend')
+        .attr('transform', function (d, i) {
+          if (i === 0) {
+            leftPos =
+              widthHeight +
+              textOffset +
+              rectOffset +
+              APPSHARED.textSize(`${d.value} ${d.text}`, fontSize).width;
+            return 'translate(0,0)';
+          }
+          prevLeftPos = leftPos;
+          leftPos +=
+            widthHeight +
+            textOffset +
+            rectOffset +
+            APPSHARED.textSize(`${d.value} ${d.text}`, fontSize).width;
+          return `translate(${prevLeftPos},0)`;
+        });
+
+      legend
+        .append('rect')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', widthHeight)
+        .attr('height', widthHeight)
+        .style('fill', <any>function (d, i) {
+          return colors[i];
+        });
+
+      legend
+        .append('text')
+        .attr('x', textOffset + rectOffset)
+        .attr('y', 5)
+        .text(function (d, i) {
+          return `${d.value} ${d.text}`;
+        })
+        .style('text-anchor', 'start')
+        .style('dominant-baseline', 'hanging')
+        .style('font-size', 12);
+    },
+
+    createNPSChartData: () => {
+      const data = _.extend([], this.allScores);
+      const chartData = [];
+
+      const propName: string = 'drlName';
+
+      data.forEach((o, index) => {
+        const i = chartData
+          .map(function (e) {
+            return e.name;
+          })
+          .indexOf(o[propName] ? o[propName] : 'NA');
+
+        if (i == -1) {
+          chartData.push({
+            name: o[propName] ? o[propName] : 'NA',
+            promoters: APPSHARED.scoreType.isPromoter(parseInt(o.score))
+              ? 1
+              : 0,
+            neutrals: APPSHARED.scoreType.isNeutral(parseInt(o.score)) ? 1 : 0,
+            detractors: APPSHARED.scoreType.isDetractor(parseInt(o.score))
+              ? 1
+              : 0
+          });
+        } else if (APPSHARED.scoreType.isPromoter(parseInt(o.score))) {
+          chartData[i].promoters++;
+        } else if (APPSHARED.scoreType.isNeutral(parseInt(o.score))) {
+          chartData[i].neutrals++;
+        } else {
+          chartData[i].detractors++;
+        }
+      });
+
+      chartData.forEach(function (o, index) {
+        o.nps =
+          Math.round(
+            (o.promoters * 100) / (o.promoters + o.neutrals + o.detractors)
+          ) -
+          Math.round(
+            (o.detractors * 100) / (o.promoters + o.neutrals + o.detractors)
+          );
+      });
+
+      chartData.sort(function (a, b) {
+        return a.name > b.name ? 1 : -1;
+      });
+
+      this.dashboardCharts.npsChartData = chartData;
+    },
+
+    displayNPSChart: () => {
+      const radius = 74;
+      const padding = 10;
+
+      const color = d3
+        .scaleOrdinal()
+        .range([
+          APPSHARED.COLORS.PROMOTER,
+          APPSHARED.COLORS.NEUTRAL,
+          APPSHARED.COLORS.DETRACTOR
+        ]);
+
+      const arc = d3
+        .arc()
+        .outerRadius(radius)
+        .innerRadius(radius - 30);
+
+      const pie = d3
+        .pie()
+        .sort(null)
+        .value(function (d: any) {
+          return d.total;
+        });
+
+      color.domain(['promoters', 'neutrals', 'detractors']);
+
+      this.dashboardCharts.npsChartData.forEach(function (d) {
+        d.total = d.promoters + d.neutrals + d.detractors;
+        d.scores = color.domain().map(function (name) {
+          return { name, total: +d[name] };
+        });
+      });
+
+      const chartContainer = d3.select('#dashboard-responses-chart');
+      chartContainer.selectAll('*').remove();
+
+      const divTooltip = chartContainer
+        .append('div')
+        .attr('class', 'd3-tooltip')
+        .style('opacity', 0);
+
+      const svg = chartContainer
+        .selectAll('.pie')
+        .data(this.dashboardCharts.npsChartData)
+        .enter()
+        .append('svg')
+        .style('margin', '25px 0px 0px 25px')
+        .attr('class', 'pie')
+        .attr('width', radius * 2)
+        .attr('height', radius * 2 + 25)
+        .append('g')
+        .attr('transform', `translate(${radius},${radius})`);
+
+      svg
+        .selectAll('.arc')
+        .data(function (d: any) {
+          return pie(d.scores);
+        })
+        .enter()
+        .append('path')
+        .attr('class', 'arc')
+        .attr('d', <any>arc)
+        .style('fill', function (d: any) {
+          return <any>color(d.data.name);
+        })
+        // show/hide tooltip
+        .on('mouseover', function (d: any) {
+          divTooltip.transition().duration(200).style('opacity', 0.9);
+
+          divTooltip
+            .html(`${d.data.total} ${d.data.name}`)
+            .style('top', `${d3.mouse(<any>chartContainer.node())[1]}px`)
+            .style('left', `${d3.mouse(<any>chartContainer.node())[0]}px`);
+
+          d3.select(this).style('stroke', 'black');
+        })
+        .on('mouseout', function (d) {
+          divTooltip.transition().duration(500).style('opacity', 0);
+
+          d3.select(this).style('stroke', null);
+        });
+
+      svg
+        .append('text')
+        .attr('dy', '.35em')
+        .style('text-anchor', 'middle')
+        .style('font-size', 32)
+        .attr('fill', '#C0C0C0')
+        .style('font-weight', 'bold')
+        .text(function (d: any) {
+          return d.nps;
+        });
+
+      svg
+        .append('text')
+        .attr('dy', radius + 20)
+        .style('text-anchor', 'middle')
+        .style('font-size', 14)
+        .style('font-weight', 'light')
+        .text(function (d: any) {
+          return d.name;
+        });
+    },
+
+    createNPSSummaryChartData: () => {
+      const data = _.extend([], this.allScores);
+
+      const chartData = { promoters: 0, neutrals: 0, detractors: 0 };
+
+      data.forEach((o, index) => {
+        if (
+          this.dashboardCharts.npsType !== 'SELF' ||
+          o.drlId == this.appStateService.loggedUser.objectId
+        ) {
+          if (APPSHARED.scoreType.isPromoter(parseInt(o.score))) {
+            chartData.promoters++;
+          } else if (APPSHARED.scoreType.isNeutral(parseInt(o.score))) {
+            chartData.neutrals++;
+          } else {
+            chartData.detractors++;
+          }
+        }
+      });
+
+      this.dashboardCharts.npsSummaryChartData = chartData;
+    },
+
+    displayNPSSummaryChart: () => {
+      // set the dimensions and margins of the graph
+      const margin = 40;
+
+      const chartContainer = d3.select('#dashboard-nps-chart');
+      const containerBox: any = (chartContainer.node() as any).getBoundingClientRect();
+      const radius =
+        Math.min(containerBox.width, containerBox.height) / 2 - margin;
+
+      chartContainer.selectAll('*').remove();
+
+      // Append tooltip div
+      const divTooltip = chartContainer
+        .append('div')
+        .attr('class', 'd3-tooltip')
+        .style('opacity', 0);
+
+      // append the svg object to the div called 'my_dataviz'
+      const svg = chartContainer
+        .append('svg')
+        .style('margin', '0px auto 0px auto')
+        .style('display', 'block')
+        .attr('width', containerBox.width)
+        .attr('height', containerBox.height)
+        .append('g')
+        .attr(
+          'transform',
+          `translate(${containerBox.width / 2},${containerBox.height / 2})`
+        );
+
+      // set the color scale
+      const color = d3
+        .scaleOrdinal()
+        .domain(this.dashboardCharts.npsSummaryChartData)
+        .range([
+          APPSHARED.COLORS.PROMOTER,
+          APPSHARED.COLORS.NEUTRAL,
+          APPSHARED.COLORS.DETRACTOR
+        ]);
+
+      // Compute the position of each group on the pie:
+      const pie = d3.pie().value(function (d: any) {
+        return d.value;
+      });
+
+      const data_ready = pie(
+        <any>d3.entries(this.dashboardCharts.npsSummaryChartData)
+      );
+
+      // Build the pie chart
+      svg
+        .selectAll('.pie')
+        .data(data_ready)
+        .enter()
+        .append('path')
+        .attr(
+          'd',
+          (d3.arc() as any).innerRadius(radius - 50).outerRadius(radius)
+        )
+        .attr('fill', function (d: any): any {
+          return color(d.data.key);
+        })
+        // show/hide tooltip
+        .on('mouseover', function (d: any) {
+          divTooltip.transition().duration(200).style('opacity', 0.9);
+
+          divTooltip
+            .html(`${d.data.value} ${d.data.key}`)
+            .style('top', `${d3.mouse(<any>chartContainer.node())[1]}px`)
+            .style('left', `${d3.mouse(<any>chartContainer.node())[0]}px`);
+
+          d3.select(this).style('stroke', 'black');
+        })
+        .on('mouseout', function (d) {
+          divTooltip.transition().duration(500).style('opacity', 0);
+
+          d3.select(this).style('stroke', null);
+        });
+
+      // Add NPS score in center of pie
+      svg
+        .append('text')
+        .attr('dy', '.35em')
+        .style('text-anchor', 'middle')
+        .style('font-size', 32)
+        .attr('fill', '#C0C0C0')
+        .style('font-weight', 'light')
+        .text((d: any): any => {
+          let npsVal = 0;
+          const totalCount =
+            this.dashboardCharts.npsSummaryChartData.promoters +
+            this.dashboardCharts.npsSummaryChartData.neutrals +
+            this.dashboardCharts.npsSummaryChartData.detractors;
+
+          if (totalCount > 0) {
+            npsVal =
+              Math.round(
+                (this.dashboardCharts.npsSummaryChartData.promoters /
+                  totalCount) *
+                  100
+              ) -
+              Math.round(
+                (this.dashboardCharts.npsSummaryChartData.detractors /
+                  totalCount) *
+                  100
+              );
+          }
+
+          return npsVal;
+        });
+    },
+
+    createClientScoreChartData: () => {
+      const data = _.extend([], this.allScores);
+      let totalCount: number = 0;
+      let totalScore: number = 0;
+
+      const chartData = { name: 'Client Score', value: 0 };
+
+      data.forEach((o, index) => {
+        if (
+          this.dashboardCharts.clientScoreType !== 'SELF' ||
+          o.drlId == this.appStateService.loggedUser.objectId
+        ) {
+          totalScore += parseInt(o.score);
+          totalCount += 1;
+        }
+      });
+
+      if (totalCount > 0) {
+        chartData.value = Math.round((totalScore / totalCount) * 2) / 2;
+      }
+
+      this.dashboardCharts.clientScoreChartData = chartData;
+      console.log(chartData);
+    },
+
+    displayClientScoreChart: () => {}
+  };
+}

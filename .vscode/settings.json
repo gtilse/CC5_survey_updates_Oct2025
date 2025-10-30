@@ -1,0 +1,13 @@
+{
+  "eslint.validate": [ "javascript", "typescript", "html"],
+
+  "eslint.options": {
+    "extensions": [".js", ".ts", "html"]
+  },
+
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "never",
+    "source.fixAll": "never"
+  },
+  "angular.enable-strict-mode-prompt": false
+}
