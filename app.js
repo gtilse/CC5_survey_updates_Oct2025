@@ -295,6 +295,7 @@
           switch(viewModel.surveyType){
             case "CLI":
             case "STA":
+            case "PUL":
               if($.isNumeric(viewModel.score) && viewModel.score >=0 && viewModel.score <=10){
 
                 // Save feedback and go directly to comments page for all scores
@@ -309,9 +310,6 @@
                 deferred.reject();
               }
 
-              break;
-            case "PUL":
-              deferred.resolve();
               break;
             case "MGR":
               viewModel.getManagers({"surveyType":viewModel.surveyType,"id": viewModel.id}).then(function(response){
@@ -416,7 +414,7 @@
 
           }
 
-          if(viewModel.surveyType === "CLI" || viewModel.surveyType === "STA"){
+          if(viewModel.surveyType === "CLI" || viewModel.surveyType === "STA" || viewModel.surveyType === "PUL"){
             // Score text
             viewModel.scoreText("What is the main reason for your score of " + String(viewModel.score) + "?");
 
@@ -425,9 +423,9 @@
             viewModel.isPassive(viewModel.score >= 7 && viewModel.score <= 8);
             viewModel.isScoreSeven(viewModel.score === 7);
 
-          } else if(viewModel.surveyType === "PUL" || viewModel.surveyType === "MGR") {
+          } else if(viewModel.surveyType === "MGR") {
 
-            if(viewModel.surveyType=="MGR") $("#slStaff").toggle();
+            $("#slStaff").toggle();
 
             viewModel.wizardState(2);
           }
