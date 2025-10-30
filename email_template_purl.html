@@ -15,26 +15,30 @@
     <style type="text/css">
       body {
         background-color:#FFFFFF;
-        color: #000000;
-        font-family: Helvetica, Arial, sans-serif;
-        font-size: 16px;
-        line-height: 1.6em;
+        color: #333;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-size: 15px;
+        line-height: 1.5;
         margin: 0;
         padding: 0;
+        font-weight: 400;
         -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
         -webkit-text-size-adjust: none;
         width: 100% !important;
       }
 
       h1, h2, h3, h4, h5, h6 {
-        margin-top: 0;
-        margin-bottom: 0.5rem;
+        margin-top: 32px;
+        margin-bottom: 12px;
+        font-weight: 400;
+        color: #222;
       }
 
       p {
         margin-top: 0;
-        margin-bottom: 1rem;
-        font-size: 16px;
+        margin-bottom: 6px;
+        font-size: 15px;
       }
 
       table {
@@ -44,9 +48,8 @@
 
       .email-container {
         background-color:#FFFFFF;
-        margin-top:20px;
-        margin-bottom:20px;
-        padding: 40px;
+        margin: 0 auto;
+        padding: 0 20px;
         max-width: 640px;
       }
 
@@ -142,9 +145,7 @@
       /* Mobile responsive styles */
       @media only screen and (max-width: 640px) {
         .email-container {
-          padding: 20px;
-          margin-top: 0;
-          margin-bottom: 0;
+          padding: 0 20px;
         }
 
         .greeting {
