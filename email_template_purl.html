@@ -140,7 +140,7 @@
       }
 
       /* Mobile responsive styles */
-      @media only screen and (max-width: 600px) {
+      @media only screen and (max-width: 640px) {
         .email-container {
           padding: 20px;
           margin-top: 0;
@@ -155,18 +155,32 @@
           font-size: 17px;
         }
 
-        .score-button {
-          padding: 10px 8px;
-          min-width: 38px;
-          font-size: 14px;
-          margin: 0;
-          flex-shrink: 0;
+        .score-buttons-container {
+          flex-direction: column-reverse;
+          align-items: stretch;
+          gap: 8px;
         }
 
-        .score-buttons-container {
-          gap: 4px;
-          justify-content: flex-start;
-          padding: 0 10px;
+        .score-button {
+          width: 100%;
+          padding: 16px;
+          min-width: auto;
+          font-size: 18px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          background-color: #f5f5f5;
+        }
+
+        .score-button::after {
+          content: attr(data-label);
+          font-size: 14px;
+          color: #666;
+          font-weight: 400;
+        }
+
+        .score-labels {
+          display: none;
         }
       }
 
@@ -216,17 +230,17 @@
               <td align="center" valign="top">
                 <div class="score-buttons-wrapper">
                   <div class="score-buttons-container">
-                    <a class="score-button" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=0&firmName={{FirmName}}" target="_blank">0</a>
-                    <a class="score-button" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=1&firmName={{FirmName}}" target="_blank">1</a>
-                    <a class="score-button" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=2&firmName={{FirmName}}" target="_blank">2</a>
-                    <a class="score-button" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=3&firmName={{FirmName}}" target="_blank">3</a>
-                    <a class="score-button" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=4&firmName={{FirmName}}" target="_blank">4</a>
-                    <a class="score-button" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=5&firmName={{FirmName}}" target="_blank">5</a>
-                    <a class="score-button" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=6&firmName={{FirmName}}" target="_blank">6</a>
-                    <a class="score-button" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=7&firmName={{FirmName}}" target="_blank">7</a>
-                    <a class="score-button" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=8&firmName={{FirmName}}" target="_blank">8</a>
-                    <a class="score-button" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=9&firmName={{FirmName}}" target="_blank">9</a>
-                    <a class="score-button" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=10&firmName={{FirmName}}" target="_blank">10</a>
+                    <a class="score-button" data-label="{{LEFT_SCORE_LABEL}}" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=0&firmName={{FirmName}}" target="_blank">0</a>
+                    <a class="score-button" data-label="" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=1&firmName={{FirmName}}" target="_blank">1</a>
+                    <a class="score-button" data-label="" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=2&firmName={{FirmName}}" target="_blank">2</a>
+                    <a class="score-button" data-label="" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=3&firmName={{FirmName}}" target="_blank">3</a>
+                    <a class="score-button" data-label="" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=4&firmName={{FirmName}}" target="_blank">4</a>
+                    <a class="score-button" data-label="" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=5&firmName={{FirmName}}" target="_blank">5</a>
+                    <a class="score-button" data-label="" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=6&firmName={{FirmName}}" target="_blank">6</a>
+                    <a class="score-button" data-label="" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=7&firmName={{FirmName}}" target="_blank">7</a>
+                    <a class="score-button" data-label="" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=8&firmName={{FirmName}}" target="_blank">8</a>
+                    <a class="score-button" data-label="" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=9&firmName={{FirmName}}" target="_blank">9</a>
+                    <a class="score-button" data-label="{{RIGHT_SCORE_LABEL}}" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=10&firmName={{FirmName}}" target="_blank">10</a>
                   </div>
                   <div class="score-labels">
                     <span class="score-label">{{LEFT_SCORE_LABEL}}</span>
