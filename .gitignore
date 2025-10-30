@@ -51,3 +51,14 @@ Thumbs.db
 
 # CONFIG FILE
 /cc_config.php
+
+# SSO configuration files with secrets (vendor-specific)
+/src/hlbsydney/
+/src/macpherson/
+/src/moores/
+/src/netwealth/
+/src/rsmaustralia/
+/src/rsmaustraliatax/
+/src/sxiq/
+/src/sso/index.php
+/src/sso/index.php.temp
