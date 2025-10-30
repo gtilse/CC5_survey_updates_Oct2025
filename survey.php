@@ -64,7 +64,8 @@ if (isset($_GET['id']) && isset($_GET['type']) && ($_GET['type']=="CLI" || $_GET
           if($surveyType == "CLI") {
             $emailTemplate = file_get_contents(__DIR__ ."/email_template_reminder.html");
           } else if($surveyType == "PUL") {
-            $emailTemplate = file_get_contents(__DIR__ ."/email_template2.html");
+            // PURL links: Use modern template with direct-to-feedback flow (bypasses confirmation page)
+            $emailTemplate = file_get_contents(__DIR__ ."/email_template_purl.html");
           } else { // Triage
             $emailTemplate = file_get_contents(__DIR__ ."/email_template_triage.html");
           }

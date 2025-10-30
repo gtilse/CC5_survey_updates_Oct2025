@@ -1,0 +1,251 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{FirmName}} - Client Feedback</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/favorite/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favorite/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favorite/favicon-16x16.ico">
+    <link rel="manifest" href="/assets/favorite/site.webmanifest">
+    <link rel="mask-icon" href="/assets/favorite/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+
+    <style type="text/css">
+      body {
+        background-color:#F6F6F6;
+        color: #000000;
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.6em;
+        margin: 0;
+        padding: 0;
+        -webkit-font-smoothing: antialiased;
+        -webkit-text-size-adjust: none;
+        width: 100% !important;
+      }
+
+      h1, h2, h3, h4, h5, h6 {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+      }
+
+      p {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        font-size: 16px;
+      }
+
+      table {
+        border-collapse: collapse;
+        border-spacing: 0;
+      }
+
+      .email-container {
+        background-color:#FFFFFF;
+        margin-top:20px;
+        margin-bottom:20px;
+        padding: 40px;
+        max-width: 600px;
+      }
+
+      /* Client greeting */
+      .greeting {
+        font-size: 24px;
+        font-weight: 500;
+        margin-bottom: 20px;
+        color: #222;
+      }
+
+      /* NPS Question */
+      .nps-question {
+        font-size: 19px;
+        font-weight: 400;
+        text-align: center;
+        margin: 30px 0 20px 0;
+        color: #222;
+      }
+
+      /* Score buttons */
+      .score-button {
+        border: 1px solid #ccc;
+        padding: 12px 16px;
+        color: #222!important;
+        background-color: #FFFFFF;
+        border-radius: 8px;
+        display:inline-block;
+        font-weight: 500;
+        text-decoration:none;
+        margin: 4px;
+        min-width: 44px;
+        text-align: center;
+        transition: all 0.2s ease;
+        font-size: 16px;
+      }
+
+      .score-button:hover {
+        background-color: #007bff;
+        color: #fff!important;
+        border-color: #007bff;
+        text-decoration: none;
+      }
+
+      .score-button:active {
+        background-color: #0056b3;
+        border-color: #0056b3;
+      }
+
+      .score-label {
+        color:#A9A9A9;
+        font-size: 13px;
+      }
+
+      .score-buttons-wrapper {
+        margin: 30px 0;
+      }
+
+      .score-buttons-container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        margin-bottom: 10px;
+      }
+
+      .score-labels {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+      }
+
+      /* Footer */
+      .footer-text {
+        display: block;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+        font-weight: normal;
+        font-size: 13px;
+        color: #777;
+        text-align: left;
+        line-height: 1.6;
+      }
+
+      .footer-link {
+        color: #777!important;
+        text-decoration: underline;
+      }
+
+      /* Mobile responsive styles */
+      @media only screen and (max-width: 600px) {
+        .email-container {
+          padding: 20px;
+          margin-top: 0;
+          margin-bottom: 0;
+        }
+
+        .greeting {
+          font-size: 20px;
+        }
+
+        .nps-question {
+          font-size: 17px;
+        }
+
+        .score-button {
+          padding: 10px 12px;
+          min-width: 40px;
+          font-size: 15px;
+          margin: 2px;
+        }
+
+        .score-buttons-container {
+          gap: 4px;
+        }
+      }
+
+    </style>
+
+  </head>
+
+  <body>
+    <!-- Outer container -->
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" class="email-wrapper">
+      <tr>
+        <td align="center" valign="top">
+
+          <!-- Contents table -->
+          <table border="0" cellpadding="0" cellspacing="0" width="600" class="email-container">
+
+            <!-- Logo Image -->
+            <tr>
+              <td align="left" valign="top" style="padding-bottom: 20px;">
+                {{LOGO_IMAGE}}
+              </td>
+            </tr>
+
+            <!-- Client Greeting -->
+            <tr>
+              <td align="left" valign="top">
+                <div class="greeting">Hi {{ClientName}},</div>
+              </td>
+            </tr>
+
+            <!-- Email contents (if any custom message) -->
+            <tr>
+              <td align="left" valign="top">
+                {{EMAIL_HTML}}
+              </td>
+            </tr>
+
+            <!-- NPS Question -->
+            <tr>
+              <td align="center" valign="top">
+                <div class="nps-question">How likely are you to recommend {{FirmName}}?</div>
+              </td>
+            </tr>
+
+            <!-- Score buttons -->
+            <tr>
+              <td align="center" valign="top">
+                <div class="score-buttons-wrapper">
+                  <div class="score-buttons-container">
+                    <a class="score-button" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=0&firmName={{FirmName}}" target="_blank">0</a>
+                    <a class="score-button" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=1&firmName={{FirmName}}" target="_blank">1</a>
+                    <a class="score-button" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=2&firmName={{FirmName}}" target="_blank">2</a>
+                    <a class="score-button" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=3&firmName={{FirmName}}" target="_blank">3</a>
+                    <a class="score-button" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=4&firmName={{FirmName}}" target="_blank">4</a>
+                    <a class="score-button" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=5&firmName={{FirmName}}" target="_blank">5</a>
+                    <a class="score-button" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=6&firmName={{FirmName}}" target="_blank">6</a>
+                    <a class="score-button" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=7&firmName={{FirmName}}" target="_blank">7</a>
+                    <a class="score-button" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=8&firmName={{FirmName}}" target="_blank">8</a>
+                    <a class="score-button" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=9&firmName={{FirmName}}" target="_blank">9</a>
+                    <a class="score-button" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=10&firmName={{FirmName}}" target="_blank">10</a>
+                  </div>
+                  <div class="score-labels">
+                    <span class="score-label">{{LEFT_SCORE_LABEL}}</span>
+                    <span class="score-label">{{RIGHT_SCORE_LABEL}}</span>
+                  </div>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td align="left" valign="top">
+                <div class="footer-text">
+                  <strong>Independent quality assurance for leading firms</strong> — a Client Culture service.<br>
+                  If you have any questions about this request, please contact your usual contact at {{FirmName}}.<br>
+                  <a href="https://clientculture.com" class="footer-link">Powered by Client Culture</a> — empowering teams to deliver client excellence.
+                </div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+  </body>
+</html>
