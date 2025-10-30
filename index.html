@@ -117,7 +117,7 @@
         <p>We're delighted to hear you've had a positive experience.</p>
         <hr/>
         <h3 style="font-size: 21px; font-weight: 500; margin-top: 24px; margin-bottom: 12px; text-align: left;">Optional questions</h3>
-        <p>If you have a moment, there are <strong>four optional quick questions</strong> below — including why you'd recommend us, how we could make things even better, and an opportunity to recognise deserving team members.</p>
+        <p>If you have a moment, there are <strong><span id="question-count-promoter">four</span> optional quick questions</strong> below — including why you'd recommend us, how we could make things even better, and an opportunity to recognise deserving team members.</p>
         <!-- /ko -->
 
         <!-- ko if: isPassive() -->
@@ -465,6 +465,31 @@
               window.location.href = webviewUrl;
             }
           });
+        }
+      });
+
+      // Vendor-specific: Change question count for Netwealth (3 questions instead of 4 for promoters)
+      window.addEventListener('load', function() {
+        // Get firmName from URL parameters
+        var urlParams = new URLSearchParams(window.location.search);
+        var firmName = urlParams.get('firmName');
+
+        if (firmName && firmName.toLowerCase().indexOf('netwealth') !== -1) {
+          // Wait for Knockout to render the element (it's inside <!-- ko if: isPromoter() -->)
+          var attempts = 0;
+          var maxAttempts = 20; // Try for 2 seconds (20 x 100ms)
+
+          var checkInterval = setInterval(function() {
+            var questionCountElement = document.getElementById('question-count-promoter');
+            attempts++;
+
+            if (questionCountElement) {
+              questionCountElement.textContent = 'three';
+              clearInterval(checkInterval);
+            } else if (attempts >= maxAttempts) {
+              clearInterval(checkInterval);
+            }
+          }, 100); // Check every 100ms
         }
       });
     </script>

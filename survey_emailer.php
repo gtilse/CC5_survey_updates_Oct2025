@@ -105,7 +105,7 @@ function sendClientSurvey(){
            "CONCAT(User.firstName, ' ',User.lastName) as drlName, Survey_Log.objectId as objectId  from Client INNER JOIN User ON Client.drl = User.objectId " .
            "INNER JOIN Survey_Log ON Client.objectId = Survey_Log.clientId WHERE Client.active=1 AND Client.sendSurveyEmail=1 AND Survey_Log.score IS NULL AND " .
            "Survey_Log.emailStatus=2 AND Survey_Log.reminderSentOnDate IS NULL AND Survey_Log.reminderDate IS NOT NULL AND Survey_Log.reminderDate <= UTC_TIMESTAMP() AND Survey_Log.reminderDate >= UTC_TIMESTAMP() - INTERVAL 30 DAY AND " .
-           "Client.vendorId = '" . $vendorId . "' AND Survey_Log.surveyId=" . $conn->quote($survey["objectId"]) . " ORDER BY Client.name LIMIT 300";
+           "Client.vendorId = '" . $vendorId . "' AND Survey_Log.surveyId=" . $conn->quote($survey["objectId"]) . " ORDER BY Client.name LIMIT 600";
   }
 
   $stmt->closeCursor();
@@ -164,11 +164,20 @@ function sendClientSurvey(){
   // ==============================================================================
 
   if($emailType == $GLOBALS["EMAIL_TYPE"]["SURVEY"]) {
-    // Initial email: Always single button template (better deliverability)
-    $emailTemplate = file_get_contents(__DIR__ ."/email_template_initial.html");
+    // Initial email: Check for vendor-specific templates
+    if ($vendorId === 'vQOAvbIlLNKbv') {
+      // Netwealth-specific template (no feedback text)
+      $emailTemplate = file_get_contents(__DIR__ ."/email_template_initial_netwealth.html");
+    } else {
+      // Default initial template
+      $emailTemplate = file_get_contents(__DIR__ ."/email_template_initial.html");
+    }
   } else {
-    // Reminder email: Check manual switch
-    if (in_array($vendorId, $inlineScoreVendorIds)) {
+    // Reminder email: Check for vendor-specific templates
+    if ($vendorId === 'vQOAvbIlLNKbv') {
+      // Netwealth-specific template (no feedback text)
+      $emailTemplate = file_get_contents(__DIR__ ."/email_template_reminder_single_netwealth.html");
+    } else if (in_array($vendorId, $inlineScoreVendorIds)) {
       // Inline scores with confirmation mode (vendor-specific)
       $emailTemplate = file_get_contents(__DIR__ ."/email_template_reminder.html");
     } else {

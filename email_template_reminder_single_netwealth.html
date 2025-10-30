@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Client Culture Survey</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/favorite/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favorite/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favorite/favicon-16x16.ico">
+    <link rel="manifest" href="/assets/favorite/site.webmanifest">
+    <link rel="mask-icon" href="/assets/favorite/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+
+    <style type="text/css">
+      body {
+        background-color:#F6F6F6;
+        color: #000000;
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.6em;margin: 0;
+        padding: 0;
+        -webkit-font-smoothing: antialiased;
+        -webkit-text-size-adjust: none;
+        width: 100% !important;
+      }
+
+      h1, h2, h3, h4, h5, h6 {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+      }
+
+      p {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        font-size: 16px;
+      }
+
+      h1, h2, h3, h4, h5, h6,
+      .h1, .h2, .h3, .h4, .h5, .h6 {
+        margin-bottom: 0.5rem;
+        font-family: inherit;
+        font-weight: 500;
+        line-height: 1.2;
+        color: inherit;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+      }
+
+      h2 {
+        font-size: 2rem;
+      }
+
+      h3 {
+        font-size: 1.75rem;
+      }
+
+      h4 {
+        font-size: 1.5rem;
+      }
+
+      h5 {
+        font-size: 1.25rem;
+      }
+
+      h6 {
+        font-size: 1rem;
+      }
+
+      table {
+        border-collapse: collapse;
+        border-spacing: 0;
+      }
+
+
+      .email-container {
+        background-color:#FFFFFF;
+        margin-top:20px;
+        margin-bottom:20px;
+      }
+
+      .footer-text {
+        display: block;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        padding: 0;
+        font-weight: normal;
+        font-size: 14px;
+        color: #666666;
+        text-align: left;
+      }
+
+      .footer-link {
+        padding: 0;
+        color: #777777!important;
+        font-size: 13px!important;
+        text-decoration: underline;
+      }
+
+      .survey-link {
+        display: inline-block;
+        background-color: #007bff!important;
+        color: #FFFFFF!important;
+        font-weight: bold;
+        font-size: 18px!important;
+        padding: 16px 48px;
+        text-decoration: none!important;
+        border-radius: 4px;
+        margin: 0;
+      }
+
+      /* Mobile responsive styles */
+      @media only screen and (max-width: 600px) {
+        .email-container {
+          width: 100% !important;
+          max-width: 100% !important;
+        }
+
+        table[width="600"] {
+          width: 100% !important;
+        }
+
+        .survey-link {
+          font-size: 16px !important;
+          padding: 14px 36px !important;
+        }
+      }
+
+    </style>
+
+    <!--[if gte mso 9]>
+      <style type="text/css">
+        body,table tr,table td,a,p, span,table.MsoNormalTable {  font-family: Arial, sans-serif !important; font-size: 12px!important  }
+        p {margin-bottom:10px!important;}
+      </style>
+    <![endif]-->
+
+  </head>
+
+  <body>
+    <!-- Outer container -->
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" class="email-wrapper">
+      <tr>
+        <td align="center" valign="top">
+
+          <!-- Contents table -->
+          <table border="0" cellpadding="10" cellspacing="0" width="600" class="email-container">
+
+            <!-- Logo Image -->
+            <tr>
+              <td align="left" valign="top">
+                {{LOGO_IMAGE}}
+              </td>
+            </tr>
+
+            <!-- Visible preheader text -->
+            <tr>
+              <td align="left" valign="top">
+                <p style="font-size: 12px; color: #666666; margin: 0 0 16px 0; padding: 0;">It's just one question — should take 10 seconds.</p>
+              </td>
+            </tr>
+
+            <!-- Email contents -->
+            <tr>
+              <td align="left" valign="top" style="padding-bottom:20px;">
+                {{EMAIL_HTML}}
+              </td>
+            </tr>
+
+            <!-- Single Feedback Button -->
+            <tr>
+              <td align="left" valign="top" style="padding: 10px 10px 30px 10px;">
+                <a href="{{WEB_ROOT}}survey/survey.php?id={{OBJECTID}}&type={{SURVEY_TYPE}}&webview=1" class="survey-link" target="_blank">Share Your Feedback</a>
+              </td>
+            </tr>
+
+            <!-- Divider -->
+            <tr>
+              <td colspan="1">
+                <hr style="border:none;border-top:1px solid #eee;margin:36px 0;">
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td align="left" valign="top" style="padding-top:0;padding-bottom:20px;">
+                <p style="font-size:13px;color:#777;text-align:left;line-height:1.4;margin:0;">
+                  <span style="display:block;margin-bottom:5px;"><strong>Independent quality assurance for leading firms</strong> — a Client Culture service.</span>
+                  <span style="display:block;margin-bottom:5px;">If you have any questions about this request, please reach out to your usual contact at {{FirmName}}.</span>
+                  <span style="display:block;margin-bottom:5px;"><a href="https://clientculture.com" style="color:#777;text-decoration:underline;">Powered by Client Culture</a> — empowering teams to deliver client excellence</span>
+                  <span style="display:block;margin-bottom:5px;">ABN 88 619 177 132</span>
+                  <span style="display:block;"><a href="{{WEB_ROOT}}survey/survey.php?id={{OBJECTID}}&type={{SURVEY_TYPE}}&webview=1" target="_blank" style="color:#777;text-decoration:underline;">View in browser</a> · {{UNSUBSCRIBE_LINK}}</span>
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <div style="display:none">{{UTRACK}}</div>
+
+  </body>
+</html>
