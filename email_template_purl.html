@@ -1,8 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{FirmName}} - Client Feedback</title>
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/favorite/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/favorite/favicon-32x32.png">
@@ -13,60 +14,22 @@
     <meta name="theme-color" content="#ffffff">
 
     <style type="text/css">
-      body {
-        background-color:#FFFFFF;
-        color: #333;
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-        font-size: 15px;
-        line-height: 1.5;
-        margin: 0;
-        padding: 0;
-        font-weight: 400;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        -webkit-text-size-adjust: none;
-        width: 100% !important;
-      }
-
-      h1, h2, h3, h4, h5, h6 {
-        margin-top: 32px;
-        margin-bottom: 12px;
-        font-weight: 400;
-        color: #222;
-      }
-
-      p {
-        margin-top: 0;
-        margin-bottom: 6px;
-        font-size: 15px;
-      }
-
-      table {
-        border-collapse: collapse;
-        border-spacing: 0;
-      }
-
-      .email-container {
-        background-color:#FFFFFF;
-        margin: 0 auto;
+      /* Page container */
+      #divScorePage {
         max-width: 640px;
+        margin: 0 auto;
+        padding: 0 20px;
       }
 
-      /* Client greeting */
-      .greeting {
-        font-size: 24px;
-        font-weight: 500;
-        margin-bottom: 20px;
-        color: #222;
+      #divScorePage img {
+        display: block;
+        margin: 20px 0;
+        max-width: 300px;
       }
 
-      /* NPS Question */
-      .nps-question {
-        font-size: 19px;
-        font-weight: 400;
-        text-align: center;
-        margin: 30px 0 20px 0;
-        color: #222;
+      #divScorePage > hr {
+        margin: 0;
+        width: 100%;
       }
 
       /* Score buttons */
@@ -124,33 +87,77 @@
       }
 
       /* Footer */
+      .footer {
+        position: relative;
+        width: 100%;
+        background-color: #ffffff;
+        font-size: 13px;
+        text-align: left;
+        border-top: none;
+        box-shadow: none;
+        margin-top: 60px;
+        padding: 20px 0 40px 0;
+      }
+
+      .footer .container {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      .footer hr {
+        margin: 0 0 20px 0;
+        width: 100%;
+      }
+
       .footer-text {
         display: block;
-        margin-top: 30px;
-        padding-top: 20px;
-        border-top: 1px solid #eee;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        padding: 0;
         font-weight: normal;
-        font-size: 13px;
-        color: #777;
+        font-size: 14px;
+        color: #999999;
         text-align: left;
-        line-height: 1.6;
       }
 
       .footer-link {
-        color: #777!important;
+        padding: 0;
+        color: #999999!important;
+        font-size: 14px!important;
         text-decoration: underline;
+      }
+
+      body {
+        background-color:#FFFFFF;
+        color: #333;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-size: 15px;
+        line-height: 1.5;
+        margin: 0;
+        padding: 0;
+        font-weight: 400;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-text-size-adjust: none;
+        width: 100% !important;
+      }
+
+      h1, h2, h3, h4, h5, h6 {
+        margin-top: 32px;
+        margin-bottom: 12px;
+        font-weight: 400;
+        color: #222;
+      }
+
+      p {
+        margin-top: 0;
+        margin-bottom: 6px;
+        font-size: 15px;
       }
 
       /* Mobile responsive styles */
       @media only screen and (max-width: 640px) {
-        .greeting {
-          font-size: 20px;
-        }
-
-        .nps-question {
-          font-size: 17px;
-        }
-
         .score-buttons-wrapper {
           margin: 0;
         }
@@ -189,67 +196,71 @@
   </head>
 
   <body>
-    <!-- Outer container -->
-    <table border="0" cellpadding="0" cellspacing="0" width="100%" class="email-wrapper">
-      <tr>
-        <td align="center" valign="top">
+    <!-- Hidden firm name for JavaScript access -->
+    <div id="firm-name-holder" data-firm-name="{{FirmName}}" style="display:none;"></div>
 
-          <!-- Contents table -->
-          <table border="0" cellpadding="0" cellspacing="0" width="100%" class="email-container" style="max-width: 640px;">
+    <!-- Page contents -->
+    <div id="divScorePage">
 
-            <!-- Logo Image -->
-            <tr>
-              <td align="left" valign="top" style="padding: 0 20px 20px 20px;">
-                {{LOGO_IMAGE}}
-              </td>
-            </tr>
+      <!-- Logo -->
+      {{LOGO_IMAGE}}
+      <hr>
 
-            <!-- Email contents (includes greeting and NPS question) -->
-            <tr>
-              <td align="left" valign="top" style="padding: 0 20px;">
-                {{EMAIL_HTML}}
-              </td>
-            </tr>
+      <!-- Email contents (includes greeting and NPS question) -->
+      <div id="email-intro">
+        {{EMAIL_HTML}}
+      </div>
 
-            <!-- Score buttons -->
-            <tr>
-              <td align="center" valign="top" style="padding: 0 20px;">
-                <div class="score-buttons-wrapper">
-                  <div class="score-buttons-container">
-                    <a class="score-button" data-label="{{LEFT_SCORE_LABEL}}" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=0&firmName={{FirmName}}" target="_blank">0</a>
-                    <a class="score-button" data-label="" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=1&firmName={{FirmName}}" target="_blank">1</a>
-                    <a class="score-button" data-label="" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=2&firmName={{FirmName}}" target="_blank">2</a>
-                    <a class="score-button" data-label="" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=3&firmName={{FirmName}}" target="_blank">3</a>
-                    <a class="score-button" data-label="" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=4&firmName={{FirmName}}" target="_blank">4</a>
-                    <a class="score-button" data-label="" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=5&firmName={{FirmName}}" target="_blank">5</a>
-                    <a class="score-button" data-label="" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=6&firmName={{FirmName}}" target="_blank">6</a>
-                    <a class="score-button" data-label="" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=7&firmName={{FirmName}}" target="_blank">7</a>
-                    <a class="score-button" data-label="" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=8&firmName={{FirmName}}" target="_blank">8</a>
-                    <a class="score-button" data-label="" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=9&firmName={{FirmName}}" target="_blank">9</a>
-                    <a class="score-button" data-label="{{RIGHT_SCORE_LABEL}}" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=10&firmName={{FirmName}}" target="_blank">10</a>
-                  </div>
-                  <div class="score-labels">
-                    <span class="score-label">{{LEFT_SCORE_LABEL}}</span>
-                    <span class="score-label">{{RIGHT_SCORE_LABEL}}</span>
-                  </div>
-                </div>
-              </td>
-            </tr>
+      <!-- Score buttons -->
+      <div class="score-buttons-wrapper">
+        <div class="score-buttons-container">
+          <a class="score-button" data-label="{{LEFT_SCORE_LABEL}}" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=0&firmName={{FirmName}}" target="_blank">0</a>
+          <a class="score-button" data-label="" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=1&firmName={{FirmName}}" target="_blank">1</a>
+          <a class="score-button" data-label="" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=2&firmName={{FirmName}}" target="_blank">2</a>
+          <a class="score-button" data-label="" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=3&firmName={{FirmName}}" target="_blank">3</a>
+          <a class="score-button" data-label="" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=4&firmName={{FirmName}}" target="_blank">4</a>
+          <a class="score-button" data-label="" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=5&firmName={{FirmName}}" target="_blank">5</a>
+          <a class="score-button" data-label="" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=6&firmName={{FirmName}}" target="_blank">6</a>
+          <a class="score-button" data-label="" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=7&firmName={{FirmName}}" target="_blank">7</a>
+          <a class="score-button" data-label="" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=8&firmName={{FirmName}}" target="_blank">8</a>
+          <a class="score-button" data-label="" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=9&firmName={{FirmName}}" target="_blank">9</a>
+          <a class="score-button" data-label="{{RIGHT_SCORE_LABEL}}" href="{{WEB_ROOT}}survey/?id={{OBJECTID}}&type={{SURVEY_TYPE}}&score=10&firmName={{FirmName}}" target="_blank">10</a>
+        </div>
+        <div class="score-labels">
+          <span class="score-label">{{LEFT_SCORE_LABEL}}</span>
+          <span class="score-label">{{RIGHT_SCORE_LABEL}}</span>
+        </div>
+      </div>
 
-            <!-- Footer -->
-            <tr>
-              <td align="left" valign="top" style="padding: 0 20px;">
-                <div class="footer-text">
-                  <strong>Independent quality assurance for leading firms</strong> — a Client Culture service.<br>
-                  If you have any questions about this request, please contact your usual contact at {{FirmName}}.<br>
-                  <a href="https://clientculture.com" class="footer-link">Powered by Client Culture</a> — empowering teams to deliver client excellence.
-                </div>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container" style="padding-bottom:20px;">
+        <hr style="border:none;border-top:1px solid #eee;margin:36px 0 8px 0;">
+
+        <p style="font-size:13px;color:#777;text-align:left;line-height:1.4;margin:0;">
+          <span style="display:block;margin-bottom:5px;"><strong>Independent quality assurance for leading firms</strong> — a Client Culture service.</span>
+          <span style="display:block;margin-bottom:5px;">If you have any questions about this request, please contact your usual contact at {{FirmName}}.</span>
+          <span style="display:block;"><a href="https://clientculture.com" style="color:#777;text-decoration:underline;">Powered by Client Culture</a> — empowering teams to deliver client excellence.</span>
+        </p>
+      </div>
+    </footer>
+
+    <script type="text/javascript">
+      // Add click handlers to close window after navigation
+      (function() {
+        var scoreButtons = document.querySelectorAll('.score-button');
+        for (var i = 0; i < scoreButtons.length; i++) {
+          scoreButtons[i].addEventListener('click', function() {
+            // Close this window after a short delay to allow navigation
+            setTimeout(function() {
+              window.close();
+            }, 500);
+          });
+        }
+      })();
+    </script>
 
   </body>
 </html>
