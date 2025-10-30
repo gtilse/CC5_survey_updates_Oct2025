@@ -49,8 +49,12 @@
       .email-container {
         background-color:#FFFFFF;
         margin: 0 auto;
-        padding: 0 20px;
         max-width: 640px;
+      }
+
+      .email-container td {
+        padding-left: 20px;
+        padding-right: 20px;
       }
 
       /* Client greeting */
@@ -144,8 +148,9 @@
 
       /* Mobile responsive styles */
       @media only screen and (max-width: 640px) {
-        .email-container {
-          padding: 0 20px;
+        .email-container td {
+          padding-left: 20px;
+          padding-right: 20px;
         }
 
         .greeting {
@@ -196,7 +201,7 @@
         <td align="center" valign="top">
 
           <!-- Contents table -->
-          <table border="0" cellpadding="0" cellspacing="0" width="640" class="email-container">
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" class="email-container" style="max-width: 640px;">
 
             <!-- Logo Image -->
             <tr>
